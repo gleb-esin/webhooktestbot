@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.example.network.TelegramBot;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -18,13 +19,5 @@ public class MessageHandler {
     TelegramBot bot;
 
 
-    public void sendMessageTo(Long chatId, String notification) {
-        SendMessage message = new SendMessage(chatId.toString(), notification);
-//        message.setParseMode(ParseMode.HTML);
-        try {
-            getBot().execute(message);
-        } catch (TelegramApiException e) {
-            log.error("send(" + chatId + notification + ")" + e.getMessage());
-        }
-    }
+
 }
