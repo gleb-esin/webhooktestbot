@@ -23,10 +23,6 @@ public class PlayerController implements Serializable {
     private Deque<Player> playersQueue;
 
 
-    public PlayerController(List<Player> players) {
-        this.players = players;
-    }
-
     public void setPlayersTurn() {
         for (Player player : players) {
             setPlayerMinWeight(player);

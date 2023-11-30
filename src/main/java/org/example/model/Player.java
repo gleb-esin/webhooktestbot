@@ -24,12 +24,10 @@ public class Player implements Comparable<Player> {
     private int turn;
     private String role;
     private Integer minTrumpWeight;
-    private final TelegramBot bot;
 
-    public Player(Long chatID, String name, TelegramBot bot) {
+    public Player(Long chatID, String name) {
         this.name = name;
         this.chatID = chatID;
-        this.bot = bot;
     }
 
     @Override

@@ -11,6 +11,8 @@ import org.example.model.Player;
 import org.example.model.Table;
 import org.example.monitor.GameMonitor;
 import org.example.monitor.PlayerMonitor;
+import org.example.network.TelegramBot;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -18,8 +20,6 @@ import java.beans.ConstructorProperties;
 import java.util.UUID;
 
 import static org.example.controller.moveValidator.ThrowValidator.isThrowPossible;
-import static org.example.service.MessageHandler.sendNotificationToAll;
-
 @Component
 @Data
 public class ThrowInFool implements Game {
@@ -27,20 +27,36 @@ public class ThrowInFool implements Game {
     private DeckController deckController;
     private TableController tableController;
     private PlayerController playerController;
+    private TelegramBot bot;
+    private GameMonitor gameMonitor;
 
     @ConstructorProperties({"gameID"})
     public ThrowInFool(@Value("#{T(java.util.UUID).randomUUID()}") UUID gameID) {
         this.gameID = gameID;
-        this.playerController = new PlayerController(PlayerMonitor.getThrowInFoolWaiterList());
+        this.playerController = new PlayerController();
         this.deckController = new DeckController(this.gameID);
         this.tableController = new TableController(deckController.getDeck().getTrump());
-        GameMonitor.addThrowInFoolPlayers(gameID, playerController.getPlayers());
+    }
+
+    @Autowired
+    public void setBot(TelegramBot bot) {
+        this.bot = bot;
+    }
+
+    @Autowired
+    public void setGameMonitor(GameMonitor gameMonitor) {
+        this.gameMonitor = gameMonitor;
+    }
+    @Autowired
+    public void setPlayerMonitor(PlayerMonitor playerMonitor) {
+        this.playerController.setPlayers(playerMonitor.getThrowInFoolWaiterList());
     }
 
     public void play() {
-        Attack attack = new Attack();
-        Defence defence = new Defence();
-        Throw aThrow = new Throw();
+        gameMonitor.addThrowInFoolGame(gameID, playerController.getPlayers());
+        Attack attack = new Attack(bot);
+        Defence defence = new Defence(bot);
+        Throw aThrow = new Throw(bot);
         Table table = tableController.getTable();
         dealCards();
         playerController.setPlayersTurn();
@@ -72,7 +88,7 @@ public class ThrowInFool implements Game {
                     while (isThrowPossible(tableController.getAll(), thrower.getPlayerHand()) && !defender.getPlayerHand().isEmpty()) {
                         int numberOfUnbeatenCards = table.getUnbeatenCards().size();
                         // If thrower can throw send initial notification to all waitingPlayers...
-                        sendNotificationToAll(playerController.getPlayers(), "------------------------------\n" +
+                        bot.sendNotificationToAll(playerController.getPlayers(), "------------------------------\n" +
                                 thrower.getName() + " может подкинуть" +
                                 "\n" + tableController.getTable() +
                                 "\n------------------------------");
@@ -100,18 +116,18 @@ public class ThrowInFool implements Game {
             }
             if (defender.getRole().equals("binder")) {
                 playerController.setBinder(defender);
-                sendNotificationToAll(playerController.getPlayers(), playerController.getBinder().getName() + " забирает карты " + tableController.getAll());
+                bot.sendNotificationToAll(playerController.getPlayers(), playerController.getBinder().getName() + " забирает карты " + tableController.getAll());
                 playerController.getBinder().getPlayerHand().addAll(tableController.getAll());
             }
 
             tableController.clear();
             if (deckController.getDeck().isEmpty()) {
-                sendNotificationToAll(playerController.getPlayers(), "Колода пуста!");
+                bot.sendNotificationToAll(playerController.getPlayers(), "Колода пуста!");
             } else
                 deckController.fillUpTheHands(playerController.getPlayersQueue(), defender, deckController.getDeck());
             playerController.changeTurn();
         }
-        sendNotificationToAll(playerController.getPlayers(), "Победил " + playerController.getWinner().getName() + "!");
+        bot.sendNotificationToAll(playerController.getPlayers(), "Победил " + playerController.getWinner().getName() + "!");
     }
 
     private void dealCards() {

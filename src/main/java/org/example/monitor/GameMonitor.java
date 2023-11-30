@@ -1,39 +1,23 @@
 package org.example.monitor;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.example.model.Player;
-import org.example.game.ThrowInFool;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Component
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class GameMonitor {
-    private static ConcurrentHashMap<UUID, List<Player>> throwInFoolGames = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<UUID, List<Player>> throwInFoolGames = new ConcurrentHashMap<>();
 
-    public static void runThrowInFoolAsync() {
-        System.out.println("GameMonitor.runThrowInFoolAsync starts");
-        CompletableFuture<Void> future = new CompletableFuture<>();
-        UUID gameId = UUID.randomUUID();
-        CompletableFuture.runAsync(() -> {
-                // Создаем и запускаем игру ThrowInFool
-                ThrowInFool throwInFool = new ThrowInFool(gameId);
-                throwInFool.play();
-                // Помечаем CompletableFuture как завершенный
-                future.complete(null);
-        });
-    }
-
-    public static void addThrowInFoolPlayers(UUID gameId, List<Player> players) {
+    public void addThrowInFoolGame(UUID gameId, List<Player> players) {
         throwInFoolGames.put(gameId, players);
-    }
-
-    public static List<Player> getThrowInFoolPlayers(UUID gameId) {
-        return throwInFoolGames.get(gameId);
-    }
-
-    public static void deleteThrowInFoolPlayers(UUID gameId) {
-        throwInFoolGames.remove(gameId);
     }
 }
 

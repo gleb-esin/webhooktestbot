@@ -2,6 +2,7 @@ package org.example.monitor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.concurrent.CompletableFuture;
@@ -11,9 +12,8 @@ import java.util.concurrent.ExecutionException;
 @Component
 @Slf4j
 public class UpdateMonitor {
-    public static ConcurrentHashMap<Long, CompletableFuture<Update>> updateFutures = new ConcurrentHashMap<>();
-
-    public static void add(Long chatId, Update update) {
+    public ConcurrentHashMap<Long, CompletableFuture<Update>> updateFutures = new ConcurrentHashMap<>();
+    public BotApiMethod<?> add(Long chatId, Update update) {
         CompletableFuture<Update> future = updateFutures.get(chatId);
         if (future != null) {
             future.complete(update); // Помечаем CompletableFuture как завершенный с обновлением
@@ -22,11 +22,11 @@ public class UpdateMonitor {
             updateFutures.put(chatId, new CompletableFuture<>());
             updateFutures.get(chatId).complete(update);
             System.out.println("UpdateMonitor add new future for chatId: " + chatId);
-
         }
+        return null;
     }
 
-    public static Update getUpdate(Long chatId) {
+    public Update getUpdate(Long chatId) {
         System.out.println("UpdateMonitor.getUpdate starts for chatId: " + chatId);
         CompletableFuture<Update> inCompleteFuture = updateFutures.get(chatId);
         CompletableFuture<Update> completeFuture;
@@ -52,6 +52,7 @@ public class UpdateMonitor {
             } catch (InterruptedException e) {
                 log.error("in UpdateMonitor.getUpdate(): " + e.getMessage());
             } catch (ExecutionException e) {
+                log.error("in UpdateMonitor.getUpdate(): " + e.getMessage());
             }
         } return null;
     }
