@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.example.game.ThrowInFool;
 import org.example.model.Player;
 import org.example.network.TelegramBot;
 import org.example.service.GameFabric;
@@ -21,19 +22,13 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PlayerMonitor {
-    GameFabric gameFabric;
     private ConcurrentLinkedQueue<Player> throwInFoolWaiters = new ConcurrentLinkedQueue<>();
 
-    @Autowired
-    public PlayerMonitor(GameFabric gameFabric) {
-        this.gameFabric = gameFabric;
-    }
-
-    public BotApiMethod<?> addThrowInFoolWaiter(Player player) {
+    public BotApiMethod<?> addThrowInFoolWaiter(Player player, TelegramBot bot) {
         System.out.println("PlayerMonitor.addThrowInFoolWaiter added player: " + player);
         throwInFoolWaiters.add(player);
         if (throwInFoolWaiters.size() > 1) {
-            gameFabric.runThrowInFoolAsync();
+            new GameFabric().runThrowInFoolAsync(bot);
             return null;
         } else {
             return new SendMessage(player.getChatID().toString(), "Ждем игроков...");

@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.example.game.Game;
 import org.example.game.ThrowInFool;
 import org.example.monitor.GameMonitor;
 import org.example.monitor.PlayerMonitor;
@@ -17,17 +18,18 @@ import java.util.concurrent.CompletableFuture;
 @Component
 @Slf4j
 @AllArgsConstructor(onConstructor_ = {@Autowired})
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class GameFabric {
 
-    public void runThrowInFoolAsync() {
-        System.out.println("GameMonitor.runThrowInFoolAsync starts");
-        CompletableFuture<Void> future = new CompletableFuture<>();
-        UUID gameId = UUID.randomUUID();
+    public void runThrowInFoolAsync(TelegramBot bot) {
         CompletableFuture.runAsync(() -> {
-            new ThrowInFool(gameId).play();
-            // Помечаем CompletableFuture как завершенный
-            future.complete(null);
+            //fixme DEBUG
+            System.out.println("DEBUG: GameFabric.runThrowInFoolAsync runAsync");
+            ThrowInFool throwInFool = new ThrowInFool(UUID.randomUUID());
+            throwInFool.setBot(bot);
+            throwInFool.setGameMonitor(bot.getGameMonitor());
+            throwInFool.setPlayerMonitor(bot.getPlayerMonitor());
+            throwInFool.play();
         });
     }
 }

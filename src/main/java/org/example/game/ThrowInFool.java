@@ -36,6 +36,8 @@ public class ThrowInFool implements Game {
         this.playerController = new PlayerController();
         this.deckController = new DeckController(this.gameID);
         this.tableController = new TableController(deckController.getDeck().getTrump());
+        //fixme DEBUG
+        System.out.println("DEBUG: ThrowInFool game created for players: " + playerController.getPlayers());
     }
 
     @Autowired

@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.example.config.Botconfig;
 import org.example.model.Player;
+import org.example.monitor.GameMonitor;
 import org.example.monitor.PlayerMonitor;
 import org.example.monitor.UpdateMonitor;
 import org.example.service.PlayerFactory;
@@ -20,7 +21,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -33,10 +33,11 @@ public class TelegramBot extends TelegramWebhookBot {
     UserEntityRepository userEntityRepository;
     UpdateMonitor updateMonitor;
     PlayerMonitor playerMonitor;
+    GameMonitor gameMonitor;
     final List<String> commands = Arrays.asList("/start", "/newThrowInFool");
 
     @Autowired
-    public TelegramBot(Botconfig botconfig, UserEntityRepository userEntityRepository, UpdateMonitor updateMonitor, PlayerMonitor playerMonitor) {
+    public TelegramBot(Botconfig botconfig, UserEntityRepository userEntityRepository, UpdateMonitor updateMonitor, PlayerMonitor playerMonitor, GameMonitor gameMonitor) {
         super(new DefaultBotOptions(), botconfig.getBotToken());
         this.botPath = botconfig.getWebHookPath();
         this.botUsername = botconfig.getUserName();
@@ -44,6 +45,7 @@ public class TelegramBot extends TelegramWebhookBot {
         this.userEntityRepository = userEntityRepository;
         this.updateMonitor = updateMonitor;
         this.playerMonitor = playerMonitor;
+        this.gameMonitor = gameMonitor;
     }
 
     @Override
@@ -68,7 +70,7 @@ public class TelegramBot extends TelegramWebhookBot {
                 }
                 case "/newThrowInFool" -> {
                    new Thread(() -> {
-                        playerMonitor.addThrowInFoolWaiter(new PlayerFactory(this).createPlayer(chatId));
+                        playerMonitor.addThrowInFoolWaiter(new PlayerFactory(this).createPlayer(chatId), this);
                     }, "ThrowInFoolThread").start();
                     return null;
                 }

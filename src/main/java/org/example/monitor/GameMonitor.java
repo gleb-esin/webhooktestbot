@@ -17,6 +17,7 @@ public class GameMonitor {
     private ConcurrentHashMap<UUID, List<Player>> throwInFoolGames = new ConcurrentHashMap<>();
 
     public void addThrowInFoolGame(UUID gameId, List<Player> players) {
+
         throwInFoolGames.put(gameId, players);
     }
 }
