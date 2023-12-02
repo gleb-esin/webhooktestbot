@@ -21,14 +21,14 @@ public class PlayerFactory {
    TelegramBot bot;
 
     public Player createPlayer(Long chatId) {
-        System.out.println("PlayerFactory.createPlayer starts for chatId: " + chatId);
+        System.out.println("DEBUG: PlayerFactory.createPlayer starts for chatId: " + chatId);
         Player player = null;
         boolean playerIsRegistered = bot.getUserEntityRepository().existsByUserId(chatId);
-        System.out.println("playerIsRegistered: " + playerIsRegistered);
+        System.out.println("DEBUG: playerIsRegistered: " + playerIsRegistered);
         if (!playerIsRegistered) {
             bot.sendMessageTo(chatId, "Для участия в игре нужно зарегистрироваться. Выберите ваше имя в игре: ");
             String name = bot.receiveMessageFrom(chatId);
-            System.out.println("name: " + name);
+            System.out.println("DEBUG: name: " + name);
             boolean nameIsTaken = bot.getUserEntityRepository().existsByName(name);
             while (nameIsTaken) {
                 bot.sendMessageTo(chatId, "Такое имя уже занято. Пожалуйста, выберите другое: ");

@@ -20,6 +20,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -47,9 +48,9 @@ public class TelegramBot extends TelegramWebhookBot {
 
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
-        System.out.println("onWebhookUpdateReceived get message: " + update.getMessage().getText() + " from chatId: " + update.getMessage().getChatId());
-        handleUpdate(update);
-        return null;
+        //fixme DEBUG
+        System.out.println("DEBUG: onWebhookUpdateReceived got message: " + update.getMessage().getText() + " from chatId: " + update.getMessage().getChatId());
+        return handleUpdate(update);
     }
 
     private BotApiMethod<?> handleUpdate(Update update) {
@@ -58,15 +59,22 @@ public class TelegramBot extends TelegramWebhookBot {
             String text = update.getMessage().getText();
             chatId = update.getMessage().getChatId();
 
+            //fixme DEBUG
+            System.out.println("DEBUG: handleUpdate got message from chatId: " + chatId + " with text: " + text);
+
             switch (text) {
                 case "/start" -> {
                     return new SendMessage(chatId.toString(), "Добро пожаловать!");
                 }
                 case "/newThrowInFool" -> {
-                    return playerMonitor.addThrowInFoolWaiter(new PlayerFactory(this).createPlayer(chatId));
+                   new Thread(() -> {
+                        playerMonitor.addThrowInFoolWaiter(new PlayerFactory(this).createPlayer(chatId));
+                    }, "ThrowInFoolThread").start();
+                    return null;
                 }
                 default -> {
-                    return updateMonitor.add(chatId, update);
+                    updateMonitor.add(chatId, update);
+                    return null;
                 }
             }
         }
@@ -82,8 +90,9 @@ public class TelegramBot extends TelegramWebhookBot {
     }
 
     public String receiveMessageFrom(Long chatId) {
-        System.out.println("receiveMessageFrom starts for chatId: " + chatId);
-        return updateMonitor.getUpdate(chatId).getMessage().getText();
+        //fixme DEBUG
+        System.out.println("DEBUG: receiveMessageFrom() starts for chatId: " + chatId);
+        return updateMonitor.getMessage(chatId).join().getMessage().getText();
     }
 
     public void sendNotificationTo(Player player, String text) {

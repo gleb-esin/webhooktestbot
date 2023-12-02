@@ -7,53 +7,38 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.atomic.AtomicReference;
 
 @Component
 @Slf4j
 public class UpdateMonitor {
-    public ConcurrentHashMap<Long, CompletableFuture<Update>> updateFutures = new ConcurrentHashMap<>();
-    public BotApiMethod<?> add(Long chatId, Update update) {
-        CompletableFuture<Update> future = updateFutures.get(chatId);
-        if (future != null) {
-            future.complete(update); // Помечаем CompletableFuture как завершенный с обновлением
-            System.out.println("UpdateMonitor complete existing future for chatId: " + chatId);
+    public ConcurrentHashMap<Long, CompletableFuture<Update>> updates = new ConcurrentHashMap<>();
+
+    public void add(Long chatId, Update update) {
+        //fixme DEBUG
+        System.out.println("DEBUG: UpdateMonitor.add contains: " + updates.containsKey(chatId));
+        CompletableFuture<Update> future;
+        if (updates.containsKey(chatId)) {
+            future = updates.get(chatId);
+            System.out.println("DEBUG: UpdateMonitor.add future is null: " + (future == null));
+            future.complete(update);
+            updates.putIfAbsent(chatId, future);
+            //fixme DEBUG
+            System.out.println("DEBUG: UpdateMonitor add message: " + update.getMessage().getText() + " from chatId: " + update.getMessage().getChatId());
         } else {
-            updateFutures.put(chatId, new CompletableFuture<>());
-            updateFutures.get(chatId).complete(update);
-            System.out.println("UpdateMonitor add new future for chatId: " + chatId);
+            System.err.println("ERROR: Unexpected message");
         }
-        return null;
     }
 
-    public Update getUpdate(Long chatId) {
-        System.out.println("UpdateMonitor.getUpdate starts for chatId: " + chatId);
-        CompletableFuture<Update> inCompleteFuture = updateFutures.get(chatId);
-        CompletableFuture<Update> completeFuture;
-
-        if (inCompleteFuture == null) {
-            inCompleteFuture = new CompletableFuture<>();
-            updateFutures.put(chatId, inCompleteFuture);
-            System.out.println("...create and put a new one CompletableFuture...");
-            try {
-                System.out.println("...and trying to return it");
-                return inCompleteFuture.get();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            } catch (ExecutionException e) {
-                log.error("in UpdateMonitor.getUpdate(): " + e.getMessage());
-            }
-        } else {
-            completeFuture = updateFutures.get(chatId);
-            System.out.println("UpdateMonitor get a completed CompletableFuture...");
-            try {
-                System.out.println("...and trying to return it");
-                return completeFuture.get();
-            } catch (InterruptedException e) {
-                log.error("in UpdateMonitor.getUpdate(): " + e.getMessage());
-            } catch (ExecutionException e) {
-                log.error("in UpdateMonitor.getUpdate(): " + e.getMessage());
-            }
-        } return null;
+    public CompletableFuture<Update> getMessage(Long chatId) {
+        updates.remove(chatId);
+        //fixme DEBUG
+        System.out.println("DEBUG: UpdateMonitor.getMessage starts for chatId: " + chatId);
+        CompletableFuture<Update> future = new CompletableFuture<>();
+        //fixme DEBUG
+        System.out.println("DEBUG: UpdateMonitor.getMessage() put new future for chatId: " + chatId);
+        updates.putIfAbsent(chatId, future);
+        return future;
     }
 }

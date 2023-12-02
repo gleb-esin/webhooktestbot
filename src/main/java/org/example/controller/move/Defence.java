@@ -9,14 +9,12 @@ import org.example.controller.TableController;
 import org.example.model.Card;
 import org.example.model.Player;
 import org.example.network.TelegramBot;
-import org.example.service.MessageHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 import static org.example.controller.moveValidator.DefenceValidator.isDefenceCorrect;
-import static org.example.service.MessageHandler.*;
 @Component
 @AllArgsConstructor(onConstructor_ = {@Autowired})
 @FieldDefaults(level = AccessLevel.PRIVATE)

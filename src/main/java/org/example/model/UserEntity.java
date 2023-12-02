@@ -11,6 +11,9 @@ public class UserEntity {
     private Long userId;
     private String name;
 
+    public UserEntity() {
+    }
+
     public UserEntity(Long playerId, String name) {
         this.userId = playerId;
         this.name = name;

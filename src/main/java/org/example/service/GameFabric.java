@@ -25,9 +25,7 @@ public class GameFabric {
         CompletableFuture<Void> future = new CompletableFuture<>();
         UUID gameId = UUID.randomUUID();
         CompletableFuture.runAsync(() -> {
-            // Создаем и запускаем игру ThrowInFool
-            ThrowInFool throwInFool = new ThrowInFool(gameId);
-            throwInFool.play();
+            new ThrowInFool(gameId).play();
             // Помечаем CompletableFuture как завершенный
             future.complete(null);
         });
