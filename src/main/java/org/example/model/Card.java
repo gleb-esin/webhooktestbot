@@ -31,11 +31,8 @@ public class Card implements Comparable<Card> {
 
     @Override
     public String toString() {
-        if (suit.getSuit().equals("\u2665") || suit.getSuit().equals("\u2666")) {
-            return "\u001B[38;2;128;0;0;47m" + value + suit + "\u001B[0m";
-        } else {
-            return "\u001B[30;47m" + value + suit + "\u001B[0m";
-        }
+
+            return "[" + value + suit + "]";
     }
 }
 
