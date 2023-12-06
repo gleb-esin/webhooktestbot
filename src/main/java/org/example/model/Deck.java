@@ -13,7 +13,7 @@ public class Deck implements Iterator<Card> {
 
 
     public Deck(UUID gameId) {
-        String[] suitArr = {"♠","♣","♥","♦"};
+        String[] suitArr = {"♤","♧","♡","♢"};
         String trumpSuit = suitArr[(int) (Math.random() * 4)];
         this.trump = new Suit(trumpSuit, true);
         boolean trump;

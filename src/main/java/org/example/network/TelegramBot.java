@@ -46,13 +46,6 @@ public class TelegramBot extends TelegramWebhookBot implements UpdateMonitor, Pl
         List<BotCommand> menu = new ArrayList<>();
         menu.add(new BotCommand("/throwinfool", "Подкидной дурак"));
         menu.add(new BotCommand("/help", "Описание бота"));
-//        menu.add(new BotCommand("/find", "Найти встречу"));
-//        menu.add(new BotCommand("/mymeetings", "Найти все свои встречи"));
-//        menu.add(new BotCommand("/edit", "Редактировать даты"));
-//        menu.add(new BotCommand("/removeme", "Удалить свое участие"));
-//        menu.add(new BotCommand("/deletemeeting", "Удалить свою встречу"));
-//        menu.add(new BotCommand("/feedback", "Оставить отзыв, предложение или замечение"));
-
         try {
             execute(new SetMyCommands(menu, new BotCommandScopeDefault(), null));
         } catch (TelegramApiException e) {

@@ -38,15 +38,16 @@ public class Player implements Comparable<Player> {
         StringBuilder bottomString = new StringBuilder();
         upperString.append(this.name).append(" ");
 
-        bottomString.append(" ".repeat(this.getName().length()));
+        bottomString.append(" ".repeat(this.getName().length())).append(" ");
         int cardNumber = 1;
-        for (Card c : playerHand) {
+        for (int i = 0; i < playerHand.size(); i++) {
             bottomString.append(" ".repeat(2));
-            upperString.append(c).append(" ");
-            if (c.getValue().toString().equals("10")) bottomString.append(" ");
+            upperString.append(playerHand.get(i));
+            if(i%2 == 1) bottomString.append(" ");
+            if (playerHand.get(i).equals("10")) bottomString.append(" ");
             bottomString.append(cardNumber++);
         }
-        return upperString.append("\n").append(bottomString).toString();
+        return upperString.append("|\n").append(bottomString).toString();
     }
 
     @Override

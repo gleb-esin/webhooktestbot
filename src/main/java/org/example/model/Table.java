@@ -22,12 +22,7 @@ public class Table {
         for (Card c : unbeatenCards) {
             stringBuilder.append(c).append(" ");
         }
-        stringBuilder.append("\nКозырь ");
-        if (trump.getSuit().equals("♥") || trump.getSuit().equals("♦")) {
-            stringBuilder.append( "\u001B[38;2;128;0;0;47m" + trump + "\u001B[0m");
-        } else {
-            stringBuilder.append("\u001B[30;47m" + trump + "\u001B[0m");
-        }
+        stringBuilder.append("\nКозырь " + "<b>|" + trump+ "|</b>");
         return stringBuilder.toString();
     }
 
