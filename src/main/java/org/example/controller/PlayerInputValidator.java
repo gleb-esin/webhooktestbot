@@ -1,14 +1,10 @@
 package org.example.controller;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
 import org.example.model.Card;
 import org.example.model.Player;
+import org.example.monitor.UpdateMonitor;
 import org.example.network.TelegramBot;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.example.service.MessageHandler;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -16,18 +12,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+public interface PlayerInputValidator extends MessageHandler, UpdateMonitor {
 
-@Slf4j
-@Component
-@AllArgsConstructor(onConstructor_ = {@Autowired})
-@FieldDefaults(level = AccessLevel.PRIVATE)
-public class PlayerInputValidator {
-    TelegramBot bot;
-
-    public PlayerInputValidator() {
-    }
-
-    protected List<Card> askForCards(Player player) {
+    default List<Card> askForCards(TelegramBot bot, Player player) {
         List<Card> cards = new ArrayList<>();
         String message;
         if (player.getRole().equals("attacker")) {
@@ -36,9 +23,9 @@ public class PlayerInputValidator {
             message = player.getName() + ", введите порядковые номера карт в Вашей руке через пробел. (Если хотите пропустить ход, напечатайте \"0\"): ";
         }
         //Отправляем запрос клиенту
-        bot.sendNotificationTo(player, message);
+        sendMessageTo(bot, player, message);
         //Получаем ответ от клиента
-        String cardIndexes = bot.receiveMessageFrom(player);
+        String cardIndexes = getMessage(player.getChatID());
         String[] cardIndexesArr = cardIndexes.split(" ");
         Pattern pattern = Pattern.compile("^(0|[1-9]\\d*)$");
         for (String s : cardIndexesArr) {
@@ -54,9 +41,9 @@ public class PlayerInputValidator {
                     } else {
                         while (!correctInput) {
                             //посылаем повторный запрос клиенту
-                            bot.sendNotificationTo(player, player.getName() + message);
+                            sendMessageTo(bot, player, player.getName() + message);
                             //Получаем строку от клиента
-                            cardIndexes = bot.receiveMessageFrom(player);
+                            cardIndexes = getMessage(player.getChatID());
                             //Формируем массив с номерами карт
                             cardIndexesArr = cardIndexes.split(" ");
                             //Для каждого элемента массива с номерами карт
