@@ -1,49 +1,45 @@
 package org.example.monitor;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
-import org.example.game.ThrowInFool;
 import org.example.model.Player;
 import org.example.network.TelegramBot;
-import org.example.service.GameFabric;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.example.service.GameFactory;
+import org.example.service.MessageHandler;
+import org.example.state.PlayerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-@Component
-@Slf4j
-@FieldDefaults(level = AccessLevel.PRIVATE)
-public class PlayerMonitor {
-    private ConcurrentLinkedQueue<Player> throwInFoolWaiters = new ConcurrentLinkedQueue<>();
+public interface PlayerMonitor extends MessageHandler {
+    ConcurrentLinkedQueue<Player> throwInFoolWaiters = new ConcurrentLinkedQueue<>();
 
-    public BotApiMethod<?> addThrowInFoolWaiter(Player player, TelegramBot bot) {
-        System.out.println("PlayerMonitor.addThrowInFoolWaiter added player: " + player);
-        throwInFoolWaiters.add(player);
-        if (throwInFoolWaiters.size() > 1) {
-            new GameFabric().runThrowInFoolAsync(bot);
-            return null;
-        } else {
-            return new SendMessage(player.getChatID().toString(), "Ждем игроков...");
-        }
+    default void addPlayerToPlayerMonitor(TelegramBot bot, Long chatId) {
+        //fixme DEBUG
+        System.out.println("DEBUG: PlayerMonitor.addPlayerToPlayerMonitor starts for chatId: " + chatId);
+        new Thread(() -> {
+            Player player = new PlayerFactory(bot, chatId).createPlayer();
+            System.out.println("DEBUG: PlayerMonitor.addThrowInFoolWaiter added player: " + player);
+            throwInFoolWaiters.add(player);
+            //fixme DEBUG
+            System.out.println("DEBUG: PlayerMonitor.addThrowInFoolWaiter contains: " + throwInFoolWaiters.size() + " players");
+            if (throwInFoolWaiters.size() == 2) {
+                new GameFactory(bot).createGame();
+            }
+            else sendMessageTo(bot, chatId, "Ждем игроков...");
+        }).start();
     }
 
-    public List<Player> getThrowInFoolWaiterList() {
+    default List<Player> getThrowInFoolWaiterList() {
         List<Player> players = new ArrayList<>();
         for (int i = 0; i < 2; i++) {
             players.add(throwInFoolWaiters.poll());
         }
+        //fixme DEBUG
+        System.out.println("DEBUG: PlayerMonitor.getThrowInFoolWaiterList returns: " + players);
         return players;
     }
 
-    public boolean isPlayerAdded(Player player) {
-        return throwInFoolWaiters.contains(player);
+    default int getSize() {
+        return throwInFoolWaiters.size();
     }
 }

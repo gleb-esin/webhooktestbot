@@ -6,19 +6,21 @@ import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.example.config.Botconfig;
-import org.example.model.Player;
-import org.example.monitor.GameMonitor;
 import org.example.monitor.PlayerMonitor;
+
 import org.example.monitor.UpdateMonitor;
-import org.example.service.PlayerFactory;
+import org.example.state.Help;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.bots.DefaultBotOptions;
 import org.telegram.telegrambots.bots.TelegramWebhookBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
+import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -26,36 +28,47 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Getter
 @Slf4j
-public class TelegramBot extends TelegramWebhookBot {
+public class TelegramBot extends TelegramWebhookBot implements UpdateMonitor, PlayerMonitor {
     String botPath;
     String botUsername;
     String botToken;
     UserEntityRepository userEntityRepository;
-    UpdateMonitor updateMonitor;
-    PlayerMonitor playerMonitor;
-    GameMonitor gameMonitor;
-    final List<String> commands = Arrays.asList("/start", "/newThrowInFool");
+    final List<String> commands = Arrays.asList("/help");
 
     @Autowired
-    public TelegramBot(Botconfig botconfig, UserEntityRepository userEntityRepository, UpdateMonitor updateMonitor, PlayerMonitor playerMonitor, GameMonitor gameMonitor) {
-        super(new DefaultBotOptions(), botconfig.getBotToken());
+    public TelegramBot(Botconfig botconfig, UserEntityRepository userEntityRepository) {
+        super("${telegrambot.botToken}");
         this.botPath = botconfig.getWebHookPath();
-        this.botUsername = botconfig.getUserName();
         this.botToken = botconfig.getBotToken();
+        this.botUsername = botconfig.getUserName();
         this.userEntityRepository = userEntityRepository;
-        this.updateMonitor = updateMonitor;
-        this.playerMonitor = playerMonitor;
-        this.gameMonitor = gameMonitor;
+
+        List<BotCommand> menu = new ArrayList<>();
+        menu.add(new BotCommand("/throwinfool", "Подкидной дурак"));
+        menu.add(new BotCommand("/help", "Описание бота"));
+//        menu.add(new BotCommand("/find", "Найти встречу"));
+//        menu.add(new BotCommand("/mymeetings", "Найти все свои встречи"));
+//        menu.add(new BotCommand("/edit", "Редактировать даты"));
+//        menu.add(new BotCommand("/removeme", "Удалить свое участие"));
+//        menu.add(new BotCommand("/deletemeeting", "Удалить свою встречу"));
+//        menu.add(new BotCommand("/feedback", "Оставить отзыв, предложение или замечение"));
+
+        try {
+            execute(new SetMyCommands(menu, new BotCommandScopeDefault(), null));
+        } catch (TelegramApiException e) {
+            System.err.println("Error setting bot's command list" + e.getMessage());
+        }
     }
 
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
         //fixme DEBUG
         System.out.println("DEBUG: onWebhookUpdateReceived got message: " + update.getMessage().getText() + " from chatId: " + update.getMessage().getChatId());
-        return handleUpdate(update);
+        handleUpdate(update);
+        return null;
     }
 
-    private BotApiMethod<?> handleUpdate(Update update) {
+    private void handleUpdate(Update update) {
         Long chatId;
         if (update.hasMessage() && update.getMessage().hasText()) {
             String text = update.getMessage().getText();
@@ -65,49 +78,14 @@ public class TelegramBot extends TelegramWebhookBot {
             System.out.println("DEBUG: handleUpdate got message from chatId: " + chatId + " with text: " + text);
 
             switch (text) {
-                case "/start" -> {
-                    return new SendMessage(chatId.toString(), "Добро пожаловать!");
+                case "/start", "/help" -> {
+                    new Help(this, chatId).execute();
                 }
-                case "/newThrowInFool" -> {
-                   new Thread(() -> {
-                        playerMonitor.addThrowInFoolWaiter(new PlayerFactory(this).createPlayer(chatId), this);
-                    }, "ThrowInFoolThread").start();
-                    return null;
-                }
-                default -> {
-                    updateMonitor.add(chatId, update);
-                    return null;
-                }
+                case "/throwinfool" -> addPlayerToPlayerMonitor(this, chatId);
+
+                default -> addMessageToUpdateMonitor(chatId, update);
             }
         }
-        return null;
     }
 
-    public void sendMessageTo(Long chatId, String notification) {
-        try {
-            this.execute(new SendMessage(chatId.toString(), notification));
-        } catch (Exception e) {
-            log.error("in MessageHandler.sendMessageTo(" + chatId + ", " + notification + "): " + e.getMessage());
-        }
-    }
-
-    public String receiveMessageFrom(Long chatId) {
-        //fixme DEBUG
-        System.out.println("DEBUG: receiveMessageFrom() starts for chatId: " + chatId);
-        return updateMonitor.getMessage(chatId).join().getMessage().getText();
-    }
-
-    public void sendNotificationTo(Player player, String text) {
-        sendMessageTo(player.getChatID(), text);
-    }
-
-    public void sendNotificationToAll(List<Player> players, String text) {
-        for (Player player : players) {
-            sendMessageTo(player.getChatID(), text);
-        }
-    }
-
-    public String receiveMessageFrom(Player player) {
-        return receiveMessageFrom(player.getChatID());
-    }
 }

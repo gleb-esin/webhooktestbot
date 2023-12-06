@@ -1,65 +1,57 @@
-package org.example.game;
+package org.example.state;
 
-import lombok.Data;
-import org.example.controller.DeckController;
-import org.example.controller.PlayerController;
-import org.example.controller.TableController;
-import org.example.controller.move.Attack;
-import org.example.controller.move.Defence;
-import org.example.controller.move.Throw;
-import org.example.model.Player;
-import org.example.model.Table;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
+import org.example.controller.PlayerInputValidator;
+import org.example.controller.move.Move;
 import org.example.monitor.GameMonitor;
 import org.example.monitor.PlayerMonitor;
 import org.example.network.TelegramBot;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+
+import lombok.experimental.FieldDefaults;
+import org.example.controller.DeckController;
+import org.example.controller.PlayerController;
+import org.example.controller.TableController;
+import org.example.model.Player;
+import org.example.model.Table;
 import org.springframework.stereotype.Component;
 
-import java.beans.ConstructorProperties;
+import java.util.List;
 import java.util.UUID;
 
 import static org.example.controller.moveValidator.ThrowValidator.isThrowPossible;
-@Component
-@Data
-public class ThrowInFool implements Game {
-    private UUID gameID;
-    private DeckController deckController;
-    private TableController tableController;
-    private PlayerController playerController;
-    private TelegramBot bot;
-    private GameMonitor gameMonitor;
 
-    @ConstructorProperties({"gameID"})
-    public ThrowInFool(@Value("#{T(java.util.UUID).randomUUID()}") UUID gameID) {
-        this.gameID = gameID;
-        this.playerController = new PlayerController();
+@Component
+@Setter
+@Getter
+@FieldDefaults(level = AccessLevel.PRIVATE)
+public class ThrowInFool implements Move, PlayerInputValidator, GameMonitor, PlayerMonitor {
+    UUID gameID;
+    boolean isGameOver = false;
+    TelegramBot bot;
+    List<Player> players;
+
+    PlayerController playerController;
+    DeckController deckController;
+    TableController tableController;
+
+    Table table;
+
+
+    public ThrowInFool(TelegramBot bot) {
+        this.bot = bot;
+        this.gameID = UUID.randomUUID();
+
+        this.playerController = new PlayerController(getThrowInFoolWaiterList());
         this.deckController = new DeckController(this.gameID);
         this.tableController = new TableController(deckController.getDeck().getTrump());
-        //fixme DEBUG
-        System.out.println("DEBUG: ThrowInFool game created for players: " + playerController.getPlayers());
+
+        this.table = tableController.getTable();
+        addThrowInFoolToGameMonitor(gameID, playerController.getPlayers());
     }
 
-    @Autowired
-    public void setBot(TelegramBot bot) {
-        this.bot = bot;
-    }
-
-    @Autowired
-    public void setGameMonitor(GameMonitor gameMonitor) {
-        this.gameMonitor = gameMonitor;
-    }
-    @Autowired
-    public void setPlayerMonitor(PlayerMonitor playerMonitor) {
-        this.playerController.setPlayers(playerMonitor.getThrowInFoolWaiterList());
-    }
-
-    public void play() {
-        gameMonitor.addThrowInFoolGame(gameID, playerController.getPlayers());
-        Attack attack = new Attack(bot);
-        Defence defence = new Defence(bot);
-        Throw aThrow = new Throw(bot);
-        Table table = tableController.getTable();
+    public void execute() {
         dealCards();
         playerController.setPlayersTurn();
 
@@ -68,20 +60,20 @@ public class ThrowInFool implements Game {
             Player attacker = playerController.getAttacker();
             Player defender = playerController.getDefender();
 
-            //init move
-            attack.init(playerController, tableController);
-            attack.move(playerController.getAttacker(), playerController.getPlayers(), tableController);
+            //attackInit attackMove
+            attackInit(bot, playerController, tableController);
+            attackMove(bot, playerController.getAttacker(),  tableController);
             if (playerController.isPlayerWinner(attacker, deckController.getDeck())) break;
 
-            //defence move
+            //defence Move
             if (!playerController.isGameOver()) {
-                defence.init(playerController, tableController);
-                defence.move(playerController.getDefender(), playerController.getPlayers(), tableController);
+                defenceInit(bot, playerController, tableController);
+                defenceMove(bot, playerController.getDefender(), playerController.getPlayers(), tableController);
                 if (defender.getRole().equals("binder")) playerController.setBinder(defender);
                 if (playerController.isPlayerWinner(defender, deckController.getDeck())) break;
             }
 
-            //throw move
+            //throw attackMove
             //If the Game doesn't finnish...
             if (!playerController.isGameOver()) {
                 ///...for each thrower....
@@ -90,12 +82,12 @@ public class ThrowInFool implements Game {
                     while (isThrowPossible(tableController.getAll(), thrower.getPlayerHand()) && !defender.getPlayerHand().isEmpty()) {
                         int numberOfUnbeatenCards = table.getUnbeatenCards().size();
                         // If thrower can throw send initial notification to all waitingPlayers...
-                        bot.sendNotificationToAll(playerController.getPlayers(), "------------------------------\n" +
+                        sendMessageToAll(bot, playerController.getPlayers(), "------------------------------\n" +
                                 thrower.getName() + " может подкинуть" +
                                 "\n" + tableController.getTable() +
                                 "\n------------------------------");
-                        ///...and make a throw move.
-                        aThrow.move(thrower, playerController.getPlayers(), tableController);
+                        ///...and make a throw attackMove.
+                        throwMove(bot, thrower, playerController.getPlayers(), tableController);
                         //If thrower became the winner - break game loop
                         if (playerController.isPlayerWinner(thrower, deckController.getDeck())) break gameloop;
                         // if the thrower still didn't throw...
@@ -106,9 +98,9 @@ public class ThrowInFool implements Game {
                         if (!playerController.isGameOver() && !table.getUnbeatenCards().isEmpty()) {
                             //...and defender are not binder...
                             if (!defender.getRole().equals("binder")) {
-                                //...make a defence move.
-                                defence.init(playerController, tableController);
-                                defence.move(playerController.getDefender(), playerController.getPlayers(), tableController);
+                                //...make a defence attackMove.
+                                defenceInit(bot, playerController, tableController);
+                                defenceMove(bot, playerController.getDefender(), playerController.getPlayers(), tableController);
                                 if (playerController.isPlayerWinner(defender, deckController.getDeck()))
                                     break gameloop;
                             }
@@ -118,18 +110,18 @@ public class ThrowInFool implements Game {
             }
             if (defender.getRole().equals("binder")) {
                 playerController.setBinder(defender);
-                bot.sendNotificationToAll(playerController.getPlayers(), playerController.getBinder().getName() + " забирает карты " + tableController.getAll());
+                sendMessageToAll(bot, playerController.getPlayers(), playerController.getBinder().getName() + " забирает карты " + tableController.getAll());
                 playerController.getBinder().getPlayerHand().addAll(tableController.getAll());
             }
 
             tableController.clear();
             if (deckController.getDeck().isEmpty()) {
-                bot.sendNotificationToAll(playerController.getPlayers(), "Колода пуста!");
+                sendMessageToAll(bot, playerController.getPlayers(), "Колода пуста!");
             } else
                 deckController.fillUpTheHands(playerController.getPlayersQueue(), defender, deckController.getDeck());
             playerController.changeTurn();
         }
-        bot.sendNotificationToAll(playerController.getPlayers(), "Победил " + playerController.getWinner().getName() + "!");
+        sendMessageToAll(bot, playerController.getPlayers(), "Победил " + playerController.getWinner().getName() + "!");
     }
 
     private void dealCards() {
