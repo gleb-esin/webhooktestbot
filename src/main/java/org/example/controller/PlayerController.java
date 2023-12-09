@@ -20,7 +20,7 @@ public class PlayerController implements Serializable {
     private Player defender;
     private Player binder;
     private Player winner;
-    private Deque<Player> playersQueue;
+    private Deque<Player> throwQueue;
 
     public PlayerController(List<Player> players) {
         this.players = players;
@@ -34,10 +34,10 @@ public class PlayerController implements Serializable {
         for (int i = 0; i < players.size(); i++) {
             players.get(i).setTurn(i + 1);
         }
-        this.playersQueue = new LinkedList<>(players);
-        setAttacker(this.playersQueue.pop());
-        setDefender(this.playersQueue.pop());
-        this.playersQueue.addFirst(this.attacker);
+        this.throwQueue = new LinkedList<>(players);
+        setAttacker(this.throwQueue.pop());
+        setDefender(this.throwQueue.pop());
+        this.throwQueue.addFirst(this.attacker);
     }
 
     private static void setPlayerMinWeight(Player player) {
@@ -93,15 +93,18 @@ public class PlayerController implements Serializable {
 
 
     public void changeTurn() {
-        this.playersQueue.addLast(this.playersQueue.pop());
+        Player attacker = this.throwQueue.pop();
+        this.throwQueue.addLast(attacker);
         if (this.binder == null) {
             setAttacker(this.defender);
         } else {
-            this.playersQueue.addLast(this.binder);
-            if (this.playersQueue.size() > 1) setAttacker(this.playersQueue.pop());
+            this.throwQueue.addLast(this.binder);
+            Player firstOfThrowers = this.throwQueue.pop();
+            if (this.throwQueue.size() > 1) setAttacker(firstOfThrowers);
         }
-        setDefender(this.playersQueue.pop());
-        this.playersQueue.addFirst(this.attacker);
+        Player nextOfThrowers = this.throwQueue.pop();
+        setDefender(nextOfThrowers);
+        this.throwQueue.addFirst(this.attacker);
         setBinder(null);
     }
 

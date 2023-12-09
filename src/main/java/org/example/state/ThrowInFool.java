@@ -76,7 +76,7 @@ public class ThrowInFool implements Move, PlayerInputValidator, GameMonitor, Pla
             //If the Game doesn't finnish...
             if (!playerController.isGameOver()) {
                 ///...for each thrower....
-                for (Player thrower : playerController.getPlayersQueue()) {
+                for (Player thrower : playerController.getThrowQueue()) {
                     //...check if thrower can throw it.
                     while (isThrowPossible(tableController.getAll(), thrower.getPlayerHand()) && !defender.getPlayerHand().isEmpty()) {
                         int numberOfUnbeatenCards = table.getUnbeatenCards().size();
@@ -117,7 +117,7 @@ public class ThrowInFool implements Move, PlayerInputValidator, GameMonitor, Pla
             if (deckController.getDeck().isEmpty()) {
                 sendMessageToAll(playerController.getPlayers(), "Колода пуста!");
             } else
-                deckController.fillUpTheHands(playerController.getPlayersQueue(), defender, deckController.getDeck());
+                deckController.fillUpTheHands(playerController.getThrowQueue(), defender, deckController.getDeck());
             playerController.changeTurn();
         }
         sendMessageToAll(playerController.getPlayers(), tableController.getTable().toString());

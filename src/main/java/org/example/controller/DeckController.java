@@ -1,10 +1,12 @@
 package org.example.controller;
 
 import lombok.Data;
+import org.example.model.Card;
 import org.example.model.Deck;
 import org.example.model.Player;
 
 import java.util.Deque;
+import java.util.Iterator;
 import java.util.UUID;
 
 /**
@@ -25,16 +27,34 @@ public class DeckController {
             if (playerCardGap > 0)
                 for (int i = 0; i < playerCardGap; i++) {
                     player.getPlayerHand().add(deck.getNextCard());
-
                 }
         }
     }
 
-
-    public void fillUpTheHands(Deque<Player> queue, Player defender, Deck deck) {
-        for (Player thrower : queue) {
-            fillUpThePlayersHand(thrower, deck);
+    public void fillUpTheHandsForTheLastTime(Deque<Player> throwQueue, Player defender, Deck deck) {
+        Player nextPlayer;
+        Iterator<Player> iterator = throwQueue.descendingIterator();
+        throwQueue.addLast(defender);
+        for (Card card : deck.getDeck()) {
+            nextPlayer = iterator.next();
+            nextPlayer.getPlayerHand().add(card);
         }
-        fillUpThePlayersHand(defender, deck);
+    }
+
+
+    public void fillUpTheHands(Deque<Player> throwQueue, Player defender, Deck deck) {
+        int cardsNeeded = 0;
+        for (Player p : throwQueue) {
+            cardsNeeded += (6 - p.getPlayerHand().size());
+        }
+        boolean isLastDeal = deck.getDeck().size() < cardsNeeded;
+        if (isLastDeal) {
+            fillUpTheHandsForTheLastTime(throwQueue, defender, deck);
+        } else {
+            for (Player thrower : throwQueue) {
+                fillUpThePlayersHand(thrower, deck);
+            }
+            fillUpThePlayersHand(defender, deck);
+        }
     }
 }
