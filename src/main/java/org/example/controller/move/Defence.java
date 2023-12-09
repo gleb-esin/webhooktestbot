@@ -15,12 +15,12 @@ import static org.example.controller.moveValidator.DefenceValidator.isDefenceCor
 public interface Defence extends PlayerInputValidator, MessageHandler {
 
     default void defenceInit(TelegramBot bot, PlayerController playerController, TableController tableController) {
-        sendMessageToAll(bot, playerController.getPlayers(),
+        sendMessageToAll(playerController.getPlayers(),
                 "------------------------------\n" +
                         "Отбивается " + playerController.getDefender().getName() +
                         "\n" + tableController.getTable() +
                         "\n------------------------------");
-        sendMessageTo(bot, playerController.getDefender(), playerController.getDefender().toString());
+        sendMessageTo(playerController.getDefender(), playerController.getDefender().toString());
     }
 
     default void defenceMove(TelegramBot bot, Player defender, List<Player> playersForNotify, TableController tableController) {
@@ -28,16 +28,16 @@ public interface Defence extends PlayerInputValidator, MessageHandler {
         boolean canDefend = isDefenceCorrect(unbeatenCards, defender.getPlayerHand());
         //If defender can't beat attacker cards...
         if (!canDefend) {
-            sendMessageToAll(bot, playersForNotify, defender.getName() + " не может отбиться.");
+            sendMessageToAll(playersForNotify, defender.getName() + " не может отбиться.");
             //...set his role to binder
             defender.setRole("binder");
             //If defender can beat attacker cards...
         } else {
             //...ask defender for cards.
-            List<Card> cards = askForCards(bot, defender);
+            List<Card> cards = askForCards(defender);
             //If defender refused to beat cards...
             if (cards.isEmpty()) {
-                sendMessageToAll(bot, playersForNotify, defender.getName() + " не будет отбиваться");
+                sendMessageToAll(playersForNotify, defender.getName() + " не будет отбиваться");
                 //...set his role to binder
                 defender.setRole("binder");
                 //If defender decided to beat cards...
@@ -50,15 +50,16 @@ public interface Defence extends PlayerInputValidator, MessageHandler {
                         break;
                     }
                     //...and ask defender for correct cards.
-                    sendMessageTo(bot, defender, "Так не получится отбиться");
-                    cards = askForCards(bot, defender);
+                    sendMessageTo(defender, "Так не получится отбиться");
+                    cards = askForCards(defender);
                     isDefendPossible = isDefenceCorrect(unbeatenCards, cards);
                 }
                 //If defender could beat cards...
                 if (!defender.getRole().equals("binder")) {
-                    sendMessageToAll(bot, playersForNotify, defender.getName() + " отбился");
-                    //...we add these cards on the table...
                     tableController.addCardsToTable(cards, defender);
+                    sendMessageToAll(playersForNotify, tableController.getTable().toString());
+                    sendMessageToAll(playersForNotify, "Карты отбиты!");
+                    //...we add these cards on the table...
                 }
             }
         }

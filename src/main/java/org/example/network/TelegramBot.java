@@ -9,6 +9,7 @@ import org.example.config.Botconfig;
 import org.example.monitor.PlayerMonitor;
 
 import org.example.monitor.UpdateMonitor;
+import org.example.service.MessageHandler;
 import org.example.state.Help;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,7 +29,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Getter
 @Slf4j
-public class TelegramBot extends TelegramWebhookBot implements UpdateMonitor, PlayerMonitor {
+public class TelegramBot extends TelegramWebhookBot implements UpdateMonitor, PlayerMonitor, MessageHandler {
     String botPath;
     String botUsername;
     String botToken;
@@ -42,6 +43,7 @@ public class TelegramBot extends TelegramWebhookBot implements UpdateMonitor, Pl
         this.botToken = botconfig.getBotToken();
         this.botUsername = botconfig.getUserName();
         this.userEntityRepository = userEntityRepository;
+        setTelegramBot(this);
 
         List<BotCommand> menu = new ArrayList<>();
         menu.add(new BotCommand("/throwinfool", "Подкидной дурак"));

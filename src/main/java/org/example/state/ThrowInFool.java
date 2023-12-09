@@ -17,7 +17,6 @@ import org.example.model.Player;
 import org.example.model.Table;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 import java.util.UUID;
 
 import static org.example.controller.moveValidator.ThrowValidator.isThrowPossible;
@@ -30,7 +29,7 @@ public class ThrowInFool implements Move, PlayerInputValidator, GameMonitor, Pla
     UUID gameID;
     boolean isGameOver = false;
     TelegramBot bot;
-    List<Player> players;
+
 
     PlayerController playerController;
     DeckController deckController;
@@ -62,7 +61,7 @@ public class ThrowInFool implements Move, PlayerInputValidator, GameMonitor, Pla
 
             //attackInit attackMove
             attackInit(bot, playerController, tableController);
-            attackMove(bot, playerController.getAttacker(),  tableController);
+            attackMove(bot, playerController.getAttacker(), tableController);
             if (playerController.isPlayerWinner(attacker, deckController.getDeck())) break;
 
             //defence Move
@@ -82,7 +81,7 @@ public class ThrowInFool implements Move, PlayerInputValidator, GameMonitor, Pla
                     while (isThrowPossible(tableController.getAll(), thrower.getPlayerHand()) && !defender.getPlayerHand().isEmpty()) {
                         int numberOfUnbeatenCards = table.getUnbeatenCards().size();
                         // If thrower can throw send initial notification to all waitingPlayers...
-                        sendMessageToAll(bot, playerController.getPlayers(), "------------------------------\n" +
+                        sendMessageToAll(playerController.getPlayers(), "------------------------------\n" +
                                 thrower.getName() + " может подкинуть" +
                                 "\n" + tableController.getTable() +
                                 "\n------------------------------");
@@ -110,18 +109,20 @@ public class ThrowInFool implements Move, PlayerInputValidator, GameMonitor, Pla
             }
             if (defender.getRole().equals("binder")) {
                 playerController.setBinder(defender);
-                sendMessageToAll(bot, playerController.getPlayers(), playerController.getBinder().getName() + " забирает карты " + tableController.getAll());
+                sendMessageToAll(playerController.getPlayers(), playerController.getBinder().getName() + " забирает карты " + tableController.getAll().toString().substring(1, tableController.getAll().toString().length() - 1));
                 playerController.getBinder().getPlayerHand().addAll(tableController.getAll());
             }
 
             tableController.clear();
             if (deckController.getDeck().isEmpty()) {
-                sendMessageToAll(bot, playerController.getPlayers(), "Колода пуста!");
+                sendMessageToAll(playerController.getPlayers(), "Колода пуста!");
             } else
                 deckController.fillUpTheHands(playerController.getPlayersQueue(), defender, deckController.getDeck());
             playerController.changeTurn();
         }
-        sendMessageToAll(bot, playerController.getPlayers(), "Победил " + playerController.getWinner().getName() + "!");
+        sendMessageToAll(playerController.getPlayers(), tableController.getTable().toString());
+        sendMessageToAll(playerController.getPlayers(), "Победил " + playerController.getWinner().getName() + "!");
+        removeThrowInFoolToGameMonitor(gameID);
     }
 
     private void dealCards() {

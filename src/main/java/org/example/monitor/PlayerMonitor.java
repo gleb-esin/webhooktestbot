@@ -4,7 +4,7 @@ import org.example.model.Player;
 import org.example.network.TelegramBot;
 import org.example.service.GameFactory;
 import org.example.service.MessageHandler;
-import org.example.state.PlayerFactory;
+import org.example.service.PlayerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,7 @@ public interface PlayerMonitor extends MessageHandler {
             if (throwInFoolWaiters.size() == 2) {
                 new GameFactory(bot).createGame();
             }
-            else sendMessageTo(bot, chatId, "Ждем игроков...");
+            else sendMessageTo(chatId, "Ждем игроков...");
         }).start();
     }
 

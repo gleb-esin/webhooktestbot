@@ -3,7 +3,6 @@ package org.example.controller;
 import org.example.model.Card;
 import org.example.model.Player;
 import org.example.monitor.UpdateMonitor;
-import org.example.network.TelegramBot;
 import org.example.service.MessageHandler;
 
 import java.util.ArrayList;
@@ -14,7 +13,7 @@ import java.util.regex.Pattern;
 
 public interface PlayerInputValidator extends MessageHandler, UpdateMonitor {
 
-    default List<Card> askForCards(TelegramBot bot, Player player) {
+    default List<Card> askForCards(Player player) {
         List<Card> cards = new ArrayList<>();
         String message;
         if (player.getRole().equals("attacker")) {
@@ -23,7 +22,7 @@ public interface PlayerInputValidator extends MessageHandler, UpdateMonitor {
             message = player.getName() + ", введите порядковые номера карт в Вашей руке через пробел. (Если хотите пропустить ход, напечатайте \"0\"): ";
         }
         //Отправляем запрос клиенту
-        sendMessageTo(bot, player, message);
+        sendMessageTo(player, message);
         //Получаем ответ от клиента
         String cardIndexes = getMessage(player.getChatID());
         String[] cardIndexesArr = cardIndexes.split(" ");
@@ -41,7 +40,7 @@ public interface PlayerInputValidator extends MessageHandler, UpdateMonitor {
                     } else {
                         while (!correctInput) {
                             //посылаем повторный запрос клиенту
-                            sendMessageTo(bot, player, player.getName() + message);
+                            sendMessageTo(player, player.getName() + message);
                             //Получаем строку от клиента
                             cardIndexes = getMessage(player.getChatID());
                             //Формируем массив с номерами карт

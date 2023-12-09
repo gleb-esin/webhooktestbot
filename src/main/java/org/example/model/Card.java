@@ -1,6 +1,7 @@
 package org.example.model;
 
 import lombok.Data;
+import lombok.NonNull;
 
 @Data
 public class Card implements Comparable<Card> {
@@ -21,7 +22,7 @@ public class Card implements Comparable<Card> {
     }
 
     @Override
-    public int compareTo(Card o) {
+    public int compareTo(@NonNull Card o) {
         if ((this.suit.isTrump()) && (!o.suit.isTrump())) return 1;
         if ((!this.suit.isTrump()) && (o.suit.isTrump())) return -1;
         if (this.suit.equals(o.suit)) {
@@ -31,8 +32,7 @@ public class Card implements Comparable<Card> {
 
     @Override
     public String toString() {
-
-            return "<b>|" + value + suit + "</b>";
+            return "<b>[" + value +  suit + "]</b>";
     }
 }
 

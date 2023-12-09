@@ -20,9 +20,9 @@ public class Table {
         }
         stringBuilder.append(System.lineSeparator()).append("Неотбитые карты: ");
         for (Card c : unbeatenCards) {
-            stringBuilder.append(c).append(" ");
+            stringBuilder.append(c);
         }
-        stringBuilder.append("\nКозырь " + "<b>|" + trump+ "|</b>");
+        stringBuilder.append("\nКозырь " + "<b>[" + trump+ "]</b>");
         return stringBuilder.toString();
     }
 

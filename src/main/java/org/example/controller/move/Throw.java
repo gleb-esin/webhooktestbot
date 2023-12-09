@@ -18,16 +18,16 @@ public interface Throw extends PlayerInputValidator, MessageHandler {
 
 
     default void throwMove(TelegramBot bot, Player thrower, List<Player> playersForNotify, TableController tableController) {
-        sendMessageTo(bot, thrower, thrower.toString());
-        List<Card> cards = askForCards(bot, thrower);
+        sendMessageTo(thrower, thrower.toString());
+        List<Card> cards = askForCards(thrower);
 
         if (cards.isEmpty()) {
-            sendMessageToAll(bot, playersForNotify, thrower.getName() + ", не будет подкидывать.");
+            sendMessageToAll(playersForNotify, thrower.getName() + ", не будет подкидывать.");
         } else {
             boolean isThrowCorrect = isThrowMoveCorrect(tableController.getAll(), cards);
             while (!isThrowCorrect) {
-                sendMessageTo(bot, thrower, thrower.getName() + " , так не получится подкинуть.");
-                cards = askForCards(bot, thrower);
+                sendMessageTo(thrower, thrower.getName() + " , так не получится подкинуть.");
+                cards = askForCards(thrower);
                 isThrowCorrect = isThrowMoveCorrect(tableController.getAll(), cards);
             }
             tableController.addCardsToTable(cards, thrower);

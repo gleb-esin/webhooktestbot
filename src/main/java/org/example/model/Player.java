@@ -1,13 +1,9 @@
 package org.example.model;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.example.network.TelegramBot;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -26,7 +22,7 @@ public class Player implements Comparable<Player> {
     private Integer minTrumpWeight;
 
     public Player(Long chatID, String name) {
-        this.name = name;
+        this.name = "<b>" + name + "</b>";
         this.chatID = chatID;
     }
 
@@ -36,18 +32,16 @@ public class Player implements Comparable<Player> {
         Collections.sort(playerHand, weightComparator);
         StringBuilder upperString = new StringBuilder();
         StringBuilder bottomString = new StringBuilder();
-        upperString.append(this.name).append(" ");
-
-        bottomString.append(" ".repeat(this.getName().length())).append(" ");
+        upperString.append(this.name).append("\n");
         int cardNumber = 1;
         for (int i = 0; i < playerHand.size(); i++) {
-            bottomString.append(" ".repeat(2));
+            bottomString.append(" ".repeat(7));
             upperString.append(playerHand.get(i));
-            if(i%2 == 1) bottomString.append(" ");
-            if (playerHand.get(i).equals("10")) bottomString.append(" ");
+            if (i % 3 == 1) bottomString.append(" ");
+            if (playerHand.get(i).getValue().equals("10")) bottomString.append("  ");
             bottomString.append(cardNumber++);
         }
-        return upperString.append("|\n").append(bottomString).toString();
+        return upperString.append("\n").append(bottomString).toString();
     }
 
     @Override

@@ -1,34 +1,41 @@
 package org.example.service;
 
 import org.example.model.Player;
+import org.example.model.TelegramBotContainer;
 import org.example.network.TelegramBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 
 import java.util.List;
 
 public interface MessageHandler {
+    TelegramBotContainer telegramBotContainer = new TelegramBotContainer();
 
-    default void sendMessageTo(TelegramBot bot, Long chatId, String message) {
+
+    default void sendMessageTo(Long chatId, String message) {
         try {
-            SendMessage sendMessage = new SendMessage(chatId.toString(), "<code>" + message + "</code>");
+            SendMessage sendMessage = new SendMessage(chatId.toString(), message);
             sendMessage.enableHtml(true);
-            bot.execute(sendMessage);
+            telegramBotContainer.getBot().execute(sendMessage);
         } catch (Exception e) {
             System.err.println("in MessageHandler.sendMessageTo(" + chatId + ", " + message + "): " + e.getMessage());
         }
     }
 
-    default void sendMessageTo(TelegramBot bot, Player player, String message) {
+    default void sendMessageTo(Player player, String message) {
         try {
-            SendMessage sendMessage = new SendMessage(player.getChatID().toString(), "<code>" + message + "</code>");
+            SendMessage sendMessage = new SendMessage(player.getChatID().toString(), message);
             sendMessage.enableHtml(true);
-            bot.execute(sendMessage);
+            telegramBotContainer.getBot().execute(sendMessage);
         } catch (Exception e) {
             System.err.println("in MessageHandler.sendMessageTo(" + player.getChatID() + ", " + message + "): " + e.getMessage());
         }
     }
 
-    default void sendMessageToAll(TelegramBot bot, List<Player> players, String message) {
-        players.forEach(player -> sendMessageTo(bot, player, message));
+    default void sendMessageToAll(List<Player> players, String message) {
+        players.forEach(player -> sendMessageTo(player, message));
+    }
+
+    default void setTelegramBot (TelegramBot bot) {
+        telegramBotContainer.setBot(bot);
     }
 }
