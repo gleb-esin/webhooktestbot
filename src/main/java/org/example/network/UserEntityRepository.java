@@ -17,12 +17,9 @@ public interface UserEntityRepository extends CrudRepository<UserEntity, Long> {
     @Query("SELECT u.name FROM UserEntity u WHERE u.userId = :userId")
     String findNameByUserId(@Param("userId") Long userId);
 
-//    @Modifying
-//    @Transactional
-//    @Query("INSERT INTO UserEntity (userId, name) VALUES (:userId, :name)")
-//    void insertUserEntity(@Param("userId") Long userId, @Param("name") String name);
-
     UserEntity save(UserEntity userEntity);
 
     UserEntity saveAndFlush(UserEntity userEntity);
+
+    UserEntity findByUserId(Long userId);
 }

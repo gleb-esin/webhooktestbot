@@ -1,7 +1,9 @@
 package org.example.model;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -12,18 +14,28 @@ import java.util.List;
 @Getter
 @Setter
 @Slf4j
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Player implements Comparable<Player> {
-    private final String name;
-    private final Long chatID;
-    private List<Card> playerHand = new ArrayList<>();
-    private boolean isWinner = false;
-    private int turn;
-    private String role;
-    private Integer minTrumpWeight;
+    final String name;
+    final Long chatID;
+    List<Card> playerHand = new ArrayList<>();
+    boolean isWinner = false;
+    int turn;
+    String role;
+    Integer minTrumpWeight;
+    int wins = 0;
+    int games = 0;
 
     public Player(Long chatID, String name) {
         this.name = "<b>" + name + "</b>";
         this.chatID = chatID;
+    }
+
+    public  Player(UserEntity userEntity) {
+        this.name = "<b>" + userEntity.getName() + "</b>";
+        this.chatID = userEntity.getUserId();
+        this.wins = userEntity.getWins();
+        this.games = userEntity.getGames();
     }
 
     @Override
@@ -56,5 +68,18 @@ public class Player implements Comparable<Player> {
         if (this.minTrumpWeight > player.minTrumpWeight) return 1;
         if (this.minTrumpWeight < player.minTrumpWeight) return -1;
         return 0;
+    }
+
+    public UserEntity toUserEntity() {
+        UserEntity userEntity = new UserEntity();
+        userEntity.setUserId(chatID);
+        userEntity.setName(name);
+        userEntity.setWins(wins);
+        userEntity.setGames(games);
+        return userEntity;
+    }
+
+    public String getStatistics() {
+        return "У вас " + wins + " побед и " + games + " игр";
     }
 }
