@@ -15,10 +15,8 @@ public interface Defence extends PlayerInputValidator, MessageService {
 
     default void defenceInit(PlayerController playerController, TableController tableController) {
         sendMessageToAll(playerController.getPlayers(),
-                "------------------------------\n" +
                         "Отбивается " + playerController.getDefender().getName() +
-                        "\n" + tableController.getTable() +
-                        "\n------------------------------");
+                        "\n" + tableController.getTable());
         sendMessageTo(playerController.getDefender(), playerController.getDefender().toString());
     }
 

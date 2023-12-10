@@ -10,7 +10,7 @@ public class GameFactory {
         new Thread(() -> {
             //fixme DEBUG
             System.out.println("DEBUG: GameFactory.createGame()");
-            new ThrowInFool().execute();
+            new ThrowInFool().play();
         }).start();
     }
 }

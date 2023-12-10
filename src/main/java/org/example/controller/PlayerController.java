@@ -87,6 +87,7 @@ public class PlayerController implements Serializable {
             player.setWinner(true);
             setGameOver(true);
             setWinner(player);
+            player.setWins(player.getWins() + 1);
         }
         return isWinner;
     }

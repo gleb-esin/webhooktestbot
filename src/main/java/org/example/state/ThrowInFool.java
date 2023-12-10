@@ -3,7 +3,6 @@ package org.example.state;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import org.example.service.PlayerInputValidator;
 import org.example.controller.move.Move;
 import org.example.monitor.GameMonitor;
 import org.example.monitor.PlayerMonitor;
@@ -14,15 +13,16 @@ import org.example.controller.PlayerController;
 import org.example.controller.TableController;
 import org.example.model.Player;
 import org.example.model.Table;
-import org.springframework.stereotype.Component;
+import org.example.network.DAO;
 
 import java.util.UUID;
 
 import static org.example.controller.moveValidator.ThrowValidator.isThrowPossible;
+
 @Setter
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ThrowInFool implements Move, PlayerInputValidator, GameMonitor, PlayerMonitor {
+public class ThrowInFool implements Move, GameMonitor, PlayerMonitor, DAO {
     UUID gameID;
     boolean isGameOver = false;
 
@@ -44,7 +44,7 @@ public class ThrowInFool implements Move, PlayerInputValidator, GameMonitor, Pla
         addThrowInFoolToGameMonitor(gameID, playerController.getPlayers());
     }
 
-    public void execute() {
+    public void play() {
         dealCards();
         playerController.setPlayersTurn();
 
@@ -75,10 +75,8 @@ public class ThrowInFool implements Move, PlayerInputValidator, GameMonitor, Pla
                     while (isThrowPossible(tableController.getAll(), thrower.getPlayerHand()) && !defender.getPlayerHand().isEmpty()) {
                         int numberOfUnbeatenCards = table.getUnbeatenCards().size();
                         // If thrower can throw send initial notification to all waitingPlayers...
-                        sendMessageToAll(playerController.getPlayers(), "------------------------------\n" +
-                                thrower.getName() + " может подкинуть" +
-                                "\n" + tableController.getTable() +
-                                "\n------------------------------");
+                        sendMessageToAll(playerController.getPlayers(), thrower.getName() + " может подкинуть" +
+                                "\n" + tableController.getTable());
                         ///...and make a throw attackMove.
                         throwMove(thrower, playerController.getPlayers(), tableController);
                         //If thrower became the winner - break game loop
@@ -114,14 +112,23 @@ public class ThrowInFool implements Move, PlayerInputValidator, GameMonitor, Pla
                 deckController.fillUpTheHands(playerController.getThrowQueue(), defender, deckController.getDeck());
             playerController.changeTurn();
         }
-        sendMessageToAll(playerController.getPlayers(), tableController.getTable().toString());
-        sendMessageToAll(playerController.getPlayers(), "Победил " + playerController.getWinner().getName() + "!");
-        removeThrowInFoolToGameMonitor(gameID);
+        finnishGame();
     }
 
     private void dealCards() {
         for (Player player : playerController.getPlayers()) {
             deckController.fillUpThePlayersHand(player, deckController.getDeck());
+            //if player gets cards - add 1 game
+            player.setGames(player.getGames() + 1);
+        }
+    }
+
+    public void finnishGame() {
+//        sendMessageToAll(playerController.getPlayers(), tableController.getTable().toString());
+        sendMessageToAll(playerController.getPlayers(), "Победил " + playerController.getWinner().getName() + "!");
+        removeThrowInFoolToGameMonitor(gameID);
+        for (Player player : playerController.getPlayers()) {
+            saveInDB(player.toUserEntity());
         }
     }
 }

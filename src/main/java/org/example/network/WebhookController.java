@@ -21,6 +21,6 @@ public class WebhookController {
 
 //    @RequestMapping(value = "/", method = RequestMethod.POST)
 //    public ResponseEntity<BotApiMethod<?>> onUpdateReceived(@RequestBody Update update) {
-//        return new ResponseEntity<>(new SendMessage(update.getMessage().getCahtId().toString(), "OK"), HttpStatus.OK);
+//        return new ResponseEntity<>(new SendMessage(update.getMessage().getChatId().toString(), "OK"), HttpStatus.OK);
 //    }
 }

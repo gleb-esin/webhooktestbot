@@ -29,7 +29,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Getter
 @Slf4j
-public class TelegramBot extends TelegramWebhookBot implements UpdateMonitor, PlayerMonitor, MessageService {
+public class TelegramBot extends TelegramWebhookBot implements UpdateMonitor, PlayerMonitor, MessageService, DAO {
     String botPath;
     String botUsername;
     String botToken;
@@ -43,7 +43,8 @@ public class TelegramBot extends TelegramWebhookBot implements UpdateMonitor, Pl
         this.botToken = botconfig.getBotToken();
         this.botUsername = botconfig.getUserName();
         this.userEntityRepository = userEntityRepository;
-        setTelegramBot(this);
+        setTelegramBotInMessageService(this);
+        setTelegramBotInDAO(this);
 
         List<BotCommand> menu = new ArrayList<>();
         menu.add(new BotCommand("/throwinfool", "Подкидной дурак"));

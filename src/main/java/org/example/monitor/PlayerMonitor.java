@@ -17,7 +17,7 @@ public interface PlayerMonitor extends MessageService {
         //fixme DEBUG
         System.out.println("DEBUG: PlayerMonitor.addPlayerToPlayerMonitor starts for chatId: " + chatId);
         new Thread(() -> {
-            Player player = new PlayerFactory(bot, chatId).createPlayer();
+            Player player = new PlayerFactory(chatId).createPlayer();
             System.out.println("DEBUG: PlayerMonitor.addThrowInFoolWaiter added player: " + player);
             throwInFoolWaiters.add(player);
             //fixme DEBUG

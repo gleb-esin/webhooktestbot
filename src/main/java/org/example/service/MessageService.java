@@ -46,7 +46,7 @@ public interface MessageService extends UpdateMonitor {
 
 
 
-    default void setTelegramBot (TelegramBot bot) {
+    default void setTelegramBotInMessageService(TelegramBot bot) {
         telegramBotContainer.setBot(bot);
     }
 }

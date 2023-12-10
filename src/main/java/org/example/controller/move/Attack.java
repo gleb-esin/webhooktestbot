@@ -16,8 +16,7 @@ public interface Attack extends PlayerInputValidator, MessageService {
     default void attackInit(PlayerController playerController, TableController tableController) {
         Player attacker = playerController.getAttacker();
         Player defender = playerController.getDefender();
-        sendMessageToAll(playerController.getPlayers(), "==============================\n" +
-                "Ход " + attacker.getName() + " под " + defender.getName()+
+        sendMessageToAll(playerController.getPlayers(), "Ход " + attacker.getName() + " под " + defender.getName()+
                 "\n"+tableController.getTable());
         sendMessageTo(attacker, attacker.toString());
     }
