@@ -52,14 +52,12 @@ public class TelegramBot extends TelegramWebhookBot implements UpdateMonitor, Pl
         try {
             execute(new SetMyCommands(menu, new BotCommandScopeDefault(), null));
         } catch (TelegramApiException e) {
-            System.err.println("Error setting bot's command list" + e.getMessage());
+            System.err.println("Error setting bot's command list: " + e.getMessage());
         }
     }
 
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
-        //fixme DEBUG
-        System.out.println("DEBUG: onWebhookUpdateReceived got message: " + update.getMessage().getText() + " from chatId: " + update.getMessage().getChatId());
         handleUpdate(update);
         return null;
     }
@@ -69,10 +67,6 @@ public class TelegramBot extends TelegramWebhookBot implements UpdateMonitor, Pl
         if (update.hasMessage() && update.getMessage().hasText()) {
             String text = update.getMessage().getText();
             chatId = update.getMessage().getChatId();
-
-            //fixme DEBUG
-            System.out.println("DEBUG: handleUpdate got message from chatId: " + chatId + " with text: " + text);
-
             switch (text) {
                 case "/start", "/help" -> {
                     new Help(this, chatId).execute();

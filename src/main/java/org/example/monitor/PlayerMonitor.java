@@ -14,16 +14,11 @@ public interface PlayerMonitor extends MessageService {
     ConcurrentLinkedQueue<Player> throwInFoolWaiters = new ConcurrentLinkedQueue<>();
 
     default void addPlayerToPlayerMonitor(TelegramBot bot, Long chatId) {
-        //fixme DEBUG
-        System.out.println("DEBUG: PlayerMonitor.addPlayerToPlayerMonitor starts for chatId: " + chatId);
         new Thread(() -> {
             Player player = new PlayerFactory(chatId).createPlayer();
-            System.out.println("DEBUG: PlayerMonitor.addThrowInFoolWaiter added player: " + player);
             throwInFoolWaiters.add(player);
-            //fixme DEBUG
-            System.out.println("DEBUG: PlayerMonitor.addThrowInFoolWaiter contains: " + throwInFoolWaiters.size() + " players");
             if (throwInFoolWaiters.size() == 2) {
-                new GameFactory().createGame();
+                new GameFactory().createThrowInFoolGame();
             }
             else sendMessageTo(chatId, "Ждем игроков...");
         }).start();
@@ -34,8 +29,6 @@ public interface PlayerMonitor extends MessageService {
         for (int i = 0; i < 2; i++) {
             players.add(throwInFoolWaiters.poll());
         }
-        //fixme DEBUG
-        System.out.println("DEBUG: PlayerMonitor.getThrowInFoolWaiterList returns: " + players);
         return players;
     }
 

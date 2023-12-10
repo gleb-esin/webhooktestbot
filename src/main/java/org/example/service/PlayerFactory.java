@@ -24,14 +24,11 @@ public class PlayerFactory implements MessageService, DAO {
     }
 
     public Player createPlayer() {
-        System.out.println("DEBUG: PlayerFactory.createPlayer starts for chatId: " + chatId);
         Player player;
         boolean playerIsNotRegistered = !existsByUserId(chatId);
-        System.out.println("DEBUG: PlayerFactory.createPlayer.playerIsRegistered: " + playerIsNotRegistered);
         if (playerIsNotRegistered) {
             sendMessageTo(chatId, "Для участия в игре нужно зарегистрироваться. Выберите ваше имя в игре: ");
             String name = receiveMessageFrom(chatId);
-            System.out.println("DEBUG: name: " + name);
             boolean nameIsTaken = existsByName(name);
             while (nameIsTaken) {
                 sendMessageTo(chatId, "Такое имя уже занято. Пожалуйста, выберите другое: ");
