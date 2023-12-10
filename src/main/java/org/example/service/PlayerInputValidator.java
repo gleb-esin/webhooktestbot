@@ -1,9 +1,9 @@
-package org.example.controller;
+package org.example.service;
 
 import org.example.model.Card;
 import org.example.model.Player;
 import org.example.monitor.UpdateMonitor;
-import org.example.service.MessageHandler;
+import org.example.service.MessageService;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public interface PlayerInputValidator extends MessageHandler, UpdateMonitor {
+public interface PlayerInputValidator extends MessageService {
 
     default List<Card> askForCards(Player player) {
         List<Card> cards = new ArrayList<>();
@@ -24,7 +24,7 @@ public interface PlayerInputValidator extends MessageHandler, UpdateMonitor {
         //Отправляем запрос клиенту
         sendMessageTo(player, message);
         //Получаем ответ от клиента
-        String cardIndexes = getMessage(player.getChatID());
+        String cardIndexes = receiveMessageFrom(player);
         String[] cardIndexesArr = cardIndexes.split(" ");
         Pattern pattern = Pattern.compile("^(0|[1-9]\\d*)$");
         for (String s : cardIndexesArr) {
@@ -42,7 +42,7 @@ public interface PlayerInputValidator extends MessageHandler, UpdateMonitor {
                             //посылаем повторный запрос клиенту
                             sendMessageTo(player, player.getName() + message);
                             //Получаем строку от клиента
-                            cardIndexes = getMessage(player.getChatID());
+                            cardIndexes = receiveMessageFrom(player);
                             //Формируем массив с номерами карт
                             cardIndexesArr = cardIndexes.split(" ");
                             //Для каждого элемента массива с номерами карт

@@ -1,13 +1,13 @@
 package org.example.monitor;
 
 import org.example.model.Player;
-import org.example.service.MessageHandler;
+import org.example.service.MessageService;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-public interface GameMonitor extends MessageHandler {
+public interface GameMonitor extends MessageService {
      ConcurrentHashMap<UUID, List<Player>> throwInFoolGames = new ConcurrentHashMap<>();
 
     default void addThrowInFoolToGameMonitor(UUID gameId, List<Player> players) {

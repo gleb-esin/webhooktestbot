@@ -23,7 +23,7 @@ public interface UpdateMonitor {
             //fixme DEBUG
             System.out.println("DEBUG: UpdateMonitor addMessageToUpdateMonitor message: " + update.getMessage().getText() + " from chatId: " + update.getMessage().getChatId());
         } else {
-            System.err.println("ERROR: Unexpected message");
+            System.err.println("ERROR: Unexpected message: " + update.getMessage().getText() + " from chatId: " + update.getMessage().getChatId());
         }
     }
 

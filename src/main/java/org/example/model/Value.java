@@ -6,12 +6,12 @@ import java.util.Arrays;
 
 @Data
 public class Value implements Comparable<Value> {
-    private  String value;
-    private  Integer weight;
+    private String value;
+    private Integer weight;
 
     public Value(String value) {
         this.value = value;
-        String[] valuesArr = {"6", "7", "8", "9", "10", "J", "Q", "K", "A"};
+        String[] valuesArr = {"6", "7", "8", "9", "10", " J", "Q", "K", "A"};
         weight = Arrays.asList(valuesArr).indexOf(value);
     }
 
@@ -26,7 +26,6 @@ public class Value implements Comparable<Value> {
         Value objValue = (Value) o;
         return weight.equals(objValue.weight);
     }
-
 
 
     @Override
@@ -45,4 +44,5 @@ public class Value implements Comparable<Value> {
 
     public int getWeight() {
         return weight;
-    }}
+    }
+}

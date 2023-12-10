@@ -3,14 +3,14 @@ package org.example.monitor;
 import org.example.model.Player;
 import org.example.network.TelegramBot;
 import org.example.service.GameFactory;
-import org.example.service.MessageHandler;
+import org.example.service.MessageService;
 import org.example.service.PlayerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public interface PlayerMonitor extends MessageHandler {
+public interface PlayerMonitor extends MessageService {
     ConcurrentLinkedQueue<Player> throwInFoolWaiters = new ConcurrentLinkedQueue<>();
 
     default void addPlayerToPlayerMonitor(TelegramBot bot, Long chatId) {
@@ -23,7 +23,7 @@ public interface PlayerMonitor extends MessageHandler {
             //fixme DEBUG
             System.out.println("DEBUG: PlayerMonitor.addThrowInFoolWaiter contains: " + throwInFoolWaiters.size() + " players");
             if (throwInFoolWaiters.size() == 2) {
-                new GameFactory(bot).createGame();
+                new GameFactory().createGame();
             }
             else sendMessageTo(chatId, "Ждем игроков...");
         }).start();

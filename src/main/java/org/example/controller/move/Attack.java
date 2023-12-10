@@ -1,20 +1,19 @@
 package org.example.controller.move;
 
 import org.example.controller.PlayerController;
-import org.example.controller.PlayerInputValidator;
+import org.example.service.PlayerInputValidator;
 import org.example.controller.TableController;
 import org.example.model.Card;
 import org.example.model.Player;
-import org.example.network.TelegramBot;
-import org.example.service.MessageHandler;
+import org.example.service.MessageService;
 
 import java.util.List;
 
 import static org.example.controller.moveValidator.AttackValidator.isAttackMoveCorrect;
 
-public interface Attack extends PlayerInputValidator, MessageHandler {
+public interface Attack extends PlayerInputValidator, MessageService {
 
-    default void attackInit(TelegramBot bot, PlayerController playerController, TableController tableController) {
+    default void attackInit(PlayerController playerController, TableController tableController) {
         Player attacker = playerController.getAttacker();
         Player defender = playerController.getDefender();
         sendMessageToAll(playerController.getPlayers(), "==============================\n" +
@@ -23,7 +22,7 @@ public interface Attack extends PlayerInputValidator, MessageHandler {
         sendMessageTo(attacker, attacker.toString());
     }
 
-    default void attackMove(TelegramBot bot,Player attacker, TableController tableController) {
+    default void attackMove(Player attacker, TableController tableController) {
         List<Card> cards = askForCards(attacker);
         boolean isMoveCorrect = isAttackMoveCorrect(cards);
         while (cards.isEmpty() || (cards.size() > 1 && !isMoveCorrect)) {

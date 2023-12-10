@@ -1,20 +1,19 @@
 package org.example.controller.move;
 
 import org.example.controller.PlayerController;
-import org.example.controller.PlayerInputValidator;
+import org.example.service.PlayerInputValidator;
 import org.example.controller.TableController;
 import org.example.model.Card;
 import org.example.model.Player;
-import org.example.network.TelegramBot;
-import org.example.service.MessageHandler;
+import org.example.service.MessageService;
 
 import java.util.List;
 
 import static org.example.controller.moveValidator.DefenceValidator.isDefenceCorrect;
 
-public interface Defence extends PlayerInputValidator, MessageHandler {
+public interface Defence extends PlayerInputValidator, MessageService {
 
-    default void defenceInit(TelegramBot bot, PlayerController playerController, TableController tableController) {
+    default void defenceInit(PlayerController playerController, TableController tableController) {
         sendMessageToAll(playerController.getPlayers(),
                 "------------------------------\n" +
                         "Отбивается " + playerController.getDefender().getName() +
@@ -23,7 +22,7 @@ public interface Defence extends PlayerInputValidator, MessageHandler {
         sendMessageTo(playerController.getDefender(), playerController.getDefender().toString());
     }
 
-    default void defenceMove(TelegramBot bot, Player defender, List<Player> playersForNotify, TableController tableController) {
+    default void defenceMove(Player defender, List<Player> playersForNotify, TableController tableController) {
         List<Card> unbeatenCards = tableController.getTable().getUnbeatenCards();
         boolean canDefend = isDefenceCorrect(unbeatenCards, defender.getPlayerHand());
         //If defender can't beat attacker cards...

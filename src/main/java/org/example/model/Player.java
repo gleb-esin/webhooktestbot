@@ -34,12 +34,19 @@ public class Player implements Comparable<Player> {
         StringBuilder bottomString = new StringBuilder();
         upperString.append(this.name).append("\n");
         int cardNumber = 1;
+        bottomString.append("   ");
         for (int i = 0; i < playerHand.size(); i++) {
-            bottomString.append(" ".repeat(7));
             upperString.append(playerHand.get(i));
-            if (i % 3 == 1) bottomString.append(" ");
             if (playerHand.get(i).getValue().equals("10")) bottomString.append("  ");
             bottomString.append(cardNumber++);
+            bottomString.append(" ".repeat(8));
+            if (i % 3 == 0) bottomString.append(" ");
+            if(i != 0 && i % 5 == 0) {
+                upperString.append("\n").append(bottomString).append("\n");
+                bottomString = new StringBuilder();
+                bottomString.append("   ");
+            }
+
         }
         return upperString.append("\n").append(bottomString).toString();
     }

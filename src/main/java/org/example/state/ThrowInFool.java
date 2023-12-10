@@ -3,11 +3,10 @@ package org.example.state;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import org.example.controller.PlayerInputValidator;
+import org.example.service.PlayerInputValidator;
 import org.example.controller.move.Move;
 import org.example.monitor.GameMonitor;
 import org.example.monitor.PlayerMonitor;
-import org.example.network.TelegramBot;
 
 import lombok.experimental.FieldDefaults;
 import org.example.controller.DeckController;
@@ -20,16 +19,12 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 
 import static org.example.controller.moveValidator.ThrowValidator.isThrowPossible;
-
-@Component
 @Setter
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ThrowInFool implements Move, PlayerInputValidator, GameMonitor, PlayerMonitor {
     UUID gameID;
     boolean isGameOver = false;
-    TelegramBot bot;
-
 
     PlayerController playerController;
     DeckController deckController;
@@ -38,8 +33,7 @@ public class ThrowInFool implements Move, PlayerInputValidator, GameMonitor, Pla
     Table table;
 
 
-    public ThrowInFool(TelegramBot bot) {
-        this.bot = bot;
+    public ThrowInFool() {
         this.gameID = UUID.randomUUID();
 
         this.playerController = new PlayerController(getThrowInFoolWaiterList());
@@ -60,14 +54,14 @@ public class ThrowInFool implements Move, PlayerInputValidator, GameMonitor, Pla
             Player defender = playerController.getDefender();
 
             //attackInit attackMove
-            attackInit(bot, playerController, tableController);
-            attackMove(bot, playerController.getAttacker(), tableController);
+            attackInit(playerController, tableController);
+            attackMove(playerController.getAttacker(), tableController);
             if (playerController.isPlayerWinner(attacker, deckController.getDeck())) break;
 
             //defence Move
             if (!playerController.isGameOver()) {
-                defenceInit(bot, playerController, tableController);
-                defenceMove(bot, playerController.getDefender(), playerController.getPlayers(), tableController);
+                defenceInit(playerController, tableController);
+                defenceMove(playerController.getDefender(), playerController.getPlayers(), tableController);
                 if (defender.getRole().equals("binder")) playerController.setBinder(defender);
                 if (playerController.isPlayerWinner(defender, deckController.getDeck())) break;
             }
@@ -86,7 +80,7 @@ public class ThrowInFool implements Move, PlayerInputValidator, GameMonitor, Pla
                                 "\n" + tableController.getTable() +
                                 "\n------------------------------");
                         ///...and make a throw attackMove.
-                        throwMove(bot, thrower, playerController.getPlayers(), tableController);
+                        throwMove(thrower, playerController.getPlayers(), tableController);
                         //If thrower became the winner - break game loop
                         if (playerController.isPlayerWinner(thrower, deckController.getDeck())) break gameloop;
                         // if the thrower still didn't throw...
@@ -98,8 +92,8 @@ public class ThrowInFool implements Move, PlayerInputValidator, GameMonitor, Pla
                             //...and defender are not binder...
                             if (!defender.getRole().equals("binder")) {
                                 //...make a defence attackMove.
-                                defenceInit(bot, playerController, tableController);
-                                defenceMove(bot, playerController.getDefender(), playerController.getPlayers(), tableController);
+                                defenceInit(playerController, tableController);
+                                defenceMove(playerController.getDefender(), playerController.getPlayers(), tableController);
                                 if (playerController.isPlayerWinner(defender, deckController.getDeck()))
                                     break gameloop;
                             }

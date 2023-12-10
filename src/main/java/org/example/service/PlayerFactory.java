@@ -16,7 +16,7 @@ import java.util.concurrent.CompletableFuture;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class PlayerFactory implements MessageHandler, UpdateMonitor {
+public class PlayerFactory implements MessageService {
     TelegramBot bot;
     Long ownerId;
     CompletableFuture<String> futureMessage = new CompletableFuture<>();
@@ -33,12 +33,12 @@ public class PlayerFactory implements MessageHandler, UpdateMonitor {
         System.out.println("DEBUG: PlayerFactory.createPlayer.playerIsRegistered: " + playerIsRegistered);
         if (!playerIsRegistered) {
             sendMessageTo(ownerId, "Для участия в игре нужно зарегистрироваться. Выберите ваше имя в игре: ");
-            String name = getMessage(ownerId);
+            String name = receiveMessageFrom(ownerId);
             System.out.println("DEBUG: name: " + name);
             boolean nameIsTaken = bot.getUserEntityRepository().existsByName(name);
             while (nameIsTaken) {
                 sendMessageTo(ownerId, "Такое имя уже занято. Пожалуйста, выберите другое: ");
-                name = getMessage(ownerId);
+                name = receiveMessageFrom(ownerId);
             }
             UserEntity userEntity = new UserEntity(ownerId, name);
             bot.getUserEntityRepository().saveAndFlush(userEntity);
