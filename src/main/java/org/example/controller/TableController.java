@@ -42,7 +42,6 @@ public class TableController {
                 player.getPlayerHand().remove(playerCards.get(i));
             }
             table.getUnbeatenCards().clear();
-
         } else {
             for (Card c : playerCards) {
                 table.setUnbeatenCard(c);

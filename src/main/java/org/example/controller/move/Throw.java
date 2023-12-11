@@ -21,7 +21,7 @@ public interface Throw extends PlayerInputValidator, MessageService {
         List<Card> cards = askForCards(thrower);
 
         if (cards.isEmpty()) {
-            sendMessageToAll(playersForNotify, thrower.getName() + ", не будет подкидывать.");
+            sendMessageToAll(playersForNotify, thrower.getName() + " не будет подкидывать.");
         } else {
             boolean isThrowCorrect = isThrowMoveCorrect(tableController.getAll(), cards);
             while (!isThrowCorrect) {
@@ -30,6 +30,8 @@ public interface Throw extends PlayerInputValidator, MessageService {
                 isThrowCorrect = isThrowMoveCorrect(tableController.getAll(), cards);
             }
             tableController.addCardsToTable(cards, thrower);
+            sendMessageToAll(playersForNotify, tableController.getTable().toString());
+
         }
     }
 }

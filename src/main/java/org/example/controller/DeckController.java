@@ -7,6 +7,7 @@ import org.example.model.Player;
 
 import java.util.Deque;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.UUID;
 
 /**
@@ -33,8 +34,9 @@ public class DeckController {
 
     public void fillUpTheHandsForTheLastTime(Deque<Player> throwQueue, Player defender, Deck deck) {
         Player nextPlayer;
-        Iterator<Player> iterator = throwQueue.descendingIterator();
-        throwQueue.addLast(defender);
+        Deque<Player> throwQueueCopy = new LinkedList<>(throwQueue);
+        throwQueueCopy.addLast(defender);
+        Iterator<Player> iterator = throwQueueCopy.descendingIterator();
         for (Card card : deck.getDeck()) {
             nextPlayer = iterator.next();
             nextPlayer.getPlayerHand().add(card);

@@ -5,8 +5,6 @@ import org.example.state.ThrowInFool;
 public class GameFactory {
 
     public void createThrowInFoolGame() {
-        new Thread(() -> {
-            new ThrowInFool().play();
-        }).start();
+        new Thread(() -> new ThrowInFool().play()).start();
     }
 }

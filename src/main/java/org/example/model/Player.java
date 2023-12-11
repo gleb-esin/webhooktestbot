@@ -31,7 +31,7 @@ public class Player implements Comparable<Player> {
         this.chatID = chatID;
     }
 
-    public  Player(UserEntity userEntity) {
+    public Player(UserEntity userEntity) {
         this.name = "<b>" + userEntity.getName() + "</b>";
         this.chatID = userEntity.getUserId();
         this.wins = userEntity.getWins();
@@ -53,7 +53,7 @@ public class Player implements Comparable<Player> {
             bottomString.append(cardNumber++);
             bottomString.append(" ".repeat(8));
             if (i % 3 == 0) bottomString.append(" ");
-            if(i != 0 && i % 5 == 0) {
+            if (i != 0 && i % 5 == 0) {
                 upperString.append("\n").append(bottomString).append("\n");
                 bottomString = new StringBuilder();
                 bottomString.append("   ");
@@ -80,6 +80,23 @@ public class Player implements Comparable<Player> {
     }
 
     public String getStatistics() {
-        return "У вас " + wins + " побед и " + games + " игр";
+        StringBuilder winsWordForm = new StringBuilder("побед");
+        StringBuilder gamesWordForm = new StringBuilder("игр");
+        return "У вас " + wins + " " + wordForm(wins, winsWordForm) + " и " + games + " " + wordForm(games, gamesWordForm);
+    }
+
+    public static String wordForm(int number, StringBuilder word) {
+        if(number >10 && number < 21) return word.toString();
+        int lastDigit = number % 10;
+        System.out.println("lastDigit = " + lastDigit);
+
+        switch (lastDigit) {
+            case 1:
+                return word.append("а").toString();
+            case 2, 4, 3:
+                return word.append("ы").toString();
+            default:
+                return word.toString();
+        }
     }
 }

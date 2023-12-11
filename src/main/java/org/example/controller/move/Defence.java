@@ -15,8 +15,7 @@ public interface Defence extends PlayerInputValidator, MessageService {
 
     default void defenceInit(PlayerController playerController, TableController tableController) {
         sendMessageToAll(playerController.getPlayers(),
-                        "Отбивается " + playerController.getDefender().getName() +
-                        "\n" + tableController.getTable());
+                        "\uD83D\uDEE1 Отбивается " + playerController.getDefender().getName() + " \uD83D\uDEE1");
         sendMessageTo(playerController.getDefender(), playerController.getDefender().toString());
     }
 
@@ -25,6 +24,7 @@ public interface Defence extends PlayerInputValidator, MessageService {
         boolean canDefend = isDefenceCorrect(unbeatenCards, defender.getPlayerHand());
         //If defender can't beat attacker cards...
         if (!canDefend) {
+            sendMessageToAll(playersForNotify, tableController.getTable().toString());
             sendMessageToAll(playersForNotify, defender.getName() + " не может отбиться.");
             //...set his role to binder
             defender.setRole("binder");
@@ -34,6 +34,7 @@ public interface Defence extends PlayerInputValidator, MessageService {
             List<Card> cards = askForCards(defender);
             //If defender refused to beat cards...
             if (cards.isEmpty()) {
+                sendMessageToAll(playersForNotify, tableController.getTable().toString());
                 sendMessageToAll(playersForNotify, defender.getName() + " не будет отбиваться");
                 //...set his role to binder
                 defender.setRole("binder");

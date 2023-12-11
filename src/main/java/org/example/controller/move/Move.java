@@ -14,8 +14,8 @@ public interface Move extends Attack, Defence, Throw {
     }
 
     @Override
-    default void attackMove(Player attacker, TableController tableController) {
-        Attack.super.attackMove(attacker,  tableController);
+    default void attackMove(Player attacker, TableController tableController, PlayerController playerController) {
+        Attack.super.attackMove(attacker,  tableController, playerController);
     }
 
     @Override

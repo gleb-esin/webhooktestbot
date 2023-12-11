@@ -55,7 +55,7 @@ public class ThrowInFool implements Move, GameMonitor, PlayerMonitor, DAO {
 
             //attackInit attackMove
             attackInit(playerController, tableController);
-            attackMove(playerController.getAttacker(), tableController);
+            attackMove(playerController.getAttacker(), tableController, playerController);
             if (playerController.isPlayerWinner(attacker, deckController.getDeck())) break;
 
             //defence Move
@@ -75,8 +75,7 @@ public class ThrowInFool implements Move, GameMonitor, PlayerMonitor, DAO {
                     while (isThrowPossible(tableController.getAll(), thrower.getPlayerHand()) && !defender.getPlayerHand().isEmpty()) {
                         int numberOfUnbeatenCards = table.getUnbeatenCards().size();
                         // If thrower can throw send initial notification to all waitingPlayers...
-                        sendMessageToAll(playerController.getPlayers(), thrower.getName() + " может подкинуть" +
-                                "\n" + tableController.getTable());
+                        sendMessageToAll(playerController.getPlayers(), "⚔️ "+thrower.getName() + " может подкинуть ⚔️");
                         ///...and make a throw attackMove.
                         throwMove(thrower, playerController.getPlayers(), tableController);
                         //If thrower became the winner - break game loop
@@ -89,7 +88,7 @@ public class ThrowInFool implements Move, GameMonitor, PlayerMonitor, DAO {
                         if (!playerController.isGameOver() && !table.getUnbeatenCards().isEmpty()) {
                             //...and defender are not binder...
                             if (!defender.getRole().equals("binder")) {
-                                //...make a defence attackMove.
+                                //...make a defence move.
                                 defenceInit(playerController, tableController);
                                 defenceMove(playerController.getDefender(), playerController.getPlayers(), tableController);
                                 if (playerController.isPlayerWinner(defender, deckController.getDeck()))
@@ -124,8 +123,7 @@ public class ThrowInFool implements Move, GameMonitor, PlayerMonitor, DAO {
     }
 
     public void finnishGame() {
-//        sendMessageToAll(playerController.getPlayers(), tableController.getTable().toString());
-        sendMessageToAll(playerController.getPlayers(), "Победил " + playerController.getWinner().getName() + "!");
+        sendMessageToAll(playerController.getPlayers(), "\uD83C\uDFC6 Победил " + playerController.getWinner().getName() + "! \uD83C\uDFC6");
         removeThrowInFoolToGameMonitor(gameID);
         for (Player player : playerController.getPlayers()) {
             saveInDB(player.toUserEntity());

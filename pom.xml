@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.example</groupId>
     <artifactId>webhooktestbot</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>build-${buildNumber}</version>
     <name>webhooktestbot</name>
     <description>webhooktestbot</description>
     <properties>
@@ -55,7 +55,18 @@
             <artifactId>jaxb-api</artifactId>
             <version>2.4.0-b180830.0359</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>buildnumber-maven-plugin</artifactId>
+            <version>3.1.0</version>
+        </dependency>
     </dependencies>
+    <scm>
+        <connection>scm:git:git@github.com:gleb-esin/\webhooktestbot.git</connection>
+        <developerConnection>scm:it:git@github.com:gleb-esin/\webhooktestbot.git</developerConnection>
+        <url>scm:git:git@github.com:gleb-esin/\webhooktestbot.git</url>
+    </scm>
 
     <build>
         <plugins>

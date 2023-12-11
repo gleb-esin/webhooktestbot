@@ -71,7 +71,7 @@ public class TelegramBot extends TelegramWebhookBot implements UpdateMonitor, Pl
                 case "/start", "/help" -> {
                     new Help(this, chatId).execute();
                 }
-                case "/throwinfool" -> addPlayerToPlayerMonitor(this, chatId);
+                case "/throwinfool" -> addPlayerToPlayerMonitor(chatId);
 
                 default -> addMessageToUpdateMonitor(chatId, update);
             }

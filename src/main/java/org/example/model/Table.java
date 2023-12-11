@@ -14,6 +14,7 @@ public class Table {
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("<b>Карты на столе:</b>\n" );
         stringBuilder.append("Отбитые карты: " );
         for (Card c : beatenCards) {
             stringBuilder.append(c).append(" ");
