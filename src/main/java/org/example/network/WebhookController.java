@@ -13,14 +13,9 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 public class WebhookController {
     private final TelegramBot bot;
 
-    @RequestMapping(value = "/", method = RequestMethod.POST)
+    @RequestMapping(value = "/webhook", method = RequestMethod.POST)
     public ResponseEntity<BotApiMethod<?>> onUpdateReceived(@RequestBody Update update) {
         BotApiMethod<?> response = bot.onWebhookUpdateReceived(update);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
-//    @RequestMapping(value = "/", method = RequestMethod.POST)
-//    public ResponseEntity<BotApiMethod<?>> onUpdateReceived(@RequestBody Update update) {
-//        return new ResponseEntity<>(new SendMessage(update.getMessage().getChatId().toString(), "OK"), HttpStatus.OK);
-//    }
 }

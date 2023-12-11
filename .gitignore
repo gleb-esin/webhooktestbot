@@ -18,6 +18,8 @@ target/
 *.iws
 *.iml
 *.ipr
+telegram.properties
+db.properties
 
 ### NetBeans ###
 /nbproject/private/

@@ -88,8 +88,6 @@ public class Player implements Comparable<Player> {
     public static String wordForm(int number, StringBuilder word) {
         if(number >10 && number < 21) return word.toString();
         int lastDigit = number % 10;
-        System.out.println("lastDigit = " + lastDigit);
-
         switch (lastDigit) {
             case 1:
                 return word.append("а").toString();

@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
-    <artifactId>webhooktestbot</artifactId>
+    <artifactId>throwinfoolbot</artifactId>
     <version>build-${buildNumber}</version>
-    <name>webhooktestbot</name>
-    <description>webhooktestbot</description>
+    <name>throwinfoolbot</name>
+    <description>throwinfoolbot</description>
     <properties>
         <java.version>17</java.version>
     </properties>
@@ -80,6 +80,25 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>1.4</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <format>{0,number}</format>
+                    <items>
+                        <item>buildNumber</item>
+                    </items>
                 </configuration>
             </plugin>
         </plugins>
