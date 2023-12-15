@@ -8,7 +8,6 @@ import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
 @Configuration
 @PropertySource("classpath:telegram.properties")
 @PropertySource("classpath:db.properties")
-@PropertySource("classpath:ssl.properties")
 public class AppConfig {
 
     @Bean

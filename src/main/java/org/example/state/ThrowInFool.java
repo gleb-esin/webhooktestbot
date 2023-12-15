@@ -108,7 +108,7 @@ public class ThrowInFool implements Move, GameMonitor, PlayerMonitor, DAO {
             if (deckController.getDeck().isEmpty()) {
                 sendMessageToAll(playerController.getPlayers(), "Колода пуста!");
             } else
-                deckController.fillUpTheHands(playerController.getThrowQueue(), defender, deckController.getDeck());
+                deckController.fillUpTheHands(playerController.getThrowQueue(), defender);
             playerController.changeTurn();
         }
         finnishGame();
@@ -116,7 +116,7 @@ public class ThrowInFool implements Move, GameMonitor, PlayerMonitor, DAO {
 
     private void dealCards() {
         for (Player player : playerController.getPlayers()) {
-            deckController.fillUpThePlayersHand(player, deckController.getDeck());
+            deckController.fillUpThePlayersHand(player);
             //if player gets cards - add 1 game
             player.setGames(player.getGames() + 1);
         }
