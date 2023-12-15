@@ -85,7 +85,7 @@ public class Player implements Comparable<Player> {
         return "У вас " + wins + " " + wordForm(wins, winsWordForm) + " и " + games + " " + wordForm(games, gamesWordForm);
     }
 
-    public static String wordForm(int number, StringBuilder word) {
+    private String wordForm(int number, StringBuilder word) {
         if (number > 10 && number < 21) return word.toString();
         int lastDigit = number % 10;
         switch (lastDigit) {
