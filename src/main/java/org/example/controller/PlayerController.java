@@ -95,10 +95,12 @@ public class PlayerController implements Serializable {
 
     public void changeTurn() {
         Player attacker = this.throwQueue.pop();
+        attacker.setRole(null);
         this.throwQueue.addLast(attacker);
         if (this.binder == null) {
             setAttacker(this.defender);
         } else {
+            this.binder.setRole(null);
             this.throwQueue.addLast(this.binder);
             Player firstOfThrowers = this.throwQueue.pop();
             if (this.throwQueue.size() > 1) setAttacker(firstOfThrowers);

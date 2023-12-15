@@ -1,4 +1,4 @@
-package org.example.controller.move;
+package org.example.move;
 
 import org.example.controller.PlayerController;
 import org.example.controller.TableController;

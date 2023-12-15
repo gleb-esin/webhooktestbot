@@ -1,4 +1,4 @@
-package org.example.controller.moveValidator;
+package org.example.move.moveValidator;
 
 import org.example.model.Card;
 

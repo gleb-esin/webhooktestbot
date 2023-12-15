@@ -1,4 +1,4 @@
-package org.example.controller.move;
+package org.example.move;
 
 import org.example.controller.PlayerController;
 import org.example.service.PlayerInputValidator;
@@ -9,7 +9,7 @@ import org.example.service.MessageService;
 
 import java.util.List;
 
-import static org.example.controller.moveValidator.AttackValidator.isAttackMoveCorrect;
+import static org.example.move.moveValidator.AttackValidator.isAttackMoveCorrect;
 
 public interface Attack extends PlayerInputValidator, MessageService {
 

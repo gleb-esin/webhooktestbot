@@ -1,4 +1,4 @@
-package org.example.controller.move;
+package org.example.move;
 
 import org.example.service.PlayerInputValidator;
 import org.example.controller.TableController;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static org.example.controller.moveValidator.ThrowValidator.isThrowMoveCorrect;
+import static org.example.move.moveValidator.ThrowValidator.isThrowMoveCorrect;
 
 @Component
 

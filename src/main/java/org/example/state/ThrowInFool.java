@@ -3,7 +3,7 @@ package org.example.state;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import org.example.controller.move.Move;
+import org.example.move.Move;
 import org.example.monitor.GameMonitor;
 import org.example.monitor.PlayerMonitor;
 
@@ -17,7 +17,7 @@ import org.example.network.DAO;
 
 import java.util.UUID;
 
-import static org.example.controller.moveValidator.ThrowValidator.isThrowPossible;
+import static org.example.move.moveValidator.ThrowValidator.isThrowPossible;
 
 @Setter
 @Getter
