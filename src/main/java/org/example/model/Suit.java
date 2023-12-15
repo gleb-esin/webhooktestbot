@@ -19,14 +19,12 @@ public class Suit implements Comparable<Suit> {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
+        Suit objSuit = (Suit) o;
+        if (this.suit.equals(objSuit.suit) && this.isTrump == objSuit.isTrump) {
             return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
+        } else {
             return false;
         }
-        Suit objSuit = (Suit) o;
-        return suit.equals(objSuit.suit);
     }
 
     @Override
