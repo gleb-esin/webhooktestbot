@@ -1,9 +1,11 @@
 package org.example.model;
 
-import lombok.Data;
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.Setter;
 
-@Data
+@Setter
+@Getter
 public class Card implements Comparable<Card> {
     private Suit suit;
     private Value value;
@@ -17,10 +19,8 @@ public class Card implements Comparable<Card> {
         } else this.weight = this.value.getWeight();
     }
 
-
-    public Card() {
-    }
-
+    /**
+     * If a card can't beat another card, method returns -1*/
     @Override
     public int compareTo(@NonNull Card o) {
         if ((this.suit.isTrump()) && (!o.suit.isTrump())) return 1;

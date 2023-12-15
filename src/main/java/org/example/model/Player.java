@@ -27,12 +27,12 @@ public class Player implements Comparable<Player> {
     int games = 0;
 
     public Player(Long chatID, String name) {
-        this.name = "<b>" + name + "</b>";
+        this.name = name;
         this.chatID = chatID;
     }
 
     public Player(UserEntity userEntity) {
-        this.name = "<b>" + userEntity.getName() + "</b>";
+        this.name = userEntity.getName();
         this.chatID = userEntity.getUserId();
         this.wins = userEntity.getWins();
         this.games = userEntity.getGames();
@@ -86,7 +86,7 @@ public class Player implements Comparable<Player> {
     }
 
     public static String wordForm(int number, StringBuilder word) {
-        if(number >10 && number < 21) return word.toString();
+        if (number > 10 && number < 21) return word.toString();
         int lastDigit = number % 10;
         switch (lastDigit) {
             case 1:
@@ -96,5 +96,9 @@ public class Player implements Comparable<Player> {
             default:
                 return word.toString();
         }
+    }
+
+    public String getName() {
+        return "<b>" + name + "</b>";
     }
 }
