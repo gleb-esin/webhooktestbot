@@ -1,6 +1,5 @@
 package org.example.controller;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.example.model.Card;
@@ -20,8 +19,7 @@ public class TableController {
     private Table table;
     private  Suit trump;
     public TableController(Suit trump) {
-        table = new Table();
-        table.setTrump(trump);
+        table = new Table(trump);
     }
 
     public void clear() {

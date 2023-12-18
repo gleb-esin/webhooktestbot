@@ -1,11 +1,14 @@
 package org.example.model;
 
-import lombok.Data;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.experimental.FieldDefaults;
 
-@Data
+@Getter
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class Suit implements Comparable<Suit> {
-    private  String suit;
-    private  boolean isTrump;
+    String suit;
+    boolean isTrump;
 
     public Suit(String suit, boolean trump) {
        this.suit = suit;
@@ -19,12 +22,11 @@ public class Suit implements Comparable<Suit> {
 
     @Override
     public boolean equals(Object o) {
-        Suit objSuit = (Suit) o;
-        if (this.suit.equals(objSuit.suit) && this.isTrump == objSuit.isTrump) {
+        if (this == o) {
             return true;
-        } else {
+        } else if (o == null || getClass() != o.getClass()) {
             return false;
-        }
+        } else return suit.equals(((Suit) o).suit);
     }
 
     @Override

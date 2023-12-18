@@ -24,15 +24,11 @@ public class Card implements Comparable<Card> {
      */
     @Override
     public int compareTo(@NonNull Card o) {
-//        if ((this.suit.isTrump()) && (!o.suit.isTrump())) {
-//            System.out.println("this is trump and o is not");
-//            return 1;
-//        } else if ((!this.suit.isTrump()) && (o.suit.isTrump())) {
-//            System.out.println("this is not trump and o is");
-//            return -1;
-//        } else
-//            System.out.println("this weight: " + this.weight + " vs o weight: " + o.weight);
-        return Integer.compare(weight, o.weight);
+        if (suit.equals(o.suit)) {
+            return Integer.compare(weight, o.weight);
+        } else if (suit.isTrump() && !o.suit.isTrump()) {
+            return 1;
+        } else return -1;
     }
 
     @Override

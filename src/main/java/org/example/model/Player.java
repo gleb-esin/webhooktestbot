@@ -38,6 +38,15 @@ public class Player implements Comparable<Player> {
         this.games = userEntity.getGames();
     }
 
+    public Player(Long chatID, String name, int minTrumpWeight, int wins, int games) {
+        this.name = name;
+        this.chatID = chatID;
+        this.minTrumpWeight = minTrumpWeight;
+        this.wins = wins;
+        this.games = games;
+
+    }
+
     @Override
     public String toString() {
         Comparator<Card> weightComparator = (card1, card2) -> Integer.compare(card1.getWeight(), card2.getWeight());
@@ -71,11 +80,7 @@ public class Player implements Comparable<Player> {
     }
 
     public UserEntity toUserEntity() {
-        UserEntity userEntity = new UserEntity();
-        userEntity.setUserId(chatID);
-        userEntity.setName(name);
-        userEntity.setWins(wins);
-        userEntity.setGames(games);
+        UserEntity userEntity = new UserEntity(this);
         return userEntity;
     }
 

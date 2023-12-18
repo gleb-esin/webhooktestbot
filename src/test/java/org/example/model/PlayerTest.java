@@ -31,27 +31,21 @@ class PlayerTest {
 
     @Test
     void constructor_UserEntity() {
-        UserEntity userEntity = new UserEntity();
-        userEntity.setUserId(1L);
-        userEntity.setName("Player");
-        userEntity.setWins(10);
-        userEntity.setGames(100);
+        UserEntity userEntity = new UserEntity(1l, "Player", 10, 100);
 
         Player player = new Player(userEntity);
 
         assertEquals("<b>Player</b>", player.getName());
-        assertEquals(10, player.getWins());
-        assertEquals(100, player.getGames());
+        assertEquals(100, player.getWins());
+        assertEquals(10, player.getGames());
         assertEquals(1L, player.getChatID());
     }
 
 
     @Test
     void compareTo() {
-        Player player1 = new Player(new Random().nextLong(), "Player1");
-        player1.setMinTrumpWeight(105);
-        Player player2 = new Player(new Random().nextLong(), "Player2");
-        player2.setMinTrumpWeight(1005);
+        Player player1 = new Player(new Random().nextLong(), "Player1", 105, 10, 100);
+        Player player2 = new Player(new Random().nextLong(), "Player2", 1005, 10, 100);
 
         assertTrue(player1.compareTo(player2) < 0);
         assertTrue(player2.compareTo(player1) > 0);
@@ -59,23 +53,20 @@ class PlayerTest {
 
     @Test
     void toUserEntity() {
-        Player player = new Player(1L, "Player");
-        player.setWins(10);
-        player.setGames(100);
+        Player player = new Player(1L, "Player", 105, 10, 100);
 
         UserEntity userEntity = player.toUserEntity();
 
         assertEquals(1L, userEntity.getUserId());
-        assertEquals("Player", userEntity.getName());
+        assertEquals("<b>Player</b>", userEntity.getName());
         assertEquals(10, userEntity.getWins());
         assertEquals(100, userEntity.getGames());
     }
 
     @Test
     void getStatistics_when1() {
-        Player player = new Player(1L, "Player");
-        player.setWins(1);
-        player.setGames(1);
+        int n = 1;
+        Player player = new Player(new Random().nextLong(), "Player", n, n, n);
 
         String expected = "У вас 1 победа и 1 игра";
 
@@ -84,9 +75,9 @@ class PlayerTest {
 
     @Test
     void getStatistics_when2() {
-        Player player = new Player(1L, "Player");
-        player.setWins(2);
-        player.setGames(2);
+        int n = 2;
+        Player player = new Player(new Random().nextLong(), "Player", n, n, n);
+
         String expected = "У вас 2 победы и 2 игры";
 
         assertEquals(expected, player.getStatistics());
@@ -95,9 +86,8 @@ class PlayerTest {
     @Test
     void getStatistics_when5() {
         int n = 5;
-        Player player = new Player(1L, "Player");
-        player.setWins(n);
-        player.setGames(n);
+        Player player = new Player(new Random().nextLong(), "Player", n, n, n);
+
         String expected = "У вас " + n + " побед и " + n + " игр";
 
         assertEquals(expected, player.getStatistics());
@@ -106,9 +96,7 @@ class PlayerTest {
     @Test
     void getStatistics_when12() {
         int n = 12;
-        Player player = new Player(1L, "Player");
-        player.setWins(n);
-        player.setGames(n);
+        Player player = new Player(1L, "Player", n, n, n);
         String expected = "У вас " + n + " побед и " + n + " игр";
 
         assertEquals(expected, player.getStatistics());
@@ -117,9 +105,8 @@ class PlayerTest {
     @Test
     void getStatistics_when122() {
         int n = 122;
-        Player player = new Player(1L, "Player");
-        player.setWins(n);
-        player.setGames(n);
+        Player player = new Player(new Random().nextLong(), "Player", n, n, n);
+
         String expected = "У вас " + n + " победы и " + n + " игры";
 
         assertEquals(expected, player.getStatistics());
