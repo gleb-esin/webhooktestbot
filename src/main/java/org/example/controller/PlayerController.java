@@ -102,11 +102,11 @@ public class PlayerController implements Serializable {
         } else {
             this.binder.setRole(null);
             this.throwQueue.addLast(this.binder);
-            Player firstOfThrowers = this.throwQueue.pop();
-            if (this.throwQueue.size() > 1) setAttacker(firstOfThrowers);
+            Player nextAttacker = this.throwQueue.pop();
+            setAttacker(nextAttacker);
         }
-        Player nextOfThrowers = this.throwQueue.pop();
-        setDefender(nextOfThrowers);
+        Player nextDefender = this.throwQueue.pop();
+        setDefender(nextDefender);
         this.throwQueue.addFirst(this.attacker);
         setBinder(null);
     }

@@ -1,6 +1,8 @@
 package org.example.controller;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.example.model.Card;
 import org.example.model.Player;
 import org.example.model.Suit;
@@ -12,7 +14,8 @@ import java.util.List;
 /**
  * This class provides control over tables' behavior during round
  */
-@Data
+@Getter
+@Setter
 public class TableController {
     private Table table;
     private  Suit trump;

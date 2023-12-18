@@ -5,10 +5,9 @@ import lombok.Data;
 import java.util.*;
 
 @Data
-public class Deck implements Iterator<Card> {
+public class Deck {
     private List<Card> deck;
     private UUID gameId;
-    private int iteratorIndex = 0;
     private Suit trump;
 
 
@@ -44,18 +43,6 @@ public class Deck implements Iterator<Card> {
         this.deck.remove(0);
         return card;
     }
-
-    public boolean hasNext() {
-        return iteratorIndex < deck.size();
-    }
-
-    @Override
-    public Card next() {
-        Card nextCard = deck.get(iteratorIndex);
-        iteratorIndex++;
-        return nextCard;
-    }
-
     public boolean isEmpty() {
         return deck.isEmpty();
     }

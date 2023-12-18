@@ -18,7 +18,7 @@ import java.util.List;
 public class Player implements Comparable<Player> {
     final String name;
     final Long chatID;
-    List<Card> playerHand = new ArrayList<>();
+    final List<Card> playerHand = new ArrayList<>();
     boolean isWinner = false;
     int turn;
     String role;
