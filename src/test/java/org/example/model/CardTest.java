@@ -1,7 +1,6 @@
 package org.example.model;
 
 import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class CardTest {
@@ -13,11 +12,11 @@ class CardTest {
         Card heatsA = new Card("♥", "A", false);
         Card diamondsK = new Card("♦", "K", false);
 
-        System.out.println(heatsA.compareTo(diamondsK));
-
         assertTrue(spades7.compareTo(spades10) < 0);
         assertTrue(spades10.compareTo(heatsA) > 0);
         assertTrue(heatsA.compareTo(diamondsK) < 0);
+
+
 
     }
 }

@@ -23,10 +23,9 @@ public class Table {
         for (Card c : unbeatenCards) {
             stringBuilder.append(c);
         }
-        stringBuilder.append("\nКозырь " + "<b>[" + trump+ "]</b>");
+        stringBuilder.append("\nКозырь ").append("<b>[").append(trump).append("]</b>");
         return stringBuilder.toString();
     }
-
     public void setBeatenCard(Card beatenCard) {
         beatenCards.add(beatenCard);
     }
@@ -35,7 +34,4 @@ public class Table {
         unbeatenCards.add(unbeatenCard);
     }
 
-    public void setTrump(Suit trump) {
-        this.trump = trump;
-    }
 }

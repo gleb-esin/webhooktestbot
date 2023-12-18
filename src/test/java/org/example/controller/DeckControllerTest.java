@@ -1,6 +1,5 @@
 package org.example.controller;
 
-import org.example.model.Deck;
 import org.example.model.Player;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -14,7 +13,7 @@ class DeckControllerTest {
 
     @Test
     void test_fillUpThePlayersHand() {
-        Player player = new Player(Long.MAX_VALUE + 1, null);
+        Player player = new Player(1L, null);
         deckController.fillUpThePlayersHand(player);
         player.getPlayerHand().remove(0);
         player.getPlayerHand().remove(0);
@@ -26,7 +25,6 @@ class DeckControllerTest {
 
     @Test
     void test_fillUpTheHands_fullDeck() {
-        Deck deck = new Deck(UUID.randomUUID());
         Player attacker = new Player(4L, "Attacker");
         Player defender = new Player(3L, "Defender");
         Player thrower = new Player(5L, "Thrower");
@@ -34,9 +32,7 @@ class DeckControllerTest {
         throwQueue.add(attacker);
         throwQueue.add(thrower);
         throwQueue.add(defender);
-        throwQueue.forEach(player -> {
-            deckController.fillUpThePlayersHand(player);
-        });
+        throwQueue.forEach(player -> deckController.fillUpThePlayersHand(player));
         attacker.getPlayerHand().remove(0);
         attacker.getPlayerHand().remove(0);
         thrower.getPlayerHand().remove(0);
@@ -66,9 +62,7 @@ class DeckControllerTest {
         throwQueue.add(attacker);
         throwQueue.add(thrower);
         throwQueue.add(defender);
-        throwQueue.forEach(player -> {
-            deckController.fillUpThePlayersHand(player);
-        });
+        throwQueue.forEach(player -> deckController.fillUpThePlayersHand(player));
         attacker.getPlayerHand().remove(0);
         attacker.getPlayerHand().remove(0);
         thrower.getPlayerHand().remove(0);
@@ -77,10 +71,7 @@ class DeckControllerTest {
         defender.getPlayerHand().remove(0);
         throwQueue.remove(defender);
         throwQueue.remove(defender);
-        for (int i = 0; i < 14; i++) {
-            deckController.getDeck().getDeck().remove(0);
-        }
-
+        deckController.getDeck().getDeck().subList(0, 14).clear();
         DeckController deckControllerSpy = Mockito.spy(deckController);
         deckControllerSpy.fillUpTheHands(throwQueue, defender);
 
@@ -101,9 +92,7 @@ class DeckControllerTest {
         throwQueue.add(attacker);
         throwQueue.add(thrower);
         throwQueue.add(defender);
-        throwQueue.forEach(player -> {
-            deckController.fillUpThePlayersHand(player);
-        });
+        throwQueue.forEach(player -> deckController.fillUpThePlayersHand(player));
         attacker.getPlayerHand().remove(0);
         attacker.getPlayerHand().remove(0);
         thrower.getPlayerHand().remove(0);
@@ -111,9 +100,7 @@ class DeckControllerTest {
         defender.getPlayerHand().remove(0);
         defender.getPlayerHand().remove(0);
         throwQueue.remove(defender);
-        for (int i = 0; i < 14; i++) {
-            deckController.getDeck().getDeck().remove(0);
-        }
+        deckController.getDeck().getDeck().subList(0, 14).clear();
 
         deckController.fillUpTheHandsForTheLastTime(throwQueue, defender);
 

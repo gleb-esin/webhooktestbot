@@ -17,13 +17,12 @@ public class Deck implements Iterator<Card> {
         String trumpSuit = suitArr[(int) (Math.random() * 4)];
         this.trump = new Suit(trumpSuit, true);
         boolean trump;
-        String[] valuesArr = {"6", "7", "8", "9", "10", " J", "Q", "K", "A"};
+        String[] valuesArr = {"6", "7", "8", "9", "10", "J", "Q", "K", "A"};
         List<Card> deck = new LinkedList<>();
         for (String suit : suitArr) {
             trump = suit.equals(trumpSuit);
             for (String value : valuesArr) {
                 deck.add(new Card(suit, value, trump));
-
             }
         }
         Collections.shuffle(deck);

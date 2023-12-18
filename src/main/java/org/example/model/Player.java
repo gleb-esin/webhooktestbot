@@ -49,7 +49,7 @@ public class Player implements Comparable<Player> {
         bottomString.append("   ");
         for (int i = 0; i < playerHand.size(); i++) {
             upperString.append(playerHand.get(i));
-            if (playerHand.get(i).getValue().equals("10")) bottomString.append("  ");
+            if (playerHand.get(i).getValue().toString().equals("10")) bottomString.append("  ");
             bottomString.append(cardNumber++);
             bottomString.append(" ".repeat(8));
             if (i % 3 == 0) bottomString.append(" ");
@@ -65,9 +65,9 @@ public class Player implements Comparable<Player> {
 
     @Override
     public int compareTo(Player player) {
-        if (this.minTrumpWeight > player.minTrumpWeight) return 1;
-        if (this.minTrumpWeight < player.minTrumpWeight) return -1;
-        return 0;
+        if (this.minTrumpWeight > player.minTrumpWeight) {
+            return 1;
+        } else return -1;
     }
 
     public UserEntity toUserEntity() {

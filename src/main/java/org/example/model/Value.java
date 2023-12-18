@@ -11,7 +11,7 @@ public class Value implements Comparable<Value> {
 
     public Value(String value) {
         this.value = value;
-        String[] valuesArr = {"6", "7", "8", "9", "10", " J", "Q", "K", "A"};
+        String[] valuesArr = {"6", "7", "8", "9", "10", "J", "Q", "K", "A"};
         weight = Arrays.asList(valuesArr).indexOf(value);
     }
 
@@ -30,7 +30,9 @@ public class Value implements Comparable<Value> {
 
     @Override
     public String toString() {
-        return value;
+        if(value.equals("J")) {
+            return " J";
+        } else return value;
     }
 
     @Override

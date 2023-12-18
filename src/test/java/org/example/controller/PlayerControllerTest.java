@@ -18,12 +18,13 @@ class PlayerControllerTest {
         attacker.getPlayerHand().add(new Card("♠", "10", true));
         defender.getPlayerHand().add(new Card("♣", "10", false));
         thrower.getPlayerHand().add(new Card("♦", "A", false));
+        thrower.getName();
 
         PlayerController playerController = new PlayerController(new ArrayList<>(List.of(attacker, defender, thrower)));
         playerController.setPlayersTurn();
 
-        assertTrue(playerController.getAttacker().equals(attacker));
-        assertTrue(playerController.getDefender().equals(defender));
+        assertEquals(playerController.getAttacker(), attacker);
+        assertEquals(playerController.getDefender(), defender);
     }
 
     @Test
