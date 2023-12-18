@@ -75,7 +75,7 @@ public class ThrowInFool implements Move, GameMonitor, PlayerMonitor, DAO {
                     while (isThrowPossible(tableController.getAll(), thrower.getPlayerHand()) && !defender.getPlayerHand().isEmpty()) {
                         int numberOfUnbeatenCards = table.getUnbeatenCards().size();
                         // If thrower can throw send initial notification to all waitingPlayers...
-                        sendMessageToAll(playerController.getPlayers(), "⚔️ "+thrower.getName() + " может подкинуть ⚔️");
+                        sendMessageToAll(playerController.getPlayers(), "⚔️ " + thrower.getName() + " может подкинуть ⚔️");
                         ///...and make a throw attackMove.
                         throwMove(thrower, playerController.getPlayers(), tableController);
                         //If thrower became the winner - break game loop

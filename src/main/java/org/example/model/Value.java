@@ -1,30 +1,28 @@
 package org.example.model;
 
-import lombok.Data;
+
+import lombok.experimental.FieldDefaults;
 
 import java.util.Arrays;
 
-@Data
+@FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 public class Value implements Comparable<Value> {
-    private String value;
-    private Integer weight;
+    String value;
+    Integer weight;
 
     public Value(String value) {
         this.value = value;
         String[] valuesArr = {"6", "7", "8", "9", "10", "J", "Q", "K", "A"};
-        weight = Arrays.asList(valuesArr).indexOf(value);
+        this.weight = Arrays.asList(valuesArr).indexOf(value);
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) {
             return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
+        } else if (o == null || getClass() != o.getClass()) {
             return false;
-        }
-        Value objValue = (Value) o;
-        return weight.equals(objValue.weight);
+        } else return weight.equals(((Value) o).getWeight());
     }
 
 

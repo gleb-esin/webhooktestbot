@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public interface PlayerMonitor extends MessageService {
     ConcurrentLinkedQueue<Player> throwInFoolWaiters = new ConcurrentLinkedQueue<>();
 
-    default void addPlayerToPlayerMonitor(Long chatId) {
+    default void addPlayerToThrowInFoolWaiters(Long chatId) {
         new Thread(() -> {
             Player player = new PlayerFactory(chatId).createPlayer();
             throwInFoolWaiters.add(player);
@@ -31,7 +31,7 @@ public interface PlayerMonitor extends MessageService {
         return players;
     }
 
-    default int getSize() {
-        return throwInFoolWaiters.size();
-    }
+//    default int getSize() {
+//        return throwInFoolWaiters.size();
+//    }
 }
