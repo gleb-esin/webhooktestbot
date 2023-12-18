@@ -2,14 +2,14 @@ package org.example.model;
 
 import lombok.Getter;
 import lombok.NonNull;
-import lombok.Setter;
+import lombok.experimental.FieldDefaults;
 
-@Setter
 @Getter
+@FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 public class Card implements Comparable<Card> {
-    private Suit suit;
-    private Value value;
-    private Integer weight;
+    Suit suit;
+    Value value;
+    Integer weight;
 
     public Card(String suit, String value, boolean trump) {
         this.suit = new Suit(suit, trump);
@@ -20,19 +20,24 @@ public class Card implements Comparable<Card> {
     }
 
     /**
-     * If a card can't beat another card, method returns -1*/
+     * If a card can't beat another card, method returns -1
+     */
     @Override
     public int compareTo(@NonNull Card o) {
-        if ((this.suit.isTrump()) && (!o.suit.isTrump())) return 1;
-        if ((!this.suit.isTrump()) && (o.suit.isTrump())) return -1;
-        if (this.suit.equals(o.suit)) {
-            return Integer.compare(weight, o.weight);
-        } else return -1;
+//        if ((this.suit.isTrump()) && (!o.suit.isTrump())) {
+//            System.out.println("this is trump and o is not");
+//            return 1;
+//        } else if ((!this.suit.isTrump()) && (o.suit.isTrump())) {
+//            System.out.println("this is not trump and o is");
+//            return -1;
+//        } else
+//            System.out.println("this weight: " + this.weight + " vs o weight: " + o.weight);
+        return Integer.compare(weight, o.weight);
     }
 
     @Override
     public String toString() {
-            return "<b>[" + value +  suit + "]</b>";
+        return new StringBuilder("<b>[").append(value).append(suit).append("]</b>").toString();
     }
 }
 

@@ -14,9 +14,17 @@ class CardTest {
 
         assertTrue(spades7.compareTo(spades10) < 0);
         assertTrue(spades10.compareTo(heatsA) > 0);
-        assertTrue(heatsA.compareTo(diamondsK) < 0);
+        assertTrue(heatsA.compareTo(diamondsK) > 0);
 
 
 
+    }
+
+
+    @Test
+    void testToString() {
+        Card heartsJ = new Card("♥", "J", false);
+
+        assertEquals("<b>[ J♥]</b>", heartsJ.toString());
     }
 }

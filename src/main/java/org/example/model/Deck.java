@@ -1,18 +1,19 @@
 package org.example.model;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.experimental.FieldDefaults;
 
 import java.util.*;
 
-@Data
+@Getter
+@FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 public class Deck {
-    private List<Card> deck;
-    private UUID gameId;
-    private Suit trump;
-
+    List<Card> deck;
+    UUID gameId;
+    Suit trump;
 
     public Deck(UUID gameId) {
-        String[] suitArr = {"♠","♣","♥","♦"};
+        String[] suitArr = {"♠", "♣", "♥", "♦"};
         String trumpSuit = suitArr[(int) (Math.random() * 4)];
         this.trump = new Suit(trumpSuit, true);
         boolean trump;
@@ -39,10 +40,9 @@ public class Deck {
     }
 
     public Card getNextCard() {
-        Card card = this.deck.get(0);
-        this.deck.remove(0);
-        return card;
+        return deck.remove(0);
     }
+
     public boolean isEmpty() {
         return deck.isEmpty();
     }
