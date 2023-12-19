@@ -3,6 +3,7 @@ package org.example.controller;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.example.model.Card;
+import org.example.model.Deck;
 import org.example.model.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,13 +30,81 @@ class PlayerControllerTest {
         thrower2 = new Player(6L, "Thrower2");
         thrower3 = new Player(7L, "Thrower3");
         thrower4 = new Player(8L, "Thrower4");
-        attacker.getPlayerHand().add(new Card("♠", "10", true));
-        defender.getPlayerHand().add(new Card("♣", "6", false));
-        thrower1.getPlayerHand().add(new Card("♦", "7", false));
-        thrower2.getPlayerHand().add(new Card("♠", "8", false));
-        thrower3.getPlayerHand().add(new Card("♣", "9", false));
-        thrower4.getPlayerHand().add(new Card("♦", "10", false));
+        attacker.getPlayerHand().add(new Card("♠", "7", true));
+        defender.getPlayerHand().add(new Card("♣", "7", false));
+        thrower1.getPlayerHand().add(new Card("♦", "8", false));
+        thrower2.getPlayerHand().add(new Card("♠", "9", false));
+        thrower3.getPlayerHand().add(new Card("♣", "10", false));
+        thrower4.getPlayerHand().add(new Card("♦", "J", false));
     }
+
+    @Test
+    void setPlayersTurn_whenCardIsTrumpAndWeightNotSet() {
+
+        List<Player> players = new ArrayList<>(List.of(attacker, defender));
+        playerController = new PlayerController(players);
+        playerController.setPlayersTurn();
+
+        assertEquals(101, attacker.getMinTrumpWeight());
+    }
+
+    @Test
+    void setPlayersTurn_whenCardIsTrumpAndWeightIstSet_ButSetWeightIsLess() {
+        attacker.getPlayerHand().add(new Card("♠", "6", true));
+
+        List<Player> players = new ArrayList<>(List.of(attacker, defender));
+        playerController = new PlayerController(players);
+        playerController.setPlayersTurn();
+
+        assertEquals(100, attacker.getMinTrumpWeight());
+    }
+
+    @Test
+    void setPlayersTurn_whenCardIsTrumpAndWeightIstSet_ButSetWeightIsGreater() {
+        attacker.getPlayerHand().add(new Card("♠", "8", true));
+
+        List<Player> players = new ArrayList<>(List.of(attacker, defender));
+        playerController = new PlayerController(players);
+        playerController.setPlayersTurn();
+
+        assertEquals(101, attacker.getMinTrumpWeight());
+    }
+
+
+
+
+    @Test
+    void setPlayersTurn_whenCardIsNotTrumpAndWeightNotSet() {
+
+        List<Player> players = new ArrayList<>(List.of(attacker, defender));
+        playerController = new PlayerController(players);
+        playerController.setPlayersTurn();
+
+        assertEquals(1001, defender.getMinTrumpWeight());
+    }
+
+    @Test
+    void setPlayersTurn_whenCardIsNotTrumpAndWeightIstSet_ButSetWeightIsLess() {
+        defender.getPlayerHand().add(new Card("♣", "6", false));
+
+        List<Player> players = new ArrayList<>(List.of(attacker, defender));
+        playerController = new PlayerController(players);
+        playerController.setPlayersTurn();
+
+        assertEquals(1001, defender.getMinTrumpWeight());
+    }
+
+    @Test
+    void setPlayersTurn_whenCardIsNotTrumpAndWeightIstSet_ButSetWeightIsGreater() {
+        defender.getPlayerHand().add(new Card("♣", "8", false));
+
+        List<Player> players = new ArrayList<>(List.of(attacker, defender));
+        playerController = new PlayerController(players);
+        playerController.setPlayersTurn();
+
+        assertEquals(1001, defender.getMinTrumpWeight());
+    }
+
 
     @Test
     void setPlayersTurn_when2Players() {
@@ -97,15 +166,16 @@ class PlayerControllerTest {
     }
 
     @Test
-    void changeTurn_noBinder() {
+    void changeTurn_when6Players_AndNoBinder() {
         List<Player> players = new ArrayList<>(List.of(attacker, defender, thrower1, thrower2, thrower3, thrower4));
         playerController = new PlayerController(players);
         playerController.setPlayersTurn();
+
         playerController.changeTurn();
 
-        assertEquals("defender", playerController.getAttacker().getRole());
-        assertEquals("thrower", playerController.getDefender().getRole());
-        assertEquals("attacker", thrower1.getRole());
+        assertEquals("thrower", attacker.getRole());
+        assertEquals("attacker", defender.getRole());
+        assertEquals("defender", thrower1.getRole());
         assertEquals("thrower", thrower2.getRole());
         assertEquals("thrower", thrower3.getRole());
         assertEquals("thrower", thrower4.getRole());
@@ -113,24 +183,59 @@ class PlayerControllerTest {
 
     @Test
     void changeTurn_withBinder() {
-        Player attacker = new Player(4L, "Attacker");
-        Player defender = new Player(3L, "Defender");
-        Player thrower = new Player(5L, "Thrower");
-        attacker.setRole("attacker");
-        defender.setRole("defender");
-        List<Player> players = new ArrayList<>(List.of(attacker, defender, thrower));
-        PlayerController playerController = new PlayerController(players);
-//        playerController.setThrowQueue(new LinkedList<>(players));
-        playerController.getThrowQueue().addFirst(thrower);
-        playerController.getThrowQueue().addFirst(attacker);
-        playerController.setAttacker(attacker);
-        playerController.setDefender(defender);
-        playerController.setBinder(defender);
+        List<Player> players = new ArrayList<>(List.of(attacker, defender, thrower1, thrower2, thrower3, thrower4));
+        playerController = new PlayerController(players);
+        playerController.setPlayersTurn();
+        playerController.setBinder(playerController.getDefender());
 
         playerController.changeTurn();
 
-        assertNull(defender.getRole());
-        assertEquals("defender", attacker.getRole());
-        assertEquals("attacker", thrower.getRole());
+        assertEquals("thrower", attacker.getRole());
+        assertEquals("thrower", defender.getRole());
+        assertEquals("attacker", thrower1.getRole());
+        assertEquals("defender", thrower2.getRole());
+        assertEquals("thrower", thrower3.getRole());
+        assertEquals("thrower", thrower4.getRole());
+    }
+
+    @Test
+    void isPlayerWinner_whenDeckAndPlayerHandAreEmpty_thenTrue() {
+        attacker.getPlayerHand().clear();
+        Deck deck = new Deck(UUID.randomUUID());
+        deck.getDeck().clear();
+        List<Player> players = new ArrayList<>(List.of(attacker, defender, thrower1, thrower2, thrower3, thrower4));
+        playerController = new PlayerController(players);
+
+        assertTrue(playerController.isPlayerWinner(attacker, deck));
+    }
+
+    @Test
+    void isPlayerWinner_whenDeckIsNotEmptyAndPlayerHandIsEmpty_thenFalse() {
+        attacker.getPlayerHand().clear();
+        Deck deck = new Deck(UUID.randomUUID());
+        List<Player> players = new ArrayList<>(List.of(attacker, defender, thrower1, thrower2, thrower3, thrower4));
+        playerController = new PlayerController(players);
+
+        assertFalse(playerController.isPlayerWinner(attacker, deck));
+    }
+
+
+    @Test
+    void isPlayerWinner_whenDeckIsEmptyAndPlayerHandIsNot_thenFalse() {
+        Deck deck = new Deck(UUID.randomUUID());
+        deck.getDeck().clear();
+        List<Player> players = new ArrayList<>(List.of(attacker, defender, thrower1, thrower2, thrower3, thrower4));
+        playerController = new PlayerController(players);
+
+        assertFalse(playerController.isPlayerWinner(attacker, deck));
+    }
+
+    @Test
+    void isPlayerWinner_whenDeckAndPlayerHandAreNotEmpty_thenFalse() {
+        Deck deck = new Deck(UUID.randomUUID());
+        List<Player> players = new ArrayList<>(List.of(attacker, defender, thrower1, thrower2, thrower3, thrower4));
+        playerController = new PlayerController(players);
+
+        assertFalse(playerController.isPlayerWinner(attacker, deck));
     }
 }

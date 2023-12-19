@@ -4,16 +4,21 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 @Getter
+@Setter
 @Entity
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserEntity {
     @Id
     Long userId;
     String name;
     int games;
     int wins;
+
+    public UserEntity() {
+    }
 
     public UserEntity(Long playerId, String name) {
         this.userId = playerId;

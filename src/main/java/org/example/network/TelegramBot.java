@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.config.Botconfig;
 import org.example.monitor.PlayerMonitor;
 
-import org.example.monitor.Test_PlayerMonitor;
 import org.example.monitor.UpdateMonitor;
 import org.example.service.MessageService;
 import org.example.state.Help;
@@ -29,7 +28,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Getter
 @Slf4j
-public class TelegramBot extends TelegramWebhookBot implements UpdateMonitor, PlayerMonitor, Test_PlayerMonitor, MessageService, DAO {
+public class TelegramBot extends TelegramWebhookBot implements UpdateMonitor, PlayerMonitor, MessageService, DAO {
     String botPath;
     String botUsername;
     String botToken;
@@ -48,7 +47,7 @@ public class TelegramBot extends TelegramWebhookBot implements UpdateMonitor, Pl
         List<BotCommand> menu = new ArrayList<>();
         menu.add(new BotCommand("/throwinfool", "Подкидной дурак"));
         menu.add(new BotCommand("/help", "Описание бота"));
-        menu.add(new BotCommand("/test", "test game"));
+//        menu.add(new BotCommand("/test", "test game"));
         try {
             execute(new SetMyCommands(menu, new BotCommandScopeDefault(), null));
         } catch (TelegramApiException e) {
@@ -70,7 +69,6 @@ public class TelegramBot extends TelegramWebhookBot implements UpdateMonitor, Pl
             switch (text) {
                 case "/start", "/help" -> new Help(this, chatId).execute();
                 case "/throwinfool" -> addPlayerToThrowInFoolWaiters(chatId);
-                case "/test" -> addPlayerToTest_ThrowInFoolWaiters(chatId);
 
                 default -> addMessageToUpdateMonitor(chatId, update);
             }
