@@ -1,7 +1,8 @@
 package org.example.controller;
 
+import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.experimental.FieldDefaults;
 import org.example.model.Card;
 import org.example.model.Player;
 import org.example.model.Suit;
@@ -14,12 +15,13 @@ import java.util.List;
  * This class provides control over tables' behavior during round
  */
 @Getter
-@Setter
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class TableController {
-    private Table table;
-    private  Suit trump;
+
+    Table table;
+
     public TableController(Suit trump) {
-        table = new Table(trump);
+        this.table = new Table(trump);
     }
 
     public void clear() {

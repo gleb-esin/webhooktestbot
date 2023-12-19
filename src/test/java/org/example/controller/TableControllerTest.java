@@ -1,8 +1,11 @@
 package org.example.controller;
 
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.example.model.Card;
 import org.example.model.Deck;
 import org.example.model.Player;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -12,24 +15,33 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@FieldDefaults(level = AccessLevel.PRIVATE)
 class TableControllerTest {
+    Deck deck;
+    List<Card> playerCards;
+    Player player;
+    TableController tableController;
 
-    @Test
-    void addCardsToTable_defender() {
-        Deck deck = new Deck(UUID.randomUUID());
-        List<Card> playerCards = new ArrayList<>();
-        Player player = new Player(new Random().nextLong(), "Player");
-        player.setRole("defender");
+    @BeforeEach
+    void setUp() {
+        deck = new Deck(UUID.randomUUID());
+        playerCards = new ArrayList<>();
+        player = new Player(new Random().nextLong(), "Player");
+        tableController = new TableController(deck.getTrump());
         for (int i = 0; i < 6; i++) {
             player.getPlayerHand().add(deck.getNextCard());
         }
         for (int i = 0; i < 3; i++) {
             playerCards.add(player.getPlayerHand().get(i));
         }
-        TableController tableController = new TableController(null);
         for (int i = 0; i < 3; i++) {
             tableController.getTable().getUnbeatenCards().add(deck.getNextCard());
         }
+    }
+
+    @Test
+    void addCardsToTable_whenRoleIsDefender_thenUnbeatenCardsIsEmpty_AndBeatenCardsContains6Cards() {
+        player.setRole("defender");
 
         tableController.addCardsToTable(playerCards, player);
 
@@ -39,27 +51,42 @@ class TableControllerTest {
     }
 
     @Test
-    void addCardsToTable_attackerOrThrower() {
-        Deck deck = new Deck(UUID.randomUUID());
-        List<Card> playerCards = new ArrayList<>();
-        Player player = new Player(new Random().nextLong(), "Player");
+    void addCardsToTable_whenRoleIsAttacker_thenUnbeatenCardsContains6_AndBeatenCardsIsEmpty() {
         player.setRole("attacker");
-        for (int i = 0; i < 6; i++) {
-            player.getPlayerHand().add(deck.getNextCard());
-        }
-        for (int i = 0; i < 3; i++) {
-            playerCards.add(player.getPlayerHand().get(i));
-        }
-
-        TableController tableController = new TableController(null);
-        for (int i = 0; i < 3; i++) {
-            tableController.getTable().getUnbeatenCards().add(deck.getNextCard());
-        }
 
         tableController.addCardsToTable(playerCards, player);
 
         assertEquals(3, player.getPlayerHand().size());
         assertEquals(0, tableController.getTable().getBeatenCards().size());
         assertEquals(6, tableController.getTable().getUnbeatenCards().size());
+    }
+
+    @Test
+    void addCardsToTable_whenRoleIsThrower_thenUnbeatenCardsContains6_AndBeatenCardsIsEmpty() {
+        player.setRole("thrower");
+
+        tableController.addCardsToTable(playerCards, player);
+
+        assertEquals(3, player.getPlayerHand().size());
+        assertEquals(0, tableController.getTable().getBeatenCards().size());
+        assertEquals(6, tableController.getTable().getUnbeatenCards().size());
+    }
+
+    @Test
+    void clear() {
+        tableController.clear();
+
+        assertEquals(0, tableController.getAll().size());
+    }
+
+    @Test
+    void getAll() {
+        assertEquals(3, tableController.getAll().size());
+    }
+
+    @Test
+    void getTable() {
+
+        assertNotNull(tableController.getTable());
     }
 }

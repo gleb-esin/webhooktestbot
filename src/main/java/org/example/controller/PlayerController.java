@@ -1,6 +1,11 @@
 package org.example.controller;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import org.example.model.Card;
 import org.example.model.Deck;
 import org.example.model.Player;
@@ -11,16 +16,18 @@ import java.util.*;
 /**
  * This class provides control over waitingPlayers' behavior during round
  */
-
-@Data
+@Getter
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class PlayerController implements Serializable {
-    private boolean isGameOver = false;
-    private List<Player> players;
-    private Player attacker;
-    private Player defender;
-    private Player binder;
-    private Player winner;
-    private Deque<Player> throwQueue;
+    boolean isGameOver = false;
+    List<Player> players;
+    Player attacker;
+    Player defender;
+    @Setter
+    Player binder;
+    @Setter
+    Player winner;
+    Deque<Player> throwQueue;
 
     public PlayerController(List<Player> players) {
         this.players = players;
@@ -37,6 +44,9 @@ public class PlayerController implements Serializable {
         this.throwQueue = new LinkedList<>(players);
         setAttacker(this.throwQueue.pop());
         setDefender(this.throwQueue.pop());
+        if (this.throwQueue.size() > 0) {
+            throwQueue.forEach(p -> p.setRole("thrower"));
+        }
         this.throwQueue.addFirst(this.attacker);
     }
 
@@ -81,6 +91,7 @@ public class PlayerController implements Serializable {
     public void setGameOver(boolean gameOver) {
         isGameOver = gameOver;
     }
+
     public boolean isPlayerWinner(Player player, Deck deck) {
         boolean isWinner = deck.isEmpty() && player.getPlayerHand().isEmpty();
         if (isWinner) {
@@ -95,12 +106,12 @@ public class PlayerController implements Serializable {
 
     public void changeTurn() {
         Player attacker = this.throwQueue.pop();
-        attacker.setRole(null);
+        attacker.setRole("thrower");
         this.throwQueue.addLast(attacker);
         if (this.binder == null) {
             setAttacker(this.defender);
         } else {
-            this.binder.setRole(null);
+            this.binder.setRole("trower");
             this.throwQueue.addLast(this.binder);
             Player nextAttacker = this.throwQueue.pop();
             setAttacker(nextAttacker);
@@ -109,9 +120,5 @@ public class PlayerController implements Serializable {
         setDefender(nextDefender);
         this.throwQueue.addFirst(this.attacker);
         setBinder(null);
-    }
-
-    public void setBinder(Player player) {
-        this.binder = player;
     }
 }
