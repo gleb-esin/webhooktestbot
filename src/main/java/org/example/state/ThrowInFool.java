@@ -13,19 +13,15 @@ import org.example.model.Table;
 import org.example.move.Attack;
 import org.example.move.Defence;
 import org.example.move.Throw;
-import org.example.network.DAO;
 import org.example.network.TelegramBot;
-import org.example.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.UUID;
 
-import static org.example.move.moveValidator.ThrowValidator.isThrowPossible;
-
 
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class ThrowInFool implements MessageService,DAO {
+public class ThrowInFool {
     UUID gameID;
     @NonFinal
     boolean isGameOver = false;
@@ -78,10 +74,10 @@ public class ThrowInFool implements MessageService,DAO {
                 ///...for each thrower....
                 for (Player thrower : playerController.getThrowQueue()) {
                     //...check if thrower can throw it.
-                    while (isThrowPossible(tableController.getAll(), thrower.getPlayerHand()) && !defender.getPlayerHand().isEmpty()) {
+                    while (throwMove.isThrowPossible(tableController.getAll(), thrower.getPlayerHand()) && !defender.getPlayerHand().isEmpty()) {
                         int numberOfUnbeatenCards = table.getUnbeatenCards().size();
                         // If thrower can throw send initial notification to all waitingPlayers...
-                        sendMessageToAll(playerController.getPlayers(), "⚔️ " + thrower.getName() + " может подкинуть ⚔️",bot );
+                        bot.sendMessageToAll(playerController.getPlayers(), "⚔️ " + thrower.getName() + " может подкинуть ⚔️");
                         ///...and make a throw attackMove.
                         throwMove.throwMove(thrower, playerController.getPlayers(), tableController);
                         //If thrower became the winner - break game loop
@@ -106,13 +102,13 @@ public class ThrowInFool implements MessageService,DAO {
             }
             if (defender.getRole().equals("binder")) {
                 playerController.setBinder(defender);
-                sendMessageToAll(playerController.getPlayers(), playerController.getBinder().getName() + " забирает карты " + tableController.getAll().toString().substring(1, tableController.getAll().toString().length() - 1),bot );
+                bot.sendMessageToAll(playerController.getPlayers(), playerController.getBinder().getName() + " забирает карты " + tableController.getAll().toString().substring(1, tableController.getAll().toString().length() - 1));
                 playerController.getBinder().getPlayerHand().addAll(tableController.getAll());
             }
 
             tableController.clear();
             if (deckController.getDeck().isEmpty()) {
-                sendMessageToAll(playerController.getPlayers(), "Колода пуста!",bot );
+                bot.sendMessageToAll(playerController.getPlayers(), "Колода пуста!");
             } else
                 deckController.fillUpTheHands(playerController.getThrowQueue(), defender);
             playerController.changeTurn();
@@ -129,10 +125,10 @@ public class ThrowInFool implements MessageService,DAO {
     }
 
     public void finnishGame() {
-        sendMessageToAll(playerController.getPlayers(), "\uD83C\uDFC6 Победил " + playerController.getWinner().getName() + "! \uD83C\uDFC6",bot );
+        bot.sendMessageToAll(playerController.getPlayers(), "\uD83C\uDFC6 Победил " + playerController.getWinner().getName() + "! \uD83C\uDFC6");
         bot.getGameMonitor().removeThrowInFoolToGameMonitor(gameID, bot);
         for (Player player : playerController.getPlayers()) {
-            saveInDB(player.toUserEntity());
+            bot.getUserEntityRepository().save(player.toUserEntity());
         }
     }
 }

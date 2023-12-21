@@ -1,6 +1,9 @@
 package org.example.controller;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
+import lombok.experimental.FieldDefaults;
 import org.example.model.Card;
 import org.example.model.Deck;
 import org.example.model.Player;
@@ -10,9 +13,10 @@ import java.util.*;
 /**
  * This class provides control over deck's behavior during round
  */
-@Data
+@Getter
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class DeckController {
-    private Deck deck;
+    Deck deck;
 
     public DeckController(UUID gameId) {
         this.deck = new Deck(gameId);

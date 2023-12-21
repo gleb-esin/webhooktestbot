@@ -7,37 +7,67 @@ import org.example.network.TelegramBot;
 import org.example.controller.TableController;
 import org.example.model.Card;
 import org.example.model.Player;
+import org.example.service.PlayerInputValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static org.example.move.moveValidator.ThrowValidator.isThrowMoveCorrect;
-
 @Component
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class Throw implements Move {
+public class Throw extends PlayerInputValidator {
     TelegramBot bot;
 
 
 
     public void throwMove(Player thrower, List<Player> playersForNotify, TableController tableController) {
-        sendMessageTo(thrower, thrower.toString(), bot);
+        bot.sendMessageTo(thrower, thrower.toString());
         List<Card> cards = askForCards(thrower, bot);
 
         if (cards.isEmpty()) {
-            sendMessageToAll(playersForNotify, thrower.getName() + " не будет подкидывать.", bot);
+            bot.sendMessageToAll(playersForNotify, thrower.getName() + " не будет подкидывать.");
         } else {
             boolean isThrowCorrect = isThrowMoveCorrect(tableController.getAll(), cards);
             while (!isThrowCorrect) {
-                sendMessageTo(thrower, thrower.getName() + " , так не получится подкинуть.", bot);
+                bot.sendMessageTo(thrower, thrower.getName() + " , так не получится подкинуть.");
                 cards = askForCards(thrower, bot);
                 isThrowCorrect = isThrowMoveCorrect(tableController.getAll(), cards);
             }
             tableController.addCardsToTable(cards, thrower);
-            sendMessageToAll(playersForNotify, tableController.getTable().toString(), bot);
+            bot.sendMessageToAll(playersForNotify, tableController.getTable().toString());
 
         }
+    }
+
+    boolean isThrowMoveCorrect(List<Card> tableCards, List<Card> throwerCards) {
+        boolean isThrowCorrect;
+        int thrownCards = throwerCards.size();
+        int allowedCards = 0;
+        for (Card throwerCard : throwerCards) {
+            for (Card tableCard : tableCards) {
+                isThrowCorrect = tableCard.getValue().equals(throwerCard.getValue());
+                if (isThrowCorrect) {
+                    allowedCards++;
+                    break;
+                }
+            }
+            if (thrownCards == allowedCards) break;
+        }
+        return thrownCards == allowedCards;
+    }
+
+    public boolean isThrowPossible(List<Card> tableCards, List<Card> throwerHand) {
+        boolean isThrowPossible = false;
+        for (Card tableCard : tableCards) {
+            for (Card throwerCard : throwerHand) {
+                if (tableCard.getValue().equals(throwerCard.getValue())) {
+                    isThrowPossible = true;
+                    break;
+                }
+            }
+            if (isThrowPossible) break;
+        }
+        return isThrowPossible;
     }
 }

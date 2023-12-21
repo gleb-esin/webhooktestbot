@@ -5,25 +5,24 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import org.example.network.TelegramBot;
-import org.example.service.MessageService;
 
 import java.util.concurrent.CompletableFuture;
 
 @Setter
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Help implements MessageService {
+public class Help {
     TelegramBot bot;
-    Long ownerId;
+    Long chatId;
     CompletableFuture<String> futureMessage = new CompletableFuture<>();
     final String help = "Добро пожаловать!";
 
-    public Help(TelegramBot bot, Long ownerId) {
+    public Help(TelegramBot bot, Long chatId) {
         this.bot = bot;
-        this.ownerId = ownerId;
+        this.chatId = chatId;
     }
 
     public void execute() {
-        sendMessageTo(ownerId, help, bot);
+        bot.sendMessageTo(chatId, help);
     }
 }

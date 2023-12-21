@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.experimental.FieldDefaults;
 
+import java.util.Objects;
+
 @Getter
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 public class Card implements Comparable<Card> {
@@ -37,7 +39,9 @@ public class Card implements Comparable<Card> {
         if(this == o) return true;
         if(o == null || getClass() != o.getClass()) return false;
         Card card = (Card) o;
-        return weight.equals(card.weight);
+        return Objects.equals(suit, card.suit) &&
+                Objects.equals(value, card.value) &&
+                weight == card.weight;
     }
     @Override
     public String toString() {

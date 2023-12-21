@@ -5,14 +5,13 @@ import lombok.experimental.FieldDefaults;
 import org.example.model.Player;
 import org.example.network.TelegramBot;
 import org.example.service.GameFactory;
-import org.example.service.MessageService;
 import org.example.service.PlayerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class PlayerMonitor implements MessageService {
+public class PlayerMonitor {
     ConcurrentLinkedQueue<Player> throwInFoolWaiters = new ConcurrentLinkedQueue<>();
 
     public void addPlayerToThrowInFoolWaiters(Long chatId, TelegramBot bot) {
@@ -22,7 +21,7 @@ public class PlayerMonitor implements MessageService {
             if (throwInFoolWaiters.size() == 2) {
                 new GameFactory(bot).createThrowInFoolGame();
             }
-            else sendMessageTo(chatId, "Ждем игроков...", bot);
+            else bot.sendMessageTo(chatId, "Ждем игроков...");
         }).start();
     }
 

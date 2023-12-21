@@ -38,10 +38,7 @@ class DeckTest {
     void getNextCard() {
         Card actual = deck.getNextCard();
         Card expected = new Card("♠", "6", false);
-
-        assertEquals(expected.getValue(), actual.getValue());
-        assertEquals(expected.getSuit(), actual.getSuit());
-        assertEquals(expected.getWeight(), actual.getWeight());
+        assertEquals(expected, actual);
         assertFalse(deck.getDeck().contains(actual));
     }
 

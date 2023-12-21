@@ -6,16 +6,17 @@ import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.example.config.Botconfig;
+import org.example.model.Player;
 import org.example.monitor.GameMonitor;
 import org.example.monitor.PlayerMonitor;
 
-import org.example.monitor.UpdateMonitor;
 import org.example.state.Help;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramWebhookBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
@@ -23,19 +24,21 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Getter
 @Slf4j
-public class TelegramBot extends TelegramWebhookBot implements DAO {
+public class TelegramBot extends TelegramWebhookBot  {
     String botPath;
     String botUsername;
     String botToken;
     UserEntityRepository userEntityRepository;
     PlayerMonitor playerMonitor = new PlayerMonitor();
     GameMonitor gameMonitor = new GameMonitor();
-    UpdateMonitor updateMonitor = new UpdateMonitor();
+    ConcurrentHashMap<Long, CompletableFuture<Update>> updates = new ConcurrentHashMap<>();
 
     @Autowired
     public TelegramBot(Botconfig botconfig, UserEntityRepository userEntityRepository) {
@@ -44,8 +47,6 @@ public class TelegramBot extends TelegramWebhookBot implements DAO {
         this.botToken = botconfig.getBotToken();
         this.botUsername = botconfig.getUserName();
         this.userEntityRepository = userEntityRepository;
-
-        setTelegramBotInDAO(this);
 
         List<BotCommand> menu = new ArrayList<>();
         menu.add(new BotCommand("/throwinfool", "Подкидной дурак"));
@@ -73,8 +74,56 @@ public class TelegramBot extends TelegramWebhookBot implements DAO {
                 case "/start", "/help" -> new Help(this, chatId).execute();
                 case "/throwinfool" -> playerMonitor.addPlayerToThrowInFoolWaiters(chatId, this);
 
-                default -> getUpdateMonitor().addMessageToUpdateMonitor(chatId, update);
+                default -> addMessageToUpdateMonitor(chatId, update);
             }
         }
+    }
+
+    private void addMessageToUpdateMonitor(Long chatId, Update update) {
+        CompletableFuture<Update> future;
+        if (updates.containsKey(chatId)) {
+            future = updates.get(chatId);
+            future.complete(update);
+            updates.putIfAbsent(chatId, future);
+        }
+    }
+
+    private String getMessage(Long chatId) {
+        updates.remove(chatId);
+        CompletableFuture<Update> future = new CompletableFuture<>();
+        updates.putIfAbsent(chatId, future);
+        return future.join().getMessage().getText();
+    }
+
+    public void sendMessageTo(Long chatId, String message) {
+        try {
+            SendMessage sendMessage = new SendMessage(chatId.toString(), message);
+            sendMessage.enableHtml(true);
+            execute(sendMessage);
+        } catch (Exception e) {
+            System.err.println("in MessageService.sendMessageTo(" + chatId + ", " + message + "): " + e.getMessage());
+        }
+    }
+
+    public void sendMessageTo(Player player, String message) {
+        try {
+            SendMessage sendMessage = new SendMessage(player.getChatID().toString(), message);
+            sendMessage.enableHtml(true);
+            execute(sendMessage);
+        } catch (Exception e) {
+            System.err.println("in MessageService.sendMessageTo(" + player.getChatID() + ", " + message + "): " + e.getMessage());
+        }
+    }
+
+    public void sendMessageToAll(List<Player> players, String message) {
+        players.forEach(player -> sendMessageTo(player, message));
+    }
+
+    public String receiveMessageFrom(Player player) {
+        return getMessage(player.getChatID());
+    }
+
+    public String receiveMessageFrom(Long chatId) {
+        return getMessage(chatId);
     }
 }

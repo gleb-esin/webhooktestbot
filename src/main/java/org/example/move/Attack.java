@@ -8,12 +8,13 @@ import org.example.network.TelegramBot;
 import org.example.controller.TableController;
 import org.example.model.Card;
 import org.example.model.Player;
+import org.example.service.PlayerInputValidator;
 
 import java.util.List;
 
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class Attack implements Move {
+public class Attack extends PlayerInputValidator {
     TelegramBot bot;
 
     public void init(PlayerController playerController, TableController tableController) {
@@ -26,20 +27,20 @@ public class Attack implements Move {
                 .append("⚔️")
                 .append(System.lineSeparator())
                 .append(tableController.getTable().toString());
-        sendMessageToAll(playerController.getPlayers(), message.toString(), bot);
-        sendMessageTo(attacker, attacker.toString(), bot);
+        bot.sendMessageToAll(playerController.getPlayers(), message.toString());
+        bot.sendMessageTo(attacker, attacker.toString());
     }
 
     public void move(Player attacker, TableController tableController, PlayerController playerController) {
         List<Card> cards = askForCards(attacker, bot);
         boolean isMoveCorrect = isAttackMoveCorrect(cards);
         while (cards.isEmpty() || (cards.size() > 1 && !isMoveCorrect)) {
-            sendMessageTo(attacker, "Так пойти не получится.", bot);
+            bot.sendMessageTo(attacker, "Так пойти не получится.");
             cards = askForCards(attacker, bot);
             isMoveCorrect = isAttackMoveCorrect(cards);
         }
         tableController.addCardsToTable(cards, attacker);
-        sendMessageToAll(playerController.getPlayers(), tableController.getTable().toString(), bot);
+        bot.sendMessageToAll(playerController.getPlayers(), tableController.getTable().toString());
         attacker.setRole("thrower");
     }
 
