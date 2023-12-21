@@ -21,18 +21,18 @@ public class Throw extends PlayerInputValidator {
 
 
 
-    public void throwMove(Player thrower, List<Player> playersForNotify, TableController tableController) {
+    public void throwMove(Player thrower, List<Player> playersForNotify, TableController tableController, Player defender) {
         bot.sendMessageTo(thrower, thrower.toString());
         List<Card> cards = askForCards(thrower, bot);
 
         if (cards.isEmpty()) {
             bot.sendMessageToAll(playersForNotify, thrower.getName() + " не будет подкидывать.");
         } else {
-            boolean isThrowCorrect = isThrowMoveCorrect(tableController.getAll(), cards);
+            boolean isThrowCorrect = isThrowMoveCorrect(tableController.getAll(), cards, defender);
             while (!isThrowCorrect) {
                 bot.sendMessageTo(thrower, thrower.getName() + " , так не получится подкинуть.");
                 cards = askForCards(thrower, bot);
-                isThrowCorrect = isThrowMoveCorrect(tableController.getAll(), cards);
+                isThrowCorrect = isThrowMoveCorrect(tableController.getAll(), cards, defender);
             }
             tableController.addCardsToTable(cards, thrower);
             bot.sendMessageToAll(playersForNotify, tableController.getTable().toString());
@@ -40,9 +40,10 @@ public class Throw extends PlayerInputValidator {
         }
     }
 
-    boolean isThrowMoveCorrect(List<Card> tableCards, List<Card> throwerCards) {
+    boolean isThrowMoveCorrect(List<Card> tableCards, List<Card> throwerCards, Player defender) {
         boolean isThrowCorrect;
         int thrownCards = throwerCards.size();
+        if (thrownCards>defender.getPlayerHand().size()) return false;
         int allowedCards = 0;
         for (Card throwerCard : throwerCards) {
             for (Card tableCard : tableCards) {

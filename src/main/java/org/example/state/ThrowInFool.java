@@ -79,7 +79,7 @@ public class ThrowInFool {
                         // If thrower can throw send initial notification to all waitingPlayers...
                         bot.sendMessageToAll(playerController.getPlayers(), "⚔️ " + thrower.getName() + " может подкинуть ⚔️");
                         ///...and make a throw attackMove.
-                        throwMove.throwMove(thrower, playerController.getPlayers(), tableController);
+                        throwMove.throwMove(thrower, playerController.getPlayers(), tableController, defender);
                         //If thrower became the winner - break game loop
                         if (playerController.isPlayerWinner(thrower, deckController.getDeck())) break gameloop;
                         // if the thrower still didn't throw...
