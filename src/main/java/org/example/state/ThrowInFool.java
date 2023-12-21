@@ -2,10 +2,7 @@ package org.example.state;
 
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
-import org.example.move.Move;
-import org.example.monitor.GameMonitor;
-import org.example.monitor.PlayerMonitor;
+import lombok.experimental.NonFinal;
 
 import lombok.experimental.FieldDefaults;
 import org.example.controller.DeckController;
@@ -13,40 +10,49 @@ import org.example.controller.PlayerController;
 import org.example.controller.TableController;
 import org.example.model.Player;
 import org.example.model.Table;
+import org.example.move.Attack;
+import org.example.move.Defence;
+import org.example.move.Throw;
 import org.example.network.DAO;
+import org.example.network.TelegramBot;
+import org.example.service.MessageService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.UUID;
 
 import static org.example.move.moveValidator.ThrowValidator.isThrowPossible;
 
-@Setter
-@Getter
-@FieldDefaults(level = AccessLevel.PRIVATE)
-public class ThrowInFool implements Move, GameMonitor, PlayerMonitor, DAO {
-    UUID gameID;
-    boolean isGameOver = false;
 
+@Getter
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+public class ThrowInFool implements MessageService,DAO {
+    UUID gameID;
+    @NonFinal
+    boolean isGameOver = false;
     PlayerController playerController;
     DeckController deckController;
     TableController tableController;
+    TelegramBot bot;
 
-    Table table;
-
-
-    public ThrowInFool() {
+    @Autowired
+    public ThrowInFool(TelegramBot bot) {
         this.gameID = UUID.randomUUID();
-
-        this.playerController = new PlayerController(getThrowInFoolWaiterList());
+        this.bot = bot;
+        this.playerController = new PlayerController(bot.getPlayerMonitor().getThrowInFoolWaiterList());
         this.deckController = new DeckController(this.gameID);
         this.tableController = new TableController(deckController.getDeck().getTrump());
 
-        this.table = tableController.getTable();
-        addThrowInFoolToGameMonitor(gameID, playerController.getPlayers());
+
+        bot.getGameMonitor().addThrowInFoolToGameMonitor(gameID, playerController.getPlayers());
     }
 
     public void play() {
         dealCards();
         playerController.setPlayersTurn();
+        Table table = tableController.getTable();
+        Attack attack = new Attack(bot);
+        Defence defence = new Defence(bot);
+        Throw throwMove = new Throw(bot);
 
         gameloop:
         while (!playerController.isGameOver()) {
@@ -54,14 +60,14 @@ public class ThrowInFool implements Move, GameMonitor, PlayerMonitor, DAO {
             Player defender = playerController.getDefender();
 
             //attackInit attackMove
-            attackInit(playerController, tableController);
-            attackMove(playerController.getAttacker(), tableController, playerController);
+            attack.init(playerController, tableController);
+            attack.move(playerController.getAttacker(), tableController, playerController);
             if (playerController.isPlayerWinner(attacker, deckController.getDeck())) break;
 
             //defence Move
             if (!playerController.isGameOver()) {
-                defenceInit(playerController, tableController);
-                defenceMove(playerController.getDefender(), playerController.getPlayers(), tableController);
+                defence.init(playerController);
+                defence.move(playerController.getDefender(), playerController.getPlayers(), tableController);
                 if (defender.getRole().equals("binder")) playerController.setBinder(defender);
                 if (playerController.isPlayerWinner(defender, deckController.getDeck())) break;
             }
@@ -75,9 +81,9 @@ public class ThrowInFool implements Move, GameMonitor, PlayerMonitor, DAO {
                     while (isThrowPossible(tableController.getAll(), thrower.getPlayerHand()) && !defender.getPlayerHand().isEmpty()) {
                         int numberOfUnbeatenCards = table.getUnbeatenCards().size();
                         // If thrower can throw send initial notification to all waitingPlayers...
-                        sendMessageToAll(playerController.getPlayers(), "⚔️ " + thrower.getName() + " может подкинуть ⚔️");
+                        sendMessageToAll(playerController.getPlayers(), "⚔️ " + thrower.getName() + " может подкинуть ⚔️",bot );
                         ///...and make a throw attackMove.
-                        throwMove(thrower, playerController.getPlayers(), tableController);
+                        throwMove.throwMove(thrower, playerController.getPlayers(), tableController);
                         //If thrower became the winner - break game loop
                         if (playerController.isPlayerWinner(thrower, deckController.getDeck())) break gameloop;
                         // if the thrower still didn't throw...
@@ -89,8 +95,8 @@ public class ThrowInFool implements Move, GameMonitor, PlayerMonitor, DAO {
                             //...and defender are not binder...
                             if (!defender.getRole().equals("binder")) {
                                 //...make a defence move.
-                                defenceInit(playerController, tableController);
-                                defenceMove(playerController.getDefender(), playerController.getPlayers(), tableController);
+                                defence.init(playerController);
+                                defence.move(playerController.getDefender(), playerController.getPlayers(), tableController);
                                 if (playerController.isPlayerWinner(defender, deckController.getDeck()))
                                     break gameloop;
                             }
@@ -100,13 +106,13 @@ public class ThrowInFool implements Move, GameMonitor, PlayerMonitor, DAO {
             }
             if (defender.getRole().equals("binder")) {
                 playerController.setBinder(defender);
-                sendMessageToAll(playerController.getPlayers(), playerController.getBinder().getName() + " забирает карты " + tableController.getAll().toString().substring(1, tableController.getAll().toString().length() - 1));
+                sendMessageToAll(playerController.getPlayers(), playerController.getBinder().getName() + " забирает карты " + tableController.getAll().toString().substring(1, tableController.getAll().toString().length() - 1),bot );
                 playerController.getBinder().getPlayerHand().addAll(tableController.getAll());
             }
 
             tableController.clear();
             if (deckController.getDeck().isEmpty()) {
-                sendMessageToAll(playerController.getPlayers(), "Колода пуста!");
+                sendMessageToAll(playerController.getPlayers(), "Колода пуста!",bot );
             } else
                 deckController.fillUpTheHands(playerController.getThrowQueue(), defender);
             playerController.changeTurn();
@@ -123,8 +129,8 @@ public class ThrowInFool implements Move, GameMonitor, PlayerMonitor, DAO {
     }
 
     public void finnishGame() {
-        sendMessageToAll(playerController.getPlayers(), "\uD83C\uDFC6 Победил " + playerController.getWinner().getName() + "! \uD83C\uDFC6");
-        removeThrowInFoolToGameMonitor(gameID);
+        sendMessageToAll(playerController.getPlayers(), "\uD83C\uDFC6 Победил " + playerController.getWinner().getName() + "! \uD83C\uDFC6",bot );
+        bot.getGameMonitor().removeThrowInFoolToGameMonitor(gameID, bot);
         for (Player player : playerController.getPlayers()) {
             saveInDB(player.toUserEntity());
         }

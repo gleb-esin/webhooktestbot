@@ -6,10 +6,10 @@ import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.example.config.Botconfig;
+import org.example.monitor.GameMonitor;
 import org.example.monitor.PlayerMonitor;
 
 import org.example.monitor.UpdateMonitor;
-import org.example.service.MessageService;
 import org.example.state.Help;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,11 +28,14 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Getter
 @Slf4j
-public class TelegramBot extends TelegramWebhookBot implements UpdateMonitor, PlayerMonitor, MessageService, DAO {
+public class TelegramBot extends TelegramWebhookBot implements DAO {
     String botPath;
     String botUsername;
     String botToken;
     UserEntityRepository userEntityRepository;
+    PlayerMonitor playerMonitor = new PlayerMonitor();
+    GameMonitor gameMonitor = new GameMonitor();
+    UpdateMonitor updateMonitor = new UpdateMonitor();
 
     @Autowired
     public TelegramBot(Botconfig botconfig, UserEntityRepository userEntityRepository) {
@@ -41,7 +44,7 @@ public class TelegramBot extends TelegramWebhookBot implements UpdateMonitor, Pl
         this.botToken = botconfig.getBotToken();
         this.botUsername = botconfig.getUserName();
         this.userEntityRepository = userEntityRepository;
-        setTelegramBotInMessageService(this);
+
         setTelegramBotInDAO(this);
 
         List<BotCommand> menu = new ArrayList<>();
@@ -68,9 +71,9 @@ public class TelegramBot extends TelegramWebhookBot implements UpdateMonitor, Pl
             chatId = update.getMessage().getChatId();
             switch (text) {
                 case "/start", "/help" -> new Help(this, chatId).execute();
-                case "/throwinfool" -> addPlayerToThrowInFoolWaiters(chatId);
+                case "/throwinfool" -> playerMonitor.addPlayerToThrowInFoolWaiters(chatId, this);
 
-                default -> addMessageToUpdateMonitor(chatId, update);
+                default -> getUpdateMonitor().addMessageToUpdateMonitor(chatId, update);
             }
         }
     }

@@ -1,35 +1,30 @@
 package org.example.move;
 
-import org.example.controller.PlayerController;
-import org.example.controller.TableController;
+import org.example.model.Card;
 import org.example.model.Player;
+import org.example.network.TelegramBot;
+import org.example.service.MessageService;
+import org.example.service.PlayerInputValidator;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public interface Move extends Attack, Defence, Throw {
-
-    @Override
-    default void attackInit(PlayerController playerController, TableController tableController) {
-        Attack.super.attackInit(playerController, tableController);
-    }
-
-    @Override
-    default void attackMove(Player attacker, TableController tableController, PlayerController playerController) {
-        Attack.super.attackMove(attacker,  tableController, playerController);
-    }
-
-    @Override
-    default void defenceInit(PlayerController playerController, TableController tableController) {
-        Defence.super.defenceInit(playerController, tableController);
-    }
-
-    @Override
-    default void defenceMove(Player defender, List<Player> playersForNotify, TableController tableController) {
-        Defence.super.defenceMove(defender, playersForNotify, tableController);
-    }
-
-    @Override
-    default void throwMove(Player thrower, List<Player> playersForNotify, TableController tableController) {
-        Throw.super.throwMove(thrower, playersForNotify, tableController);
+public interface Move extends PlayerInputValidator, MessageService {
+    default List<Card> askForCards(Player player, TelegramBot bot) {
+        sendMessageTo(player, "Введите порядковые номера карт в Вашей руке через пробел:", bot);
+        String cardIndexes = receiveMessageFrom(player, bot);
+        List<Integer> cardIndexesList = parseCardIndexesStringToPlayerHandIndexes(cardIndexes);
+        boolean correctInput = validatePlayerHandIndexes(cardIndexesList, player);
+        while (!correctInput) {
+            sendMessageTo(player, "Неверный ввод. Попробуйте ещё раз:", bot);
+            cardIndexes = receiveMessageFrom(player, bot);
+            cardIndexesList = parseCardIndexesStringToPlayerHandIndexes(cardIndexes);
+            correctInput = validatePlayerHandIndexes(cardIndexesList, player);
+        }
+        List<Card> cards = new ArrayList<>();
+        for (Integer cardIndex : cardIndexesList) {
+            cards.add(player.getPlayerHand().get(cardIndex - 1));
+        }
+        return cards;
     }
 }

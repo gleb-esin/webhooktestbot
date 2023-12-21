@@ -1,36 +1,55 @@
 package org.example.move;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.example.controller.PlayerController;
-import org.example.service.PlayerInputValidator;
+import org.example.network.TelegramBot;
 import org.example.controller.TableController;
 import org.example.model.Card;
 import org.example.model.Player;
-import org.example.service.MessageService;
 
 import java.util.List;
 
-import static org.example.move.moveValidator.AttackValidator.isAttackMoveCorrect;
+@AllArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+public class Attack implements Move {
+    TelegramBot bot;
 
-public interface Attack extends PlayerInputValidator, MessageService {
-
-    default void attackInit(PlayerController playerController, TableController tableController) {
+    public void init(PlayerController playerController, TableController tableController) {
         Player attacker = playerController.getAttacker();
         Player defender = playerController.getDefender();
-        sendMessageToAll(playerController.getPlayers(), "⚔️ Ход " + attacker.getName() + " под " + defender.getName()+ "⚔️" +
-                "\n" + tableController.getTable().toString());
-        sendMessageTo(attacker, attacker.toString());
+        StringBuilder message = new StringBuilder("⚔️ Ход ")
+                .append(attacker.getName())
+                .append(" под ")
+                .append(defender.getName())
+                .append("⚔️")
+                .append(System.lineSeparator())
+                .append(tableController.getTable().toString());
+        sendMessageToAll(playerController.getPlayers(), message.toString(), bot);
+        sendMessageTo(attacker, attacker.toString(), bot);
     }
 
-    default void attackMove(Player attacker, TableController tableController, PlayerController playerController) {
-        List<Card> cards = askForCards(attacker);
+    public void move(Player attacker, TableController tableController, PlayerController playerController) {
+        List<Card> cards = askForCards(attacker, bot);
         boolean isMoveCorrect = isAttackMoveCorrect(cards);
         while (cards.isEmpty() || (cards.size() > 1 && !isMoveCorrect)) {
-            sendMessageTo(attacker, "Так пойти не получится.");
-            cards = askForCards(attacker);
+            sendMessageTo(attacker, "Так пойти не получится.", bot);
+            cards = askForCards(attacker, bot);
             isMoveCorrect = isAttackMoveCorrect(cards);
         }
         tableController.addCardsToTable(cards, attacker);
-        sendMessageToAll(playerController.getPlayers(), tableController.getTable().toString());
+        sendMessageToAll(playerController.getPlayers(), tableController.getTable().toString(), bot);
         attacker.setRole("thrower");
     }
+
+    private boolean isAttackMoveCorrect(List<Card> cards) {
+        boolean isMoveCorrect = true;
+        for (int i = 0; i < cards.size() - 1; i++) {
+            isMoveCorrect = cards.get(i).getValue().equals(cards.get(i + 1).getValue());
+            if (!isMoveCorrect) break;
+        }
+        return isMoveCorrect;
+    }
+
 }

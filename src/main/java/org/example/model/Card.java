@@ -31,6 +31,14 @@ public class Card implements Comparable<Card> {
         } else return -1;
     }
 
+
+    @Override
+    public boolean equals(Object o) {
+        if(this == o) return true;
+        if(o == null || getClass() != o.getClass()) return false;
+        Card card = (Card) o;
+        return weight.equals(card.weight);
+    }
     @Override
     public String toString() {
         return new StringBuilder("<b>[").append(value).append(suit).append("]</b>").toString();

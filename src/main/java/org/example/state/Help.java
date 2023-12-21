@@ -24,6 +24,6 @@ public class Help implements MessageService {
     }
 
     public void execute() {
-        sendMessageTo(ownerId, help);
+        sendMessageTo(ownerId, help, bot);
     }
 }

@@ -1,9 +1,6 @@
 package org.example.service;
 
-import org.example.model.Card;
 import org.example.model.Player;
-import org.example.monitor.UpdateMonitor;
-import org.example.service.MessageService;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,67 +8,43 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public interface PlayerInputValidator extends MessageService {
+public interface PlayerInputValidator {
 
-    default List<Card> askForCards(Player player) {
-        List<Card> cards = new ArrayList<>();
-        String message;
-        if (player.getRole().equals("attacker")) {
-            message = player.getName() + ", введите порядковые номера карт в Вашей руке через пробел: ";
-        } else {
-            message = player.getName() + ", введите порядковые номера карт в Вашей руке через пробел. (Если хотите пропустить ход, напечатайте \"0\"): ";
-        }
-        //Отправляем запрос клиенту
-        sendMessageTo(player, message);
-        //Получаем ответ от клиента
-        String cardIndexes = receiveMessageFrom(player);
+    default List<Integer> parseCardIndexesStringToPlayerHandIndexes(String cardIndexes) {
+        List<Integer> playerHandIndexes = new ArrayList<>();
         String[] cardIndexesArr = cardIndexes.split(" ");
         Pattern pattern = Pattern.compile("^(0|[1-9]\\d*)$");
         for (String s : cardIndexesArr) {
             Matcher matcher = pattern.matcher(s);
             if (matcher.find()) {
                 if (Integer.parseInt(s) == 0) {
-                    cards.clear();
-                    return cards;
+                    playerHandIndexes.clear();
+                    return playerHandIndexes;
                 } else {
-                    boolean correctInput = Integer.parseInt(s) <= player.getPlayerHand().size() || Integer.parseInt(s) == 0;
-                    if (correctInput) {
-                        cards.add(player.getPlayerHand().get(Integer.parseInt(s) - 1));
-                    } else {
-                        while (!correctInput) {
-                            //посылаем повторный запрос клиенту
-                            sendMessageTo(player, player.getName() + message);
-                            //Получаем строку от клиента
-                            cardIndexes = receiveMessageFrom(player);
-                            //Формируем массив с номерами карт
-                            cardIndexesArr = cardIndexes.split(" ");
-                            //Для каждого элемента массива с номерами карт
-                            for (String st : cardIndexesArr) {
-                                //парсим строку
-                                matcher = pattern.matcher(st);
-                                //если матчер нашел цифры
-                                if (matcher.find()) {
-                                    //если это ноль, то выходим из цикла
-                                    if (Integer.parseInt(st) == 0) {
-                                        cards.clear();
-                                        return cards;
-                                    } else {
-                                        //если это не ноль, то проверяем корректность ввода
-                                        correctInput = Integer.parseInt(st) <= player.getPlayerHand().size();
-                                        //если корректно
-                                        if (correctInput) {
-                                            //добавляем карту в список
-                                            cards.add(player.getPlayerHand().get(Integer.parseInt(st) - 1));
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                    if (!playerHandIndexes.contains(Integer.parseInt(s))) {
+                        playerHandIndexes.add(Integer.parseInt(s));
                     }
                 }
             }
         }
-        Collections.sort(cards);
-        return cards;
+        Collections.sort(playerHandIndexes);
+        return playerHandIndexes;
+    }
+
+    default boolean validatePlayerHandIndexes(List<Integer> playerHandIndexes, Player player) {
+        boolean correctInput = true;
+        if (playerHandIndexes.isEmpty()) {
+            correctInput = true;
+        } else if (playerHandIndexes.size() > player.getPlayerHand().size()) {
+            correctInput = false;
+        } else {
+            for (Integer index : playerHandIndexes) {
+                if (index > player.getPlayerHand().size()) {
+                    correctInput = false;
+                    break;
+                }
+            }
+        }
+        return correctInput;
     }
 }

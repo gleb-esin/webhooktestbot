@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CardTest {
 
     @Test
-    void compareTo_whenCardsHaveTheSameSuit_then1() {
+    void compareTo_whenCardsHaveTheSameSuitNotValue_then1() {
         Card spades7 = new Card("♠", "7", true);
         Card spades8 = new Card("♠", "8", true);
 
@@ -35,6 +35,46 @@ class CardTest {
         Card diamondsK = new Card("♦", "K", false);
 
         assertEquals(-1, diamondsK.compareTo(spades7));
+    }
+
+    @Test
+    void compareTo_whenCardsAreEqual_then0() {
+        Card spades71 = new Card("♠", "7", true);
+        Card spades7 = new Card("♠", "7", true);
+
+        assertEquals(0, spades71.compareTo(spades7));
+    }
+
+    @Test
+    void testEquals_whenCardsAreEqual_thenTrue() {
+        Card heartsJ = new Card("♥", "J", false);
+        Card heartsJ2 = new Card("♥", "J", false);
+
+        assertEquals(heartsJ, heartsJ2);
+    }
+
+    @Test
+    void testEquals_whenCardsAreNotEqual_thenNotEqual() {
+        Card heartsJ = new Card("♥", "J", false);
+        Card heartsK = new Card("♥", "K", false);
+
+        assertNotEquals(heartsJ, heartsK);
+    }
+
+    @Test
+    void testEquals_whenOneCardIsANull_thenNotEqual() {
+        Card heartsJ = new Card("♥", "J", false);
+        Card heartsK = null;
+
+        assertNotEquals(heartsJ, heartsK);
+    }
+
+    @Test
+    void testEquals_whenOneCardsAreNotCardClass_thenNotEqual() {
+        Card heartsJ = new Card("♥", "J", false);
+        String heartsK = "K♥";
+
+        assertNotEquals(heartsJ, heartsK);
     }
 
 
