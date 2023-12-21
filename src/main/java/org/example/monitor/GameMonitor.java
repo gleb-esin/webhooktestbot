@@ -17,6 +17,10 @@ public class GameMonitor {
         throwInFoolGames.put(gameId, players);
     }
 
+    public List<Player> getPlayers(UUID gameId) {
+        return throwInFoolGames.get(gameId);
+    }
+
     public void removeThrowInFoolToGameMonitor(UUID gameId, TelegramBot bot) {
         List<Player> players = throwInFoolGames.remove(gameId);
         bot.sendMessageToAll(players, "Игра  завершена.\n Выберите что-нибудь из меню");

@@ -10,19 +10,17 @@ import org.example.service.PlayerFactory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class PlayerMonitor {
     ConcurrentLinkedQueue<Player> throwInFoolWaiters = new ConcurrentLinkedQueue<>();
 
     public void addPlayerToThrowInFoolWaiters(Long chatId, TelegramBot bot) {
-        new Thread(() -> {
-            Player player = new PlayerFactory(chatId, bot).createPlayer();
-            throwInFoolWaiters.add(player);
-            if (throwInFoolWaiters.size() == 2) {
-                new GameFactory(bot).createThrowInFoolGame();
-            }
-            else bot.sendMessageTo(chatId, "Ждем игроков...");
-        }).start();
+        Player player = new PlayerFactory(chatId, bot).createPlayer();
+        throwInFoolWaiters.add(player);
+        if (throwInFoolWaiters.size() == 2) {
+            new GameFactory(bot).createThrowInFoolGame();
+        } else bot.sendMessageTo(chatId, "Ждем игроков...");
     }
 
     public List<Player> getThrowInFoolWaiterList() {
