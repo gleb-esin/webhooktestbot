@@ -3,14 +3,15 @@ package org.example.service;
 import org.example.model.Card;
 import org.example.model.Player;
 import org.example.network.TelegramBot;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-public abstract class PlayerInputValidator {
+@Component
+public class PlayerInputValidator {
 
     public List<Card> askForCards(Player player, TelegramBot bot) {
         bot.sendMessageTo(player, "Введите порядковые номера карт в Вашей руке через пробел:");

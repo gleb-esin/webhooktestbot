@@ -13,6 +13,7 @@ import org.example.move.Attack;
 import org.example.move.Defence;
 import org.example.move.Throw;
 import org.example.network.TelegramBot;
+import org.example.service.PlayerInputValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -41,7 +42,8 @@ public class ThrowInFool {
         dealCards();
         playerController.setPlayersTurn();
         Table table = tableController.getTable();
-        Attack attack = new Attack(bot);
+        PlayerInputValidator playerInputValidator = new PlayerInputValidator();
+        Attack attack = new Attack(bot, playerInputValidator);
         Defence defence = new Defence(bot);
         Throw throwMove = new Throw(bot);
 

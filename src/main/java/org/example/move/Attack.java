@@ -9,13 +9,16 @@ import org.example.controller.TableController;
 import org.example.model.Card;
 import org.example.model.Player;
 import org.example.service.PlayerInputValidator;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
-
+@Component
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class Attack extends PlayerInputValidator {
+public class Attack {
     TelegramBot bot;
+    PlayerInputValidator playerInputValidator;
+
 
     public void init(PlayerController playerController, TableController tableController) {
         Player attacker = playerController.getAttacker();
@@ -32,11 +35,11 @@ public class Attack extends PlayerInputValidator {
     }
 
     public void move(Player attacker, TableController tableController, PlayerController playerController) {
-        List<Card> cards = askForCards(attacker, bot);
+        List<Card> cards = playerInputValidator.askForCards(attacker, bot);
         boolean isMoveCorrect = isAttackMoveCorrect(cards);
         while (cards.isEmpty() || (cards.size() > 1 && !isMoveCorrect)) {
             bot.sendMessageTo(attacker, "Так пойти не получится.");
-            cards = askForCards(attacker, bot);
+            cards = playerInputValidator.askForCards(attacker, bot);
             isMoveCorrect = isAttackMoveCorrect(cards);
         }
         tableController.addCardsToTable(cards, attacker);
