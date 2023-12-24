@@ -17,8 +17,9 @@ import java.util.List;
 @Component
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class Defence extends PlayerInputValidator {
+public class Defence  {
     TelegramBot bot;
+    PlayerInputValidator playerInputValidator;
 
     public void init(PlayerController playerController) {
         bot.sendMessageToAll(playerController.getPlayers(),
@@ -38,7 +39,7 @@ public class Defence extends PlayerInputValidator {
             //If defender can beat attacker cards...
         } else {
             //...ask defender for cards.
-            List<Card> cards = askForCards(defender, bot);
+            List<Card> cards = playerInputValidator.askForCards(defender, bot);
             //If defender refused to beat cards...
             if (cards.isEmpty()) {
                 bot.sendMessageToAll(playersForNotify, tableController.getTable().toString());
@@ -56,7 +57,7 @@ public class Defence extends PlayerInputValidator {
                     }
                     //...and ask defender for correct cards.
                     bot.sendMessageTo(defender, "Так не получится отбиться");
-                    cards = askForCards(defender, bot);
+                    cards = playerInputValidator.askForCards(defender, bot);
                     isDefendPossible = isDefenceCorrect(unbeatenCards, cards);
                 }
                 //If defender could beat cards...

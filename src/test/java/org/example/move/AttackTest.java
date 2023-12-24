@@ -42,9 +42,7 @@ class AttackTest {
         playerController = new PlayerController(List.of(attacker, defender));
         playerController.setAttacker(attacker);
         playerController.setDefender(defender);
-        cards = new ArrayList<>(List.of(
-                new Card("♠", "6", true),
-                new Card("♣", "6", false)));
+
 
     }
 
@@ -65,7 +63,10 @@ class AttackTest {
     }
 
     @Test
-    void move() {
+    void move_whenMoveIsCorrect_thenAddCardsToTable() {
+        cards = new ArrayList<>(List.of(
+                new Card("♠", "6", true),
+                new Card("♣", "6", false)));
         when(playerInputValidator.askForCards(any(), any())).thenReturn(cards);
 
         attack.move(playerController.getAttacker(), tableController, playerController);
@@ -74,5 +75,21 @@ class AttackTest {
         verify(bot).sendMessageToAll(playerController.getPlayers(), tableController.getTable().toString());
         assertEquals("thrower", attacker.getRole());
 
+    }
+    @Test
+    void move_whenAttackIsNotCorrect_thenSendWarning() {
+       ArrayList<Card> wrongCards = new ArrayList<>(List.of(
+                new Card("♠", "6", true),
+                new Card("♣", "7", false)));
+        cards = new ArrayList<>(List.of(
+                new Card("♠", "6", true),
+                new Card("♣", "6", false)));
+        when(playerInputValidator.askForCards(any(), any())).
+                thenReturn(wrongCards).thenReturn(cards);
+
+        attack.move(playerController.getAttacker(), tableController, playerController);
+
+        verify(bot).sendMessageTo(attacker, "Так пойти не получится.");
+        verify(playerInputValidator, times(2)).askForCards(any(), any());
     }
 }

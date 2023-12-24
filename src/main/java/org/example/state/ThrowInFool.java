@@ -44,7 +44,7 @@ public class ThrowInFool {
         Table table = tableController.getTable();
         PlayerInputValidator playerInputValidator = new PlayerInputValidator();
         Attack attack = new Attack(bot, playerInputValidator);
-        Defence defence = new Defence(bot);
+        Defence defence = new Defence(bot, playerInputValidator);
         Throw throwMove = new Throw(bot);
 
         gameloop:
