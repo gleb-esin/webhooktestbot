@@ -11,8 +11,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-@Getter
 @Setter
+@Getter
 @Slf4j
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Player implements Comparable<Player> {
@@ -36,15 +36,6 @@ public class Player implements Comparable<Player> {
         this.chatID = userEntity.getUserId();
         this.wins = userEntity.getWins();
         this.games = userEntity.getGames();
-    }
-
-    public Player(Long chatID, String name, int minTrumpWeight, int wins, int games) {
-        this.name = name;
-        this.chatID = chatID;
-        this.minTrumpWeight = minTrumpWeight;
-        this.wins = wins;
-        this.games = games;
-
     }
 
     @Override
@@ -76,7 +67,9 @@ public class Player implements Comparable<Player> {
     public int compareTo(Player player) {
         if (this.minTrumpWeight > player.minTrumpWeight) {
             return 1;
-        } else return -1;
+        } else if(this.minTrumpWeight < player.minTrumpWeight) {
+            return -1;
+        } else return 0;
     }
 
     public UserEntity toUserEntity() {
