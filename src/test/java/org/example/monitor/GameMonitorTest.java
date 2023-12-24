@@ -35,15 +35,14 @@ class GameMonitorTest {
     @Test
     void addThrowInFoolToGameMonitor_andGetPlayers() {
         gameMonitor.addThrowInFoolToGameMonitor(gameId, players);
-
         assertEquals(players, gameMonitor.getPlayers(gameId));
     }
 
     @Test
     void removeThrowInFoolToGameMonitor() {
         TelegramBot botMock = Mockito.mock(TelegramBot.class);
-
         gameMonitor.addThrowInFoolToGameMonitor(gameId, players);
+
         gameMonitor.removeThrowInFoolToGameMonitor(gameId, botMock);
 
         assertNotEquals(players, gameMonitor.getPlayers(gameId));

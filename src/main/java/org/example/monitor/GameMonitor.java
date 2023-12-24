@@ -4,11 +4,13 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.example.model.Player;
 import org.example.network.TelegramBot;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Component
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class GameMonitor {
     ConcurrentHashMap<UUID, List<Player>> throwInFoolGames = new ConcurrentHashMap<>();

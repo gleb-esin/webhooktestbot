@@ -1,43 +1,43 @@
 package org.example.monitor;
 
 import org.example.model.Player;
-import org.example.network.TelegramBot;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.spy;
 
 class PlayerMonitorTest {
     @Mock
-    Player player1;
+    Player player1 = new Player(1L, "player1");
     @Mock
-    Player player2;
-    @Mock
-    Player player3;
-    @Spy
+    Player player2 = new Player(2L, "player2");
     PlayerMonitor playerMonitor;
-    @Mock
-    TelegramBot bot;
 
     @BeforeEach
     void setUp() {
-        playerMonitor = spy(PlayerMonitor.class);
-//        player1 = new Player(1L, "player1");
-//        player2 = new Player(2L, "player2");
-//        player3 = new Player(3L, "player3");
-//
-    }
-
-    @Test
-    void addPlayerToThrowInFoolWaiters_whenOnePlayer_then() {
-        playerMonitor.addPlayerToThrowInFoolWaiters(1L, bot);
+        playerMonitor = new PlayerMonitor();
+        playerMonitor.addPlayerToThrowInFoolWaiters(player1);
 
     }
 
     @Test
-    void getThrowInFoolWaiterList() {
+    void addPlayerToThrowInFoolWaiters_whenAddedOnePlayer_thenThrowInFoolWaiterListSizeIsOne() {
+        assertEquals(1, playerMonitor.getThrowInFoolWaiterListSize());
+    }
+
+    @Test
+    void getThrowInFoolWaiterList_whenAddedTwoPlayers_thenReturnsTwoPlayers() {
+        playerMonitor.addPlayerToThrowInFoolWaiters(player2);
+        assertEquals(2, playerMonitor.getThrowInFoolWaiterListSize());
+    }
+
+    @Test
+    void getThrowInFoolWaiterListSize_whenAddedTwoPlayers_thenReturnsTwoPlayers() {
+        playerMonitor.addPlayerToThrowInFoolWaiters(player2);
+
+        assertEquals(2, playerMonitor.getThrowInFoolWaiterListSize());
+
     }
 }

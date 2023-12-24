@@ -3,24 +3,18 @@ package org.example.monitor;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.example.model.Player;
-import org.example.network.TelegramBot;
-import org.example.service.GameFactory;
-import org.example.service.PlayerFactory;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
-
+@Component
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class PlayerMonitor {
     ConcurrentLinkedQueue<Player> throwInFoolWaiters = new ConcurrentLinkedQueue<>();
 
-    public void addPlayerToThrowInFoolWaiters(Long chatId, TelegramBot bot) {
-        Player player = new PlayerFactory(chatId, bot).createPlayer();
+    public void addPlayerToThrowInFoolWaiters(Player player) {
         throwInFoolWaiters.add(player);
-        if (throwInFoolWaiters.size() == 2) {
-            new GameFactory(bot).createThrowInFoolGame();
-        } else bot.sendMessageTo(chatId, "Ждем игроков...");
     }
 
     public List<Player> getThrowInFoolWaiterList() {
@@ -29,5 +23,9 @@ public class PlayerMonitor {
             players.add(throwInFoolWaiters.poll());
         }
         return players;
+    }
+
+    public int getThrowInFoolWaiterListSize() {
+        return throwInFoolWaiters.size();
     }
 }

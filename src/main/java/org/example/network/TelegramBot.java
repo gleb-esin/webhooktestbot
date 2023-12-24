@@ -10,6 +10,8 @@ import org.example.model.Player;
 import org.example.monitor.GameMonitor;
 import org.example.monitor.PlayerMonitor;
 
+import org.example.service.GameFactory;
+import org.example.service.PlayerFactory;
 import org.example.state.Help;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -35,18 +37,20 @@ public class TelegramBot extends TelegramWebhookBot  {
     String botPath;
     String botUsername;
     String botToken;
-    UserEntityRepository userEntityRepository;
-    PlayerMonitor playerMonitor = new PlayerMonitor();
-    GameMonitor gameMonitor = new GameMonitor();
+    PlayerMonitor playerMonitor;
+    GameFactory gameFactory;
+    PlayerFactory playerfactory;
     ConcurrentHashMap<Long, CompletableFuture<Update>> updates = new ConcurrentHashMap<>();
 
     @Autowired
-    public TelegramBot(Botconfig botconfig, UserEntityRepository userEntityRepository) {
+    public TelegramBot(Botconfig botconfig, PlayerMonitor playerMonitor, GameFactory gameFactory, PlayerFactory playerfactory) {
         super("${telegrambot.botToken}");
         this.botPath = botconfig.getWebHookPath();
         this.botToken = botconfig.getBotToken();
         this.botUsername = botconfig.getUserName();
-        this.userEntityRepository = userEntityRepository;
+        this.playerMonitor = playerMonitor;
+        this.gameFactory = gameFactory;
+        this.playerfactory = playerfactory;
 
         List<BotCommand> menu = new ArrayList<>();
         menu.add(new BotCommand("/throwinfool", "Подкидной дурак"));
@@ -72,7 +76,17 @@ public class TelegramBot extends TelegramWebhookBot  {
             chatId = update.getMessage().getChatId();
             switch (text) {
                 case "/start", "/help" -> new Help(this, chatId).execute();
-                case "/throwinfool" -> playerMonitor.addPlayerToThrowInFoolWaiters(chatId, this);
+                case "/throwinfool" -> {
+                   new Thread(() -> {
+                        Player player = playerfactory.createPlayer(chatId, this);
+                        playerMonitor.addPlayerToThrowInFoolWaiters(player);
+                        if (playerMonitor.getThrowInFoolWaiterListSize() == 2) {
+                            gameFactory.createThrowInFoolGame(this);
+                        } else {
+                            sendMessageTo(chatId, "Ждем игроков");
+                        }
+                    }).start();
+                }
 
                 default -> addMessageToUpdateMonitor(chatId, update);
             }

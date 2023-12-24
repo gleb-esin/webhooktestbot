@@ -1,7 +1,6 @@
 package org.example.state;
 
 import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.experimental.NonFinal;
 
 import lombok.experimental.FieldDefaults;
@@ -16,10 +15,10 @@ import org.example.move.Throw;
 import org.example.network.TelegramBot;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
 import java.util.UUID;
 
 
-@Getter
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ThrowInFool {
     UUID gameID;
@@ -31,16 +30,12 @@ public class ThrowInFool {
     TelegramBot bot;
 
     @Autowired
-    public ThrowInFool(TelegramBot bot) {
-        this.gameID = UUID.randomUUID();
+    public ThrowInFool(TelegramBot bot,UUID gameID, List<Player> players) {
+        this.gameID = gameID;
         this.bot = bot;
-        this.playerController = new PlayerController(bot.getPlayerMonitor().getThrowInFoolWaiterList());
+        this.playerController = new PlayerController(players);
         this.deckController = new DeckController(this.gameID);
-        this.tableController = new TableController(deckController.getDeck().getTrump());
-
-
-        bot.getGameMonitor().addThrowInFoolToGameMonitor(gameID, playerController.getPlayers());
-    }
+        this.tableController = new TableController(deckController.getDeck().getTrump());}
 
     public void play() {
         dealCards();
@@ -113,7 +108,7 @@ public class ThrowInFool {
                 deckController.fillUpTheHands(playerController.getThrowQueue(), defender);
             playerController.changeTurn();
         }
-        finnishGame();
+        bot.sendMessageToAll(playerController.getPlayers(), "\uD83C\uDFC6 Победил " + playerController.getWinner().getName() + "! \uD83C\uDFC6");
     }
 
     private void dealCards() {
@@ -121,14 +116,6 @@ public class ThrowInFool {
             deckController.fillUpThePlayersHand(player);
             //if player gets cards - add 1 game
             player.setGames(player.getGames() + 1);
-        }
-    }
-
-    public void finnishGame() {
-        bot.sendMessageToAll(playerController.getPlayers(), "\uD83C\uDFC6 Победил " + playerController.getWinner().getName() + "! \uD83C\uDFC6");
-        bot.getGameMonitor().removeThrowInFoolToGameMonitor(gameID, bot);
-        for (Player player : playerController.getPlayers()) {
-            bot.getUserEntityRepository().save(player.toUserEntity());
         }
     }
 }
