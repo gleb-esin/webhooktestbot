@@ -16,22 +16,22 @@ import java.util.List;
 @Component
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class Throw extends PlayerInputValidator {
+public class Throw {
     TelegramBot bot;
+    PlayerInputValidator playerInputValidator;
 
 
 
     public void throwMove(Player thrower, List<Player> playersForNotify, TableController tableController, Player defender) {
         bot.sendMessageTo(thrower, thrower.toString());
-        List<Card> cards = askForCards(thrower, bot);
-
+        List<Card> cards = playerInputValidator.askForCards(thrower, bot);
         if (cards.isEmpty()) {
             bot.sendMessageToAll(playersForNotify, thrower.getName() + " не будет подкидывать.");
         } else {
             boolean isThrowCorrect = isThrowMoveCorrect(tableController.getAll(), cards, defender);
             while (!isThrowCorrect) {
                 bot.sendMessageTo(thrower, thrower.getName() + " , так не получится подкинуть.");
-                cards = askForCards(thrower, bot);
+                cards = playerInputValidator.askForCards(thrower, bot);
                 isThrowCorrect = isThrowMoveCorrect(tableController.getAll(), cards, defender);
             }
             tableController.addCardsToTable(cards, thrower);

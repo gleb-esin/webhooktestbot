@@ -45,7 +45,7 @@ public class ThrowInFool {
         PlayerInputValidator playerInputValidator = new PlayerInputValidator();
         Attack attack = new Attack(bot, playerInputValidator);
         Defence defence = new Defence(bot, playerInputValidator);
-        Throw throwMove = new Throw(bot);
+        Throw throwMove = new Throw(bot, playerInputValidator);
 
         gameloop:
         while (!playerController.isGameOver()) {
