@@ -6,8 +6,6 @@ import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.example.config.Botconfig;
-import org.example.model.Player;
-import org.example.monitor.MessageMonitor;
 import org.example.service.UpdateHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
@@ -23,8 +21,6 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -36,31 +32,27 @@ public class TelegramBot extends TelegramWebhookBot {
     String botUsername;
     @Getter
     String botToken;
-    MessageMonitor messageMonitor;
-
     UpdateHandler updateHandler;
-    List<BotCommand> menu = new ArrayList<>(
-            List.of(
-                    new BotCommand("/throwinfool", "Подкидной дурак"),
-                    new BotCommand("/help", "Описание бота")
-//                    ,new BotCommand("/test", "test game")
-            )
-    );
 
     @Autowired
-    public TelegramBot(Botconfig botconfig, MessageMonitor messageMonitor, UpdateHandler updateHandler) {
+    public TelegramBot(Botconfig botconfig, UpdateHandler updateHandler) {
         super("${telegrambot.botToken}");
         this.botPath = botconfig.getWebHookPath();
         this.botToken = botconfig.getBotToken();
         this.botUsername = botconfig.getUserName();
-        this.messageMonitor = messageMonitor;
         this.updateHandler = updateHandler;
         try {
+            List<BotCommand> menu = new ArrayList<>(
+                    List.of(
+                            new BotCommand("/throwinfool", "Подкидной дурак"),
+                            new BotCommand("/help", "Описание бота")
+//                    ,new BotCommand("/test", "test game")
+                    )
+            );
             execute(new SetMyCommands(menu, new BotCommandScopeDefault(), null));
         } catch (TelegramApiException e) {
             System.err.println("Error setting bot's command list: " + e.getMessage());
         }
-
     }
 
 

@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.example.model.Player;
 import org.example.monitor.GameMonitor;
-import org.example.monitor.PlayerMonitor;
 import org.example.network.UserEntityRepository;
 import org.example.state.ThrowInFool;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +12,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Semaphore;
 
 @Component
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -25,18 +27,29 @@ public class GameFactory {
     public void createThrowInFoolGame(List<Player> players) {
         UUID gameID = UUID.randomUUID();
         gameMonitor.addThrowInFoolToGameMonitor(gameID, players);
-        Thread gameThread = new Thread(() -> {
+        ExecutorService executorService = Executors.newCachedThreadPool(); // Мы используем CachedThreadPool
+        Semaphore semaphore = new Semaphore(2); // Начальное количество разрешений
+        executorService.submit(() -> {
+            try {
+                // Ожидаем, пока не получим разрешение от семафора
+                semaphore.acquire();
+                // Код для каждого отдельного игрока
                 new ThrowInFool(messageService, gameID, players).play();
-                finnishGame(messageService, players, gameID);
+                finnishGame(players, gameID);
+            } catch (InterruptedException e) {
+                // Обработка исключения
+            } finally {
+                // Освобождаем разрешение после завершения игры
+                semaphore.release();
+            }
         });
-        gameThread.start();
+        executorService.shutdown();
     }
 
-    public void finnishGame(MessageService bot, List<Player> players, UUID gameID) {
-        System.err.println("Игра завершена");
-        gameMonitor.removeThrowInFoolToGameMonitor(gameID);
-        for (Player player : players) {
-            userEntityRepository.save(player.toUserEntity());
-        }
+public void finnishGame(List<Player> players, UUID gameID) {
+    gameMonitor.removeThrowInFoolToGameMonitor(gameID);
+    for (Player player : players) {
+        userEntityRepository.save(player.toUserEntity());
     }
+}
 }

@@ -1,28 +1,19 @@
 package org.example.state;
 
 import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.example.network.TelegramBot;
 import org.example.service.MessageService;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.crypto.MacSpi;
-import java.util.concurrent.CompletableFuture;
-
-@Setter
-@Getter
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@AllArgsConstructor(onConstructor = @__(@Autowired))
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class Help {
     Long chatId;
     MessageService messageService;
-    final String help = "Добро пожаловать!";
-
-    public Help(Long chatId) {
-        this.chatId = chatId;
-    }
 
     public void execute() {
+        String help = "Добро пожаловать!";
         messageService.sendMessageTo(chatId, help);
     }
 }

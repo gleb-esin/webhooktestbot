@@ -1,12 +1,13 @@
 package org.example.monitor;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import org.example.model.Player;
 import org.example.service.GameFactory;
 import org.example.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -14,16 +15,28 @@ import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Component
-@AllArgsConstructor(onConstructor = @__(@Autowired))
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class PlayerMonitor {
     GameFactory gameFactory;
     MessageService messageService;
     ConcurrentLinkedQueue<Player> throwInFoolWaiters = new ConcurrentLinkedQueue<>();
+    @Value("${game.maxPlayers}")
+    @NonFinal
+    int maxPlayers;
+
+    @Autowired
+    public PlayerMonitor(GameFactory gameFactory, MessageService messageService) {
+        this.gameFactory = gameFactory;
+        this.messageService = messageService;
+    }
 
     public void addPlayerToThrowInFoolWaiters(Player player) {
         throwInFoolWaiters.add(player);
-        if (getThrowInFoolWaiterListSize() == 2) {
+        runThrowInFoolGameIfPlayersEquals(maxPlayers, player);
+    }
+
+    private void runThrowInFoolGameIfPlayersEquals(int maxPlayers, Player player) {
+        if (getThrowInFoolWaiterSize() == maxPlayers) {
             gameFactory.createThrowInFoolGame(getThrowInFoolWaiterList());
         } else {
             messageService.sendMessageTo(player.getChatID(), "Ждем игроков");
@@ -38,7 +51,7 @@ public class PlayerMonitor {
         return players;
     }
 
-    public int getThrowInFoolWaiterListSize() {
+    public int getThrowInFoolWaiterSize() {
         return throwInFoolWaiters.size();
     }
 }

@@ -42,6 +42,5 @@ public class MessageService  {
 
     public void publishEvent(Object event) {
         applicationEventPublisher.publishEvent(event);
-        System.out.println("DEBUG Event published: " + event);
     }
 }

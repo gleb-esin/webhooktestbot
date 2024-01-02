@@ -4,7 +4,7 @@ import org.example.controller.TableController;
 import org.example.model.Card;
 import org.example.model.Player;
 import org.example.model.Suit;
-import org.example.network.TelegramBot;
+import org.example.service.MessageService;
 import org.example.service.PlayerInputValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ class ThrowTest {
 
     List<Card> thrownCards;
     @Mock
-    TelegramBot bot;
+    MessageService messageService;
     @Mock
     PlayerInputValidator playerInputValidator;
     @InjectMocks
@@ -116,7 +116,7 @@ class ThrowTest {
         doReturn(false).doReturn(true).when(throwMove).isThrowMoveCorrect(any(), any(), any());
         throwMove.throwMove(thrower, playersForNotify, tableControllerSpy, defender);
 
-        bot.sendMessageTo(thrower, thrower.getName() + " , так не получится подкинуть.");
+        messageService.sendMessageTo(thrower, thrower.getName() + " , так не получится подкинуть.");
 
     }
 
@@ -126,7 +126,7 @@ class ThrowTest {
         when(playerInputValidator.askForCards(any())).thenReturn(thrownCards);
         throwMove.throwMove(thrower, playersForNotify, tableControllerSpy, defender);
 
-        verify(bot).sendMessageToAll(playersForNotify, thrower.getName() + " не будет подкидывать.");
+        verify(messageService).sendMessageToAll(playersForNotify, thrower.getName() + " не будет подкидывать.");
         assertEquals(0, tableControllerSpy.getTable().getUnbeatenCards().size());
     }
     @Test

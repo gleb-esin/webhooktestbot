@@ -5,7 +5,7 @@ import org.example.controller.TableController;
 import org.example.model.Card;
 import org.example.model.Player;
 import org.example.model.Suit;
-import org.example.network.TelegramBot;
+import org.example.service.MessageService;
 import org.example.service.PlayerInputValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +16,7 @@ import org.mockito.MockitoAnnotations;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class AttackTest {
@@ -26,7 +26,7 @@ class AttackTest {
     PlayerController playerController;
     ArrayList<Card> cards;
     @Mock
-    TelegramBot bot;
+    MessageService messageService;
     @Mock
     PlayerInputValidator playerInputValidator;
     @InjectMocks
@@ -42,8 +42,6 @@ class AttackTest {
         playerController = new PlayerController(List.of(attacker, defender));
         playerController.setAttacker(attacker);
         playerController.setDefender(defender);
-
-
     }
 
     @Test
@@ -57,9 +55,9 @@ class AttackTest {
                 .append(tableController.getTable().toString());
 
         attack.init(playerController, tableController);
-//FIXME:
-//        verify(bot).sendMessageToAll(playerController.getPlayers(), expexceted.toString());
-//        verify(bot).sendMessageTo(attacker, attacker.toString());
+
+        verify(messageService).sendMessageToAll(playerController.getPlayers(), expexceted.toString());
+        verify(messageService).sendMessageTo(attacker, attacker.toString());
     }
 
     @Test
@@ -77,9 +75,10 @@ class AttackTest {
         assertEquals("thrower", attacker.getRole());
 
     }
+
     @Test
     void move_whenAttackIsNotCorrect_thenSendWarning() {
-       ArrayList<Card> wrongCards = new ArrayList<>(List.of(
+        ArrayList<Card> wrongCards = new ArrayList<>(List.of(
                 new Card("♠", "6", true),
                 new Card("♣", "7", false)));
         cards = new ArrayList<>(List.of(

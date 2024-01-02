@@ -5,7 +5,7 @@ import org.example.controller.TableController;
 import org.example.model.Card;
 import org.example.model.Player;
 import org.example.model.Suit;
-import org.example.network.TelegramBot;
+import org.example.service.MessageService;
 import org.example.service.PlayerInputValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +16,7 @@ import org.mockito.MockitoAnnotations;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -28,7 +28,7 @@ class DefenceTest {
     PlayerController playerController;
     ArrayList<Card> cards;
     @Mock
-    TelegramBot bot;
+    MessageService messageService;
     @Mock
     PlayerInputValidator playerInputValidator;
     @InjectMocks
@@ -58,9 +58,9 @@ class DefenceTest {
     @Test
     void init() {
         defence.init(playerController);
-        verify(bot).sendMessageToAll(playerController.getPlayers(),
+        verify(messageService).sendMessageToAll(playerController.getPlayers(),
                 "\uD83D\uDEE1 Отбивается " + playerController.getDefender().getName() + " \uD83D\uDEE1");
-        verify(bot).sendMessageTo(playerController.getDefender(), playerController.getDefender().toString());
+        verify(messageService).sendMessageTo(playerController.getDefender(), playerController.getDefender().toString());
     }
 
     @Test
@@ -70,8 +70,8 @@ class DefenceTest {
         defence.move(defender, playerController.getPlayers(), tableController);
 
         assertEquals(4, tableController.getTable().getBeatenCards().size());
-        verify(bot).sendMessageToAll(playerController.getPlayers(), tableController.getTable().toString());
-        verify(bot).sendMessageToAll(playerController.getPlayers(), "Карты отбиты!");
+        verify(messageService).sendMessageToAll(playerController.getPlayers(), tableController.getTable().toString());
+        verify(messageService).sendMessageToAll(playerController.getPlayers(), "Карты отбиты!");
 
     }
 
@@ -86,7 +86,7 @@ class DefenceTest {
         defence.move(defender, playerController.getPlayers(), tableController);
 
         verify(playerInputValidator, times(2)).askForCards(any());
-        verify(bot).sendMessageTo(defender, "Так не получится отбиться");
+        verify(messageService).sendMessageTo(defender, "Так не получится отбиться");
     }
 
     @Test
@@ -126,7 +126,7 @@ class DefenceTest {
 
         defence.move(defender, playerController.getPlayers(), tableController);
 
-        verify(bot).sendMessageToAll(playerController.getPlayers(), defender.getName() + " не будет отбиваться");
+        verify(messageService).sendMessageToAll(playerController.getPlayers(), defender.getName() + " не будет отбиваться");
         assertEquals("binder", defender.getRole());
         assertEquals(2, tableController.getAll().size());
     }
