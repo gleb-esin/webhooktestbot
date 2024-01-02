@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 @Getter
 @Entity
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = false)
 public class UserEntity {
     @Id
     Long userId;
@@ -27,5 +27,8 @@ public class UserEntity {
         this.name = player.getName();
         this.games = player.getGames();
         this.wins = player.getWins();
+    }
+
+    public UserEntity() {
     }
 }

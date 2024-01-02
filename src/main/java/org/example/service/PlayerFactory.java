@@ -7,26 +7,26 @@ import org.example.network.UserEntityRepository;
 import org.springframework.stereotype.Component;
 
 @Component
-public record PlayerFactory(UserEntityRepository userEntityRepository) {
+public record PlayerFactory(UserEntityRepository userEntityRepository, MessageService messageService) {
 
-    public Player createPlayer(Long chatId, TelegramBot bot) {
+    public Player createPlayer(Long chatId) {
         Player player;
         boolean playerIsNotRegistered = !userEntityRepository.existsByUserId(chatId);
         if (playerIsNotRegistered) {
-            bot.sendMessageTo(chatId, "Для участия в игре нужно зарегистрироваться. Выберите ваше имя в игре: ");
-            String name = bot.receiveMessageFrom(chatId);
+            messageService.sendMessageTo(chatId, "Для участия в игре нужно зарегистрироваться. Выберите ваше имя в игре: ");
+            String name = messageService.receiveMessageFrom(chatId);
             boolean nameIsTaken = userEntityRepository.existsByName(name);
             while (nameIsTaken) {
-                bot.sendMessageTo(chatId, "Такое имя уже занято. Пожалуйста, выберите другое: ");
-                name = bot.receiveMessageFrom(chatId);
+                messageService.sendMessageTo(chatId, "Такое имя уже занято. Пожалуйста, выберите другое: ");
+                name = messageService.receiveMessageFrom(chatId);
             }
             UserEntity userEntity = new UserEntity(chatId, name);
             userEntityRepository.save(userEntity);
             player = new Player(chatId, name);
-            bot.sendMessageTo(chatId, name + ", Вы успешно зарегистрированы в игре!");
+            messageService.sendMessageTo(chatId, name + ", Вы успешно зарегистрированы в игре!");
         } else {
             player = new Player(userEntityRepository.findByUserId(chatId));
-            bot.sendMessageTo(chatId, "С возвращением, " + player.getName() + "!\n" +
+            messageService.sendMessageTo(chatId, "С возвращением, " + player.getName() + "!\n" +
                     player.getStatistics());
         }
         return player;

@@ -1,8 +1,9 @@
 package org.example.service;
 
+import lombok.AllArgsConstructor;
 import org.example.model.Card;
 import org.example.model.Player;
-import org.example.network.TelegramBot;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -11,16 +12,18 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 @Component
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 public class PlayerInputValidator {
+    MessageService messageService;
 
-    public List<Card> askForCards(Player player, TelegramBot bot) {
-        bot.sendMessageTo(player, "Введите порядковые номера карт в Вашей руке через пробел:");
-        String cardIndexes = bot.receiveMessageFrom(player);
+    public List<Card> askForCards(Player player) {
+        messageService.sendMessageTo(player, "Введите порядковые номера карт в Вашей руке через пробел:");
+        String cardIndexes = messageService.receiveMessageFrom(player);
         List<Integer> cardIndexesList = parseCardIndexesStringToPlayerHandIndexes(cardIndexes);
         boolean correctInput = validatePlayerHandIndexes(cardIndexesList, player);
         while (!correctInput) {
-            bot.sendMessageTo(player, "Неверный ввод. Попробуйте ещё раз:");
-            cardIndexes = bot.receiveMessageFrom(player);
+            messageService.sendMessageTo(player, "Неверный ввод. Попробуйте ещё раз:");
+            cardIndexes = messageService.receiveMessageFrom(player);
             cardIndexesList = parseCardIndexesStringToPlayerHandIndexes(cardIndexes);
             correctInput = validatePlayerHandIndexes(cardIndexesList, player);
         }

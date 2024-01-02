@@ -12,7 +12,7 @@ import org.example.model.Table;
 import org.example.move.Attack;
 import org.example.move.Defence;
 import org.example.move.Throw;
-import org.example.network.TelegramBot;
+import org.example.service.MessageService;
 import org.example.service.PlayerInputValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -28,12 +28,12 @@ public class ThrowInFool {
     PlayerController playerController;
     DeckController deckController;
     TableController tableController;
-    TelegramBot bot;
+    MessageService messageService;
 
     @Autowired
-    public ThrowInFool(TelegramBot bot,UUID gameID, List<Player> players) {
+    public ThrowInFool(MessageService messageService,UUID gameID, List<Player> players) {
         this.gameID = gameID;
-        this.bot = bot;
+        this.messageService = messageService;
         this.playerController = new PlayerController(players);
         this.deckController = new DeckController(this.gameID);
         this.tableController = new TableController(deckController.getDeck().getTrump());}
@@ -42,10 +42,10 @@ public class ThrowInFool {
         dealCards();
         playerController.setPlayersTurn();
         Table table = tableController.getTable();
-        PlayerInputValidator playerInputValidator = new PlayerInputValidator();
-        Attack attack = new Attack(bot, playerInputValidator);
-        Defence defence = new Defence(bot, playerInputValidator);
-        Throw throwMove = new Throw(bot, playerInputValidator);
+        PlayerInputValidator playerInputValidator = new PlayerInputValidator(messageService);
+        Attack attack = new Attack(messageService, playerInputValidator);
+        Defence defence = new Defence(messageService, playerInputValidator);
+        Throw throwMove = new Throw(messageService, playerInputValidator);
 
         gameloop:
         while (!playerController.isGameOver()) {
@@ -74,7 +74,7 @@ public class ThrowInFool {
                     while (throwMove.isThrowPossible(tableController.getAll(), thrower.getPlayerHand()) && !defender.getPlayerHand().isEmpty()) {
                         int numberOfUnbeatenCards = table.getUnbeatenCards().size();
                         // If thrower can throw send initial notification to all waitingPlayers...
-                        bot.sendMessageToAll(playerController.getPlayers(), "⚔️ " + thrower.getName() + " может подкинуть ⚔️");
+                        messageService.sendMessageToAll(playerController.getPlayers(), "⚔️ " + thrower.getName() + " может подкинуть ⚔️");
                         ///...and make a throw attackMove.
                         throwMove.throwMove(thrower, playerController.getPlayers(), tableController, defender);
                         //If thrower became the winner - break game loop
@@ -99,18 +99,18 @@ public class ThrowInFool {
             }
             if (defender.getRole().equals("binder")) {
                 playerController.setBinder(defender);
-                bot.sendMessageToAll(playerController.getPlayers(), playerController.getBinder().getName() + " забирает карты " + tableController.getAll().toString().substring(1, tableController.getAll().toString().length() - 1));
+                messageService.sendMessageToAll(playerController.getPlayers(), playerController.getBinder().getName() + " забирает карты " + tableController.getAll().toString().substring(1, tableController.getAll().toString().length() - 1));
                 playerController.getBinder().getPlayerHand().addAll(tableController.getAll());
             }
 
             tableController.clear();
             if (deckController.getDeck().isEmpty()) {
-                bot.sendMessageToAll(playerController.getPlayers(), "Колода пуста!");
+                messageService.sendMessageToAll(playerController.getPlayers(), "Колода пуста!");
             } else
                 deckController.fillUpTheHands(playerController.getThrowQueue(), defender);
             playerController.changeTurn();
         }
-        bot.sendMessageToAll(playerController.getPlayers(), "\uD83C\uDFC6 Победил " + playerController.getWinner().getName() + "! \uD83C\uDFC6");
+        messageService.sendMessageToAll(playerController.getPlayers(), "\uD83C\uDFC6 Победил " + playerController.getWinner().getName() + "! \uD83C\uDFC6");
     }
 
     private void dealCards() {

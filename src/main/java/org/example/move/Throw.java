@@ -7,6 +7,7 @@ import org.example.network.TelegramBot;
 import org.example.controller.TableController;
 import org.example.model.Card;
 import org.example.model.Player;
+import org.example.service.MessageService;
 import org.example.service.PlayerInputValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -17,25 +18,25 @@ import java.util.List;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class Throw {
-    TelegramBot bot;
+    MessageService messageService;
     PlayerInputValidator playerInputValidator;
 
 
 
     public void throwMove(Player thrower, List<Player> playersForNotify, TableController tableController, Player defender) {
-        bot.sendMessageTo(thrower, thrower.toString());
-        List<Card> cards = playerInputValidator.askForCards(thrower, bot);
+        messageService.sendMessageTo(thrower, thrower.toString());
+        List<Card> cards = playerInputValidator.askForCards(thrower);
         if (cards.isEmpty()) {
-            bot.sendMessageToAll(playersForNotify, thrower.getName() + " не будет подкидывать.");
+            messageService.sendMessageToAll(playersForNotify, thrower.getName() + " не будет подкидывать.");
         } else {
             boolean isThrowCorrect = isThrowMoveCorrect(tableController.getAll(), cards, defender);
             while (!isThrowCorrect) {
-                bot.sendMessageTo(thrower, thrower.getName() + " , так не получится подкинуть.");
-                cards = playerInputValidator.askForCards(thrower, bot);
+                messageService.sendMessageTo(thrower, thrower.getName() + " , так не получится подкинуть.");
+                cards = playerInputValidator.askForCards(thrower);
                 isThrowCorrect = isThrowMoveCorrect(tableController.getAll(), cards, defender);
             }
             tableController.addCardsToTable(cards, thrower);
-            bot.sendMessageToAll(playersForNotify, tableController.getTable().toString());
+            messageService.sendMessageToAll(playersForNotify, tableController.getTable().toString());
 
         }
     }

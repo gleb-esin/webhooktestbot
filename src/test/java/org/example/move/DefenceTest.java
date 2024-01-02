@@ -65,7 +65,7 @@ class DefenceTest {
 
     @Test
     void move_whenDefenceIsCorrect_thenCadsAreBeaten() {
-        when(playerInputValidator.askForCards(defender, bot)).thenReturn(defenderCardsCorrect);
+        when(playerInputValidator.askForCards(defender)).thenReturn(defenderCardsCorrect);
 
         defence.move(defender, playerController.getPlayers(), tableController);
 
@@ -81,11 +81,11 @@ class DefenceTest {
                 new Card("♠", "6", true),
                 new Card("♣", "6", false)));
         defender.getPlayerHand().addAll(defenderCardsWrong);
-        when(playerInputValidator.askForCards(defender, bot)).thenReturn(defenderCardsWrong).thenReturn(defenderCardsCorrect);
+        when(playerInputValidator.askForCards(defender)).thenReturn(defenderCardsWrong).thenReturn(defenderCardsCorrect);
 
         defence.move(defender, playerController.getPlayers(), tableController);
 
-        verify(playerInputValidator, times(2)).askForCards(any(), any());
+        verify(playerInputValidator, times(2)).askForCards(any());
         verify(bot).sendMessageTo(defender, "Так не получится отбиться");
     }
 
@@ -95,7 +95,7 @@ class DefenceTest {
                 new Card("♠", "6", true),
                 new Card("♣", "6", false)));
         defender.getPlayerHand().addAll(defenderCardsWrong);
-        when(playerInputValidator.askForCards(defender, bot)).thenReturn(defenderCardsWrong).thenReturn(List.of());
+        when(playerInputValidator.askForCards(defender)).thenReturn(defenderCardsWrong).thenReturn(List.of());
 
         defence.move(defender, playerController.getPlayers(), tableController);
 
@@ -110,7 +110,7 @@ class DefenceTest {
                 new Card("♣", "6", false)));
         defender.getPlayerHand().clear();
         defender.getPlayerHand().addAll(defenderCardsWrong);
-        when(playerInputValidator.askForCards(defender, bot)).thenReturn(defenderCardsWrong).thenReturn(defenderCardsCorrect);
+        when(playerInputValidator.askForCards(defender)).thenReturn(defenderCardsWrong).thenReturn(defenderCardsCorrect);
 
         defence.move(defender, playerController.getPlayers(), tableController);
 
@@ -122,7 +122,7 @@ class DefenceTest {
     void move_whenDefenderDoNotWantDefence_thenTableIsEmpty () {
         ArrayList<Card> defenderCardsEmpty = new ArrayList<>();
         defender.getPlayerHand().addAll(defenderCardsEmpty);
-        when(playerInputValidator.askForCards(defender, bot)).thenReturn(defenderCardsEmpty);
+        when(playerInputValidator.askForCards(defender)).thenReturn(defenderCardsEmpty);
 
         defence.move(defender, playerController.getPlayers(), tableController);
 

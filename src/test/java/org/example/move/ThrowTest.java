@@ -101,7 +101,7 @@ class ThrowTest {
     void throwMove_whenThrowIsCorrect_thenAddCardToTable() {
         thrownCards = List.of(
                 new Card("♥", "7", false));
-        when(playerInputValidator.askForCards(any(), any())).thenReturn(thrownCards);
+        when(playerInputValidator.askForCards(any())).thenReturn(thrownCards);
         doReturn(true).when(throwMove).isThrowMoveCorrect(any(), any(), any());
         throwMove.throwMove(thrower, playersForNotify, tableControllerSpy, defender);
 
@@ -112,7 +112,7 @@ class ThrowTest {
     void throwMove_whenThrowIsNotCorrect_thenSendWarning() {
         thrownCards = List.of(
                 new Card("♥", "7", false));
-        when(playerInputValidator.askForCards(any(), any())).thenReturn(thrownCards);
+        when(playerInputValidator.askForCards(any())).thenReturn(thrownCards);
         doReturn(false).doReturn(true).when(throwMove).isThrowMoveCorrect(any(), any(), any());
         throwMove.throwMove(thrower, playersForNotify, tableControllerSpy, defender);
 
@@ -123,7 +123,7 @@ class ThrowTest {
     @Test
     void throwMove_whenThrowIsEmpty_thenSendNotificationAndDoNotAddCardsToTable() {
         thrownCards = List.of();
-        when(playerInputValidator.askForCards(any(), any())).thenReturn(thrownCards);
+        when(playerInputValidator.askForCards(any())).thenReturn(thrownCards);
         throwMove.throwMove(thrower, playersForNotify, tableControllerSpy, defender);
 
         verify(bot).sendMessageToAll(playersForNotify, thrower.getName() + " не будет подкидывать.");

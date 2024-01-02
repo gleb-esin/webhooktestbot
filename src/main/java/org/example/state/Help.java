@@ -5,24 +5,24 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import org.example.network.TelegramBot;
+import org.example.service.MessageService;
 
+import javax.crypto.MacSpi;
 import java.util.concurrent.CompletableFuture;
 
 @Setter
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Help {
-    TelegramBot bot;
     Long chatId;
-    CompletableFuture<String> futureMessage = new CompletableFuture<>();
+    MessageService messageService;
     final String help = "Добро пожаловать!";
 
-    public Help(TelegramBot bot, Long chatId) {
-        this.bot = bot;
+    public Help(Long chatId) {
         this.chatId = chatId;
     }
 
     public void execute() {
-        bot.sendMessageTo(chatId, help);
+        messageService.sendMessageTo(chatId, help);
     }
 }

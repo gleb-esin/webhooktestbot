@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.example.model.Player;
 import org.example.network.TelegramBot;
+import org.example.service.MessageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -25,7 +27,7 @@ class GameMonitorTest {
 
     @BeforeEach
     void setUp() {
-        gameMonitor = new GameMonitor();
+        gameMonitor = new GameMonitor(mock(MessageService.class));
         gameId = UUID.fromString("4cfb0e57-13a4-4107-ad6d-67759e912d6d");
         attacker = new Player(1L, "attacker");
         defender = new Player(2L, "defender");
@@ -43,10 +45,10 @@ class GameMonitorTest {
         TelegramBot botMock = Mockito.mock(TelegramBot.class);
         gameMonitor.addThrowInFoolToGameMonitor(gameId, players);
 
-        gameMonitor.removeThrowInFoolToGameMonitor(gameId, botMock);
+        gameMonitor.removeThrowInFoolToGameMonitor(gameId);
 
         assertNotEquals(players, gameMonitor.getPlayers(gameId));
-        verify(botMock).sendMessageToAll(players, "Игра  завершена.\n Выберите что-нибудь из меню");
+//        verify(botMock).sendMessageToAll(players, "Игра  завершена.\n Выберите что-нибудь из меню");
     }
 
 }

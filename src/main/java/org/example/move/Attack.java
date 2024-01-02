@@ -8,6 +8,7 @@ import org.example.network.TelegramBot;
 import org.example.controller.TableController;
 import org.example.model.Card;
 import org.example.model.Player;
+import org.example.service.MessageService;
 import org.example.service.PlayerInputValidator;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class Attack {
-    TelegramBot bot;
+    MessageService messageService;
     PlayerInputValidator playerInputValidator;
 
 
@@ -30,20 +31,20 @@ public class Attack {
                 .append("⚔️")
                 .append(System.lineSeparator())
                 .append(tableController.getTable().toString());
-        bot.sendMessageToAll(playerController.getPlayers(), message.toString());
-        bot.sendMessageTo(attacker, attacker.toString());
+        messageService.sendMessageToAll(playerController.getPlayers(), message.toString());
+        messageService.sendMessageTo(attacker, attacker.toString());
     }
 
     public void move(Player attacker, TableController tableController, PlayerController playerController) {
-        List<Card> cards = playerInputValidator.askForCards(attacker, bot);
+        List<Card> cards = playerInputValidator.askForCards(attacker);
         boolean isMoveCorrect = isAttackMoveCorrect(cards);
         while (cards.isEmpty() || (cards.size() > 1 && !isMoveCorrect)) {
-            bot.sendMessageTo(attacker, "Так пойти не получится.");
-            cards = playerInputValidator.askForCards(attacker, bot);
+            messageService.sendMessageTo(attacker, "Так пойти не получится.");
+            cards = playerInputValidator.askForCards(attacker);
             isMoveCorrect = isAttackMoveCorrect(cards);
         }
         tableController.addCardsToTable(cards, attacker);
-        bot.sendMessageToAll(playerController.getPlayers(), tableController.getTable().toString());
+        messageService.sendMessageToAll(playerController.getPlayers(), tableController.getTable().toString());
         attacker.setRole("thrower");
     }
 
