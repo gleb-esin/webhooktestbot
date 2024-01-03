@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MessageMonitor {
     ConcurrentHashMap<Long, CompletableFuture<Update>> incomeMessages = new ConcurrentHashMap<>();
 
-    public void addMessageToIncomingMessages(Long chatId, Update update) {
+    public void addRequestToIncomingMessages(Long chatId, Update update) {
         CompletableFuture<Update> future;
         if (incomeMessages.containsKey(chatId)) {
             future = incomeMessages.get(chatId);

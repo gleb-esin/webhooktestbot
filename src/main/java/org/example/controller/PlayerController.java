@@ -11,7 +11,7 @@ import org.example.model.Player;
 import java.util.*;
 
 /**
- * This class provides control over waitingPlayers' behavior during round
+ * This class provides control over players' behavior during round
  */
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)

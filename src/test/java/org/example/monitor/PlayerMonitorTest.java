@@ -2,7 +2,7 @@ package org.example.monitor;
 
 import org.example.model.Player;
 import org.example.service.GameFactory;
-import org.example.service.MessageService;
+import org.example.service.MessageService_EventListener;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -25,7 +25,7 @@ class PlayerMonitorTest {
 
     @BeforeEach
     void setUp() {
-        playerMonitor = new PlayerMonitor(mock(GameFactory.class), mock(MessageService.class));
+        playerMonitor = new PlayerMonitor(mock(GameFactory.class), mock(MessageService_EventListener.class));
         maxPlayers = 2;
         ReflectionTestUtils.setField(playerMonitor, "maxPlayers", maxPlayers);
     }

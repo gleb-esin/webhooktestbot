@@ -4,7 +4,7 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.example.model.Player;
 import org.example.network.TelegramBot;
-import org.example.service.MessageService;
+import org.example.service.MessageService_EventListener;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -12,9 +12,9 @@ import org.mockito.Mockito;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 class GameMonitorTest {
@@ -27,7 +27,7 @@ class GameMonitorTest {
 
     @BeforeEach
     void setUp() {
-        gameMonitor = new GameMonitor(mock(MessageService.class));
+        gameMonitor = new GameMonitor(mock(MessageService_EventListener.class));
         gameId = UUID.fromString("4cfb0e57-13a4-4107-ad6d-67759e912d6d");
         attacker = new Player(1L, "attacker");
         defender = new Player(2L, "defender");

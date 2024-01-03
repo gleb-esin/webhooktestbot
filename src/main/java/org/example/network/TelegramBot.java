@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.config.Botconfig;
 import org.example.service.UpdateHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramWebhookBot;
@@ -21,7 +22,9 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * This class provides proxy for get and send information by Telegram servers 
+ * */
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
@@ -33,7 +36,6 @@ public class TelegramBot extends TelegramWebhookBot {
     @Getter
     String botToken;
     UpdateHandler updateHandler;
-
     @Autowired
     public TelegramBot(Botconfig botconfig, UpdateHandler updateHandler) {
         super("${telegrambot.botToken}");
@@ -41,6 +43,9 @@ public class TelegramBot extends TelegramWebhookBot {
         this.botToken = botconfig.getBotToken();
         this.botUsername = botconfig.getUserName();
         this.updateHandler = updateHandler;
+    }
+    @EventListener(ApplicationReadyEvent.class)
+    private void registerMenu() {
         try {
             List<BotCommand> menu = new ArrayList<>(
                     List.of(
@@ -54,15 +59,12 @@ public class TelegramBot extends TelegramWebhookBot {
             System.err.println("Error setting bot's command list: " + e.getMessage());
         }
     }
-
-
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
         updateHandler.handleUpdate(update);
         return null;
     }
-
-    @EventListener(SendMessage.class)
+    @EventListener(BotApiMethod.class)
     private void eventListener(SendMessage event) {
         try {
             event.enableHtml(true);

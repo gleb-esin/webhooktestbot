@@ -22,7 +22,7 @@ public class PlayerMonitor {
     ConcurrentLinkedQueue<Player> throwInFoolWaiters = new ConcurrentLinkedQueue<>();
     @Value("${game.maxPlayers}")
     @NonFinal
-    int maxPlayers;
+    int MAX_PLAYERS;
 
     @Autowired
     public PlayerMonitor(GameFactory gameFactory, MessageService messageService) {
@@ -32,11 +32,11 @@ public class PlayerMonitor {
 
     public void addPlayerToThrowInFoolWaiters(Player player) {
         throwInFoolWaiters.add(player);
-        runThrowInFoolGameIfPlayersEquals(maxPlayers, player);
+        runThrowInFoolGameIfPlayersEquals(MAX_PLAYERS, player);
     }
 
-    private void runThrowInFoolGameIfPlayersEquals(int maxPlayers, Player player) {
-        if (getThrowInFoolWaiterSize() == maxPlayers) {
+    private void runThrowInFoolGameIfPlayersEquals(int MAX_PLAYERS, Player player) {
+        if (getThrowInFoolWaiterSize() == MAX_PLAYERS) {
             gameFactory.createThrowInFoolGame(getThrowInFoolWaiterList());
         } else {
             messageService.sendMessageTo(player.getChatID(), "Ждем игроков");

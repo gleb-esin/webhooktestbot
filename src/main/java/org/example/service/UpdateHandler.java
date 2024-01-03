@@ -38,7 +38,7 @@ public class UpdateHandler {
                     });
                     executorService.shutdown();
                 }
-                default -> messageMonitor.addMessageToIncomingMessages(chatId, update);
+                default -> messageMonitor.addRequestToIncomingMessages(chatId, update);
             }
         }
     }

@@ -1,9 +1,8 @@
 package org.example.state;
 
 import lombok.AccessLevel;
-import lombok.experimental.NonFinal;
-
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import org.example.controller.DeckController;
 import org.example.controller.PlayerController;
 import org.example.controller.TableController;
@@ -30,8 +29,7 @@ public class ThrowInFool {
     TableController tableController;
     MessageService messageService;
 
-    @Autowired
-    public ThrowInFool(MessageService messageService,UUID gameID, List<Player> players) {
+    public ThrowInFool(MessageService messageService, UUID gameID, List<Player> players) {
         this.gameID = gameID;
         this.messageService = messageService;
         this.playerController = new PlayerController(players);
@@ -65,7 +63,7 @@ public class ThrowInFool {
                 if (playerController.isPlayerWinner(defender, deckController.getDeck())) break;
             }
 
-            //throw attackMove
+            //throw move
             //If the Game doesn't finnish...
             if (!playerController.isGameOver()) {
                 ///...for each thrower....
