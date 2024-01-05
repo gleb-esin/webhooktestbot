@@ -2,9 +2,10 @@ package org.example.controller;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
-import org.example.model.Card;
-import org.example.model.Deck;
-import org.example.model.Player;
+import org.example.usecases.controller.PlayerController;
+import org.example.entities.Card;
+import org.example.entities.Deck;
+import org.example.entities.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

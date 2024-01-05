@@ -1,12 +1,13 @@
 package org.example.move;
 
-import org.example.controller.PlayerController;
-import org.example.controller.TableController;
-import org.example.model.Card;
-import org.example.model.Player;
-import org.example.model.Suit;
-import org.example.service.MessageService;
-import org.example.service.PlayerInputValidator;
+import org.example.usecases.controller.PlayerController;
+import org.example.usecases.controller.TableController;
+import org.example.entities.Card;
+import org.example.entities.Player;
+import org.example.entities.Suit;
+import org.example.usecases.move.Defence;
+import org.example.interfaceAdapters.service.MessageService;
+import org.example.interfaceAdapters.service.PlayerInputValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

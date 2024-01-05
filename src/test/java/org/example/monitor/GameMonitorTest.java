@@ -2,9 +2,10 @@ package org.example.monitor;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
-import org.example.model.Player;
-import org.example.network.TelegramBot;
-import org.example.service.MessageService_EventListener;
+import org.example.entities.Player;
+import org.example.interfaceAdapters.monitor.GameMonitor;
+import org.example.frameworks.TelegramBot;
+import org.example.interfaceAdapters.service.MessageService_EventListener;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

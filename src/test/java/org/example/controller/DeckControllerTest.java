@@ -1,6 +1,7 @@
 package org.example.controller;
 
-import org.example.model.Player;
+import org.example.usecases.controller.DeckController;
+import org.example.entities.Player;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
