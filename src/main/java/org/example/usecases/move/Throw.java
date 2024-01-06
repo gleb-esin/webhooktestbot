@@ -40,7 +40,7 @@ public class Throw {
         }
     }
 
-    boolean isThrowMoveCorrect(List<Card> tableCards, List<Card> throwerCards, Player defender) {
+    public boolean isThrowMoveCorrect(List<Card> tableCards, List<Card> throwerCards, Player defender) {
         boolean isThrowCorrect;
         int thrownCards = throwerCards.size();
         if (thrownCards>defender.getPlayerHand().size()) return false;
