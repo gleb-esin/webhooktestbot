@@ -1,12 +1,13 @@
 package org.example.move;
 
-import org.example.usecases.controller.TableController;
 import org.example.entities.Card;
 import org.example.entities.Player;
 import org.example.entities.Suit;
-import org.example.usecases.move.Throw;
 import org.example.interfaceAdapters.service.MessageService;
 import org.example.interfaceAdapters.service.PlayerInputValidator;
+import org.example.usecases.controller.TableController;
+import org.example.usecases.move.Throw;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -22,6 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class ThrowTest {
+    AutoCloseable closeable;
     Player thrower;
     Player defender;
     TableController tableControllerSpy;
@@ -38,7 +40,7 @@ class ThrowTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        closeable = MockitoAnnotations.openMocks(this);
 
         thrower = new Player(1L, "thrower");
         defender = new Player(2L, "defender");
@@ -57,6 +59,11 @@ class ThrowTest {
                         new Card("♦", "7", false),
                         new Card("♣", "8", false)));
 
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        closeable.close();
     }
 
     @Test

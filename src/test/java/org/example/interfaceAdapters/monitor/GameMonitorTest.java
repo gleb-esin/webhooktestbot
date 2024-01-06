@@ -1,15 +1,15 @@
-package org.example.monitor;
+package org.example.interfaceAdapters.monitor;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.example.entities.Player;
-import org.example.interfaceAdapters.monitor.GameMonitor;
 import org.example.frameworks.TelegramBot;
 import org.example.interfaceAdapters.service.MessageService_EventListener;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -32,7 +32,7 @@ class GameMonitorTest {
         gameId = UUID.fromString("4cfb0e57-13a4-4107-ad6d-67759e912d6d");
         attacker = new Player(1L, "attacker");
         defender = new Player(2L, "defender");
-        players = List.of(attacker, defender);
+        players = new ArrayList<>(List.of(attacker, defender));
     }
 
     @Test

@@ -8,6 +8,7 @@ import org.example.entities.Suit;
 import org.example.usecases.move.Attack;
 import org.example.interfaceAdapters.service.MessageService;
 import org.example.interfaceAdapters.service.PlayerInputValidator;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class AttackTest {
+    AutoCloseable closeable;
     Player attacker;
     Player defender;
     TableController tableController;
@@ -35,7 +37,7 @@ class AttackTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        closeable = MockitoAnnotations.openMocks(this);
 
         attacker = new Player(1L, "attacker");
         defender = new Player(2L, "defender");
@@ -45,19 +47,24 @@ class AttackTest {
         playerController.setDefender(defender);
     }
 
+    @AfterEach
+    void tearDown() throws Exception {
+        closeable.close();
+    }
+
     @Test
     void init() {
-        StringBuilder expexceted = new StringBuilder("⚔️ Ход ")
-                .append(attacker.getName())
-                .append(" под ")
-                .append(defender.getName())
-                .append("⚔️")
-                .append(System.lineSeparator())
-                .append(tableController.getTable().toString());
+        String expexceted = "⚔️ Ход " +
+                attacker.getName() +
+                " под " +
+                defender.getName() +
+                "⚔️" +
+                System.lineSeparator() +
+                tableController.getTable().toString();
 
         attack.init(playerController, tableController);
 
-        verify(messageService).sendMessageToAll(playerController.getPlayers(), expexceted.toString());
+        verify(messageService).sendMessageToAll(playerController.getPlayers(), expexceted);
         verify(messageService).sendMessageTo(attacker, attacker.toString());
     }
 

@@ -8,6 +8,7 @@ import org.example.entities.Suit;
 import org.example.usecases.move.Defence;
 import org.example.interfaceAdapters.service.MessageService;
 import org.example.interfaceAdapters.service.PlayerInputValidator;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -22,6 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class DefenceTest {
+    AutoCloseable closeable;
     Player attacker;
     Player defender;
     ArrayList<Card> defenderCardsCorrect;
@@ -37,8 +39,7 @@ class DefenceTest {
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
-
+        closeable = MockitoAnnotations.openMocks(this);
         attacker = new Player(1L, "attacker");
         defender = new Player(2L, "defender");
         tableController = new TableController(new Suit("♠", true));
@@ -54,6 +55,11 @@ class DefenceTest {
                 new Card("♣", "8", false)));
         defender.getPlayerHand().addAll(defenderCardsCorrect);
 
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        closeable.close();
     }
 
     @Test
