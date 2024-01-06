@@ -58,7 +58,7 @@ public class TelegramBot extends TelegramWebhookBot {
             );
             execute(new SetMyCommands(menu, new BotCommandScopeDefault(), null));
         } catch (TelegramApiException e) {
-            System.err.println("Error setting bot's command list: " + e.getMessage());
+            log.error("TelegramBot.registerMenu(): Error setting bot's command list: " + e.getMessage());
         }
     }
 
@@ -78,6 +78,7 @@ public class TelegramBot extends TelegramWebhookBot {
             event.enableHtml(true);
             execute(event);
         } catch (TelegramApiException e) {
+            log.error("TelegramBot.eventListener(): Error sending message: " + e.getMessage());
         }
     }
 }

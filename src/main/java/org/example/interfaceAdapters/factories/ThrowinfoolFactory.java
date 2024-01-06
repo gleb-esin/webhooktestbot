@@ -3,6 +3,7 @@ package org.example.interfaceAdapters.factories;
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
+import lombok.extern.slf4j.Slf4j;
 import org.example.entities.GameType;
 import org.example.entities.Player;
 import org.example.interfaceAdapters.monitor.GameMonitor;
@@ -19,6 +20,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
 
+@Slf4j
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ThrowinfoolFactory implements GameFactory {
@@ -51,7 +53,7 @@ public class ThrowinfoolFactory implements GameFactory {
                 new ThrowInFool(messageService, gameID, players).play();
                 finnish(players, gameID);
             } catch (InterruptedException e) {
-                // Обработка исключения
+                log.error("ThrowinfoolFactory.create(): " + e.getMessage());
             } finally {
                 // Освобождаем разрешение после завершения игры
                 semaphore.release();
