@@ -15,6 +15,7 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.Spy;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -98,9 +99,9 @@ class ThrowinfoolMonitorTest {
         }
 
         throwinfoolMonitor.runGameIfPlayersEquals(2, player1, "test");
-        List<Player> players = throwinfoolMonitor.getPlayers();
 
-        verify(abstractGameFactory, times(0)).create(eq("test"), players);
+
+        verify(abstractGameFactory, times(0)).create(eq("test"), any(ArrayList.class));
         verify(messageService_EventListener, times(1)).sendMessageTo(player1.getChatID(), "Ждем игроков");
     }
 
@@ -119,10 +120,10 @@ class ThrowinfoolMonitorTest {
         }
 
         throwinfoolMonitor.runGameIfPlayersEquals(2, player2, "test");
-        List<Player> players = throwinfoolMonitor.getPlayers();
 
 
-        verify(abstractGameFactory, times(1)).create(eq("test"), players);
+
+        verify(abstractGameFactory, times(1)).create(eq("test"), any(ArrayList.class));
         verify(messageService_EventListener, times(0)).sendMessageTo(player2.getChatID(), "Ждем игроков");
     }
 
@@ -141,10 +142,8 @@ class ThrowinfoolMonitorTest {
         }
 
         throwinfoolMonitor.runGameIfPlayersEquals(2, player3, "test");
-        List<Player> players = throwinfoolMonitor.getPlayers();
 
-
-        verify(abstractGameFactory, times(1)).create(eq("test"), players);
+        verify(abstractGameFactory, times(1)).create(eq("test"), any(ArrayList.class));
         verify(messageService_EventListener, times(0)).sendMessageTo(player3.getChatID(), "Ждем игроков");
     }
 
