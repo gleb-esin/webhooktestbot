@@ -28,6 +28,7 @@ public record PlayerBuilder(UserEntityRepository userEntityRepository, MessageSe
             while (nameIsTaken) {
                 messageService.sendMessageTo(chatId, "Такое имя уже занято. Пожалуйста, выберите другое: ");
                 name = messageService.receiveMessageFrom(chatId);
+                nameIsTaken = userEntityRepository.existsByName(name);
             }
             UserEntity userEntity = new UserEntity(chatId, name);
             userEntityRepository.save(userEntity);

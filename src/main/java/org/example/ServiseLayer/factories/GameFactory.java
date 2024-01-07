@@ -19,7 +19,7 @@ import java.util.Map;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class GameFactory {
-    Map<String, GameBuilder> gameFactories;
+    Map<String, GameBuilder> gameBuilders;
 
     /**
      * Creates a new game of the specified type with the given players.
@@ -29,8 +29,8 @@ public class GameFactory {
      */
     public void create(String gameType, List<Player> players) {
         String key = gameType + "Builder";
-        if (gameFactories.containsKey(key)) {
-            gameFactories.get(key).buildGame(players);
+        if (gameBuilders.containsKey(key)) {
+            gameBuilders.get(key).buildGame(players);
         } else {
             log.error("GameFactory.create(): Unsupported game type: " + gameType);
         }
