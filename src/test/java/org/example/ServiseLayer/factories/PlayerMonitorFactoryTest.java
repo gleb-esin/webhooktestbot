@@ -3,11 +3,9 @@ package org.example.ServiseLayer.factories;
 import org.example.BusinessLayer.throwInFool.ThrowinfoolPlayerMonitor;
 import org.example.EntityLayer.Player;
 import org.example.ServiseLayer.monitors.PlayersMonitor;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +13,6 @@ import java.util.Map;
 import static org.mockito.Mockito.verify;
 
 class PlayerMonitorFactoryTest {
-    AutoCloseable closeable;
     Map<String, PlayersMonitor> monitorMap;
     @Mock
     ThrowinfoolPlayerMonitor throwinfoolMonitor;
@@ -25,15 +22,9 @@ class PlayerMonitorFactoryTest {
 
     @BeforeEach
     void setUp() {
-        closeable = MockitoAnnotations.openMocks(this);
         monitorMap = new HashMap<>();
         monitorMap.put("throwinfoolPlayerMonitor", throwinfoolMonitor);
         playerMonitorFactory = new PlayerMonitorFactory(monitorMap);
-    }
-
-    @AfterEach
-    void tearDown() throws Exception {
-        closeable.close();
     }
 
     @Test

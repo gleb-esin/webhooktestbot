@@ -28,8 +28,8 @@ public class GameFactory {
      * @param  players    the list of players participating in the game
      */
     public void create(String gameType, List<Player> players) {
-        if (gameFactories.containsKey(gameType)) {
-            String key = gameType + "Factory";
+        String key = gameType + "Builder";
+        if (gameFactories.containsKey(key)) {
             gameFactories.get(key).buildGame(players);
         } else {
             log.error("GameFactory.create(): Unsupported game type: " + gameType);

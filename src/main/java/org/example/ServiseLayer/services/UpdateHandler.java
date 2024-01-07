@@ -29,13 +29,12 @@ public class UpdateHandler implements ClientCommandHandler {
         switch (command) {
             case "/start", "/help" -> new Help(messageService).execute(id);
             case "/throwinfool", "/transferfool" -> {
-                try (ExecutorService executorService = Executors.newCachedThreadPool()) {
-                    executorService.submit(() -> {
-                        Player player = playerfactory.createPlayer(id);
-                        playerMonitorFactory.addPlayer(player, command.substring(1));
-                    });
-                    executorService.shutdown();
-                }
+                ExecutorService executorService = Executors.newCachedThreadPool();
+                executorService.submit(() -> {
+                    Player player = playerfactory.createPlayer(id);
+                    playerMonitorFactory.addPlayer(player, command.substring(1));
+                });
+                executorService.shutdown();
             }
             default -> messageMonitor.addRequestToIncomingMessages(id, command);
         }
