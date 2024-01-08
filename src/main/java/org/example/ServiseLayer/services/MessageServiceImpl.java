@@ -37,12 +37,12 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public String receiveMessageFrom(Player player) {
-        return messageMonitor.getIncomingMessage(player.getChatID());
+        return messageMonitor.requestIncomingMessage(player.getChatID());
     }
 
     @Override
     public String receiveMessageFrom(Long chatId) {
-        return messageMonitor.getIncomingMessage(chatId);
+        return messageMonitor.requestIncomingMessage(chatId);
     }
 
     private void publishEvent(Object event) {

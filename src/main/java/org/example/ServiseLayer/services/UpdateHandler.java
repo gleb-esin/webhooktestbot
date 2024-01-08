@@ -36,7 +36,7 @@ public class UpdateHandler implements ClientCommandHandler {
                 });
                 executorService.shutdown();
             }
-            default -> messageMonitor.addRequestToIncomingMessages(id, command);
+            default -> messageMonitor.completeRequestedMessage(id, command);
         }
     }
 }

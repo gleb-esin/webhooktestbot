@@ -6,24 +6,43 @@ import org.springframework.stereotype.Component;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+/**
+ * This class provides asynchronous methods to add and retrieve incoming messages from a messages monitor.
+ */
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class MessageMonitor {
-    ConcurrentHashMap<Long, CompletableFuture<String>> incomeMessages = new ConcurrentHashMap<>();
+    ConcurrentHashMap<Long, CompletableFuture<String>> messagesMonitor = new ConcurrentHashMap<>();
 
-    public void addRequestToIncomingMessages(Long chatId, String text) {
+    /**
+     * Completes the future with given text from given chatId request.
+     *
+     * @param  chatId    the ID of the chat
+     * @param  text      the text of the incoming message
+     */
+
+    public void completeRequestedMessage(Long chatId, String text) {
         CompletableFuture<String> future;
-        if (incomeMessages.containsKey(chatId)) {
-            future = incomeMessages.get(chatId);
+        if (messagesMonitor.containsKey(chatId)) {
+            future = messagesMonitor.get(chatId);
             future.complete(text);
-            incomeMessages.putIfAbsent(chatId, future);
+            messagesMonitor.putIfAbsent(chatId, future);
         }
     }
 
-    public String getIncomingMessage(Long chatId) {
-        incomeMessages.remove(chatId);
+    /**
+     * Removes previous not requested message from the monitor.
+     * Then creates a request with a new CompletableFuture<String> and adds it to the messagesMonitor map.
+     * When the future will be completed, it returns the string with which the CompletableFuture was completed.
+     *
+     * @param  chatId  the client ID
+     * @return         the string with which the CompletableFuture was completed.
+     */
+
+    public String requestIncomingMessage(Long chatId) {
+        messagesMonitor.remove(chatId);
         CompletableFuture<String> future = new CompletableFuture<>();
-        incomeMessages.putIfAbsent(chatId, future);
+        messagesMonitor.putIfAbsent(chatId, future);
         return future.join();
     }
 }
