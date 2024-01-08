@@ -9,8 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Scanner;
 @Component
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class PlayerInputValidator {
@@ -20,7 +19,7 @@ public class PlayerInputValidator {
         messageService.sendMessageTo(player, "Введите порядковые номера карт в Вашей руке через пробел:");
         String cardIndexes = messageService.receiveMessageFrom(player);
         List<Integer> cardIndexesList = parseCardIndexesStringToPlayerHandIndexes(cardIndexes);
-        boolean correctInput = validatePlayerHandIndexes(cardIndexesList, player);
+        boolean correctInput = (!cardIndexesList.isEmpty() && validatePlayerHandIndexes(cardIndexesList, player));
         while (!correctInput) {
             messageService.sendMessageTo(player, "Неверный ввод. Попробуйте ещё раз:");
             cardIndexes = messageService.receiveMessageFrom(player);
@@ -36,22 +35,10 @@ public class PlayerInputValidator {
 
     private List<Integer> parseCardIndexesStringToPlayerHandIndexes(String cardIndexes) {
         List<Integer> playerHandIndexes = new ArrayList<>();
-        String[] cardIndexesArr = cardIndexes.split(" ");
-        Pattern pattern = Pattern.compile("^(0|[1-9]\\d*)$");
-        for (String s : cardIndexesArr) {
-            Matcher matcher = pattern.matcher(s);
-            if (matcher.find()) {
-                if (Integer.parseInt(s) == 0) {
-                    playerHandIndexes.clear();
-                    return playerHandIndexes;
-                } else {
-                    if (!playerHandIndexes.contains(Integer.parseInt(s))) {
-                        playerHandIndexes.add(Integer.parseInt(s));
-                    }
-                }
-            }
+        if (!cardIndexes.contains("0")) {
+            playerHandIndexes = parseNumbers(cardIndexes);
+            Collections.sort(playerHandIndexes);
         }
-        Collections.sort(playerHandIndexes);
         return playerHandIndexes;
     }
 
@@ -70,5 +57,22 @@ public class PlayerInputValidator {
             }
         }
         return correctInput;
+    }
+
+    private ArrayList<Integer> parseNumbers(String input) {
+        ArrayList<Integer> result = new ArrayList<>();
+        Scanner scanner = new Scanner(input);
+
+        // Используем регулярное выражение для поиска чисел
+        scanner.useDelimiter("\\D+");
+
+        while (scanner.hasNextInt()) {
+            // Обработка каждого числа
+            int number = scanner.nextInt();
+            result.add(number);
+        }
+
+        scanner.close();
+        return result;
     }
 }
