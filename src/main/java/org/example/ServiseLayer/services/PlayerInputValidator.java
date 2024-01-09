@@ -10,11 +10,21 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
+/**
+ *Provides methods for validating player input.
+ *  */
 @Component
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class PlayerInputValidator {
     MessageService messageService;
 
+    /**
+     * Asks the player for the cards, parse and validate given string and returns the list of cards.
+     * If the player input contains 0, returns an empty list.
+     *
+     * @param  player the player object
+     * @return       the list of cards chosen by the player
+     */
     public List<Card> askForCards(Player player) {
         if (player.getRole().equals("attacker"))  {
             messageService.sendMessageTo(player, "Введите порядковые номера карт в Вашей руке через пробел:");
@@ -38,6 +48,13 @@ public class PlayerInputValidator {
         return cards;
     }
 
+    /**
+     * Parses a string of card indexes to a list of player hand indexes.
+     * If the string contains 0 returns an empty list.
+     *
+     * @param  cardIndexes  the string containing the card indexes
+     * @return              the list of player hand indexes
+     */
     private List<Integer> parseCardIndexesStringToPlayerHandIndexes(String cardIndexes) {
         List<Integer> playerHandIndexes = new ArrayList<>();
         if (!cardIndexes.contains("0")) {
@@ -47,6 +64,13 @@ public class PlayerInputValidator {
         return playerHandIndexes;
     }
 
+    /**
+     * Validates cards indexes of player's hand.
+     *
+     * @param  playerHandIndexes  the list of player hand indexes
+     * @param  player             the player
+     * @return                    true if the input is correct, false otherwise
+     */
     private boolean validatePlayerHandIndexes(List<Integer> playerHandIndexes, Player player) {
         boolean correctInput = true;
         if (playerHandIndexes.isEmpty()) {
@@ -64,19 +88,20 @@ public class PlayerInputValidator {
         return correctInput;
     }
 
+    /**
+     * Parses a given input string and returns a list of integers.
+     *
+     * @param  input  the input string to be parsed
+     * @return        the list of integers parsed from the input string
+     */
     private ArrayList<Integer> parseNumbers(String input) {
         ArrayList<Integer> result = new ArrayList<>();
         Scanner scanner = new Scanner(input);
-
-        // Используем регулярное выражение для поиска чисел
         scanner.useDelimiter("\\D+");
-
         while (scanner.hasNextInt()) {
-            // Обработка каждого числа
             int number = scanner.nextInt();
             result.add(number);
         }
-
         scanner.close();
         return result;
     }
