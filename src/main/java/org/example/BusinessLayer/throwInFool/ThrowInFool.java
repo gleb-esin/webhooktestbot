@@ -34,7 +34,8 @@ public class ThrowInFool implements State {
         this.messageService = messageService;
         this.playerController = new PlayerController(players);
         this.deckController = new DeckController(this.gameID);
-        this.tableController = new TableController(deckController.getDeck().getTrump());}
+        this.tableController = new TableController(deckController.getDeck().getTrump());
+    }
 
     public void play() {
         dealCards();

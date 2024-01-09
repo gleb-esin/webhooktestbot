@@ -17,19 +17,20 @@ import java.util.concurrent.Executors;
 @Component
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class UpdateHandler implements ClientCommandHandler {
+public class CommandHandler implements ClientCommandHandler {
     PlayerBuilder playerfactory;
     MessageMonitor messageMonitor;
-    MessageService messageService;
+    Help help;
     PlayerMonitorFactory playerMonitorFactory;
 
 
     @Override
     public void handleCommand(Long id, String command) {
+        System.err.println("run handleCommand in " + Thread.currentThread().getName());
         switch (command) {
-            case "/start", "/help" -> new Help(messageService).execute(id);
+            case "/start", "/help" -> help.execute(id);
             case "/throwinfool", "/transferfool" -> {
-                ExecutorService executorService = Executors.newCachedThreadPool();
+                ExecutorService executorService = Executors.newSingleThreadExecutor();
                 executorService.submit(() -> {
                     Player player = playerfactory.createPlayer(id);
                     playerMonitorFactory.addPlayer(player, command.substring(1));
