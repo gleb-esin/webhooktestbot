@@ -15,7 +15,6 @@ import java.util.Scanner;
 public class PlayerInputValidator {
     MessageService messageService;
 
-    //fixme
     public List<Card> askForCards(Player player) {
         if (player.getRole().equals("attacker"))  {
             messageService.sendMessageTo(player, "Введите порядковые номера карт в Вашей руке через пробел:");
