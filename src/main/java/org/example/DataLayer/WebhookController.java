@@ -13,9 +13,15 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 public class WebhookController {
     private final TelegramBot bot;
 
+    /**
+     * Handles the webhook update received.
+     *
+     * @param  update  the update received from the webhook
+     * @return         the empty response 200 to the server
+     */
     @RequestMapping(value = "/webhook", method = RequestMethod.POST)
     public ResponseEntity<BotApiMethod<?>> onUpdateReceived(@RequestBody Update update) {
-        BotApiMethod<?> response = bot.onWebhookUpdateReceived(update);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        bot.onWebhookUpdateReceived(update);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

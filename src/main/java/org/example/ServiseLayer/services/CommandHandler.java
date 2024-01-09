@@ -13,7 +13,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
+/**
+ * CommandHandler class handles messages and commands from the user.
+ */
 @Component
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -23,7 +25,12 @@ public class CommandHandler implements ClientCommandHandler {
     Help help;
     PlayerMonitorFactory playerMonitorFactory;
 
-
+    /**
+     * Handle a messages and commands from the user.
+     *
+     * @param  id       the ID of the user
+     * @param  command  the command to be handled
+     */
     @Override
     public void handleCommand(Long id, String command) {
         System.err.println("run handleCommand in " + Thread.currentThread().getName());

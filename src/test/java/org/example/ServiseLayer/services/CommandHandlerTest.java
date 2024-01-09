@@ -12,10 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class CommandHandlerTest {
     AutoCloseable closeable;
@@ -24,14 +22,13 @@ class CommandHandlerTest {
     @Mock
     MessageMonitor messageMonitor;
     @Mock
-    MessageService messageService;
+    PlayerBuilder playerBuilder;
     @Mock
     PlayerMonitorFactory playerMonitorFactory;
     @InjectMocks
     CommandHandler commandHandler;
     @Mock
     Player player;
-    UserEntityRepository userEntityRepository;
 
     @BeforeEach
     void setUp() {
@@ -60,21 +57,11 @@ class CommandHandlerTest {
 
     @Test
     void handleCommand_whenCommandIsThrowinfool_thenPlayerMonitorFactoryIsCalled() throws InterruptedException {
-        PlayerBuilder playerBuilder1 = new PlayerBuilder(userEntityRepository, messageService);
-        final PlayerBuilder spyPlayerBuilder = spy(playerBuilder1);
-        doReturn(player).when(spyPlayerBuilder).createPlayer(1L);
-        final CommandHandler commandHandler1 = new CommandHandler(spyPlayerBuilder, messageMonitor, help, playerMonitorFactory);
-        AtomicInteger passedTests = new AtomicInteger();
-        new Thread(() -> {
-            commandHandler1.handleCommand(1L, "/throwinfool");
-            // Verify the interactions
-            verify(spyPlayerBuilder).createPlayer(1L);
-            passedTests.incrementAndGet();
+        when(playerBuilder.createPlayer(1L)).thenReturn(player);
+            commandHandler.handleCommand(1L, "/throwinfool");
+            Thread.sleep(1000);
+            verify(playerBuilder).createPlayer(1L);
             verify(playerMonitorFactory).addPlayer(player, "throwinfool");
-            passedTests.incrementAndGet();
-        }).start();
-        Thread.sleep(100);
-        assertEquals(2, passedTests.get());
     }
 
     @Test

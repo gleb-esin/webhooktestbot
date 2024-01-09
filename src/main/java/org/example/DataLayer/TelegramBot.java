@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class provides proxy for get and send information by Telegram servers
+ * This class provides proxy for get and send information to Telegram servers
  */
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -46,6 +46,9 @@ public class TelegramBot extends TelegramWebhookBot {
         this.clientCommandHandler = clientCommandHandler;
     }
 
+    /**
+     * Registers the bot menu when application is ready.
+     */
     @EventListener(ApplicationReadyEvent.class)
     private void registerMenu() {
         try {
@@ -62,6 +65,12 @@ public class TelegramBot extends TelegramWebhookBot {
         }
     }
 
+    /**
+     * Handles the received webhook update. Returns null for a successful answer to server
+     *
+     * @param  update  the update received from the webhook
+     * @return         the BotApiMethod object representing the response to the webhook update
+     */
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
         if (update.hasMessage() && update.getMessage().hasText()) {
@@ -72,8 +81,14 @@ public class TelegramBot extends TelegramWebhookBot {
         return null;
     }
 
+    /**
+     * A listener method for handling outgoing messages to the server.
+     *
+     * @param  event  the event to be handled, expects a SendMessage object
+     * @return        void
+     */
     @EventListener(BotApiMethod.class)
-    private void eventListener(SendMessage event) {
+    private void messageSenderOnEventListener(SendMessage event) {
         try {
             event.enableHtml(true);
             execute(event);
