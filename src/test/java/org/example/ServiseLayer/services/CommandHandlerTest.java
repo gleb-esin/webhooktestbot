@@ -1,7 +1,6 @@
 package org.example.ServiseLayer.services;
 
 import org.example.BusinessLayer.states.Help;
-import org.example.DataLayer.UserEntityRepository;
 import org.example.EntityLayer.Player;
 import org.example.ServiseLayer.factories.PlayerBuilder;
 import org.example.ServiseLayer.factories.PlayerMonitorFactory;
@@ -33,7 +32,7 @@ class CommandHandlerTest {
     @BeforeEach
     void setUp() {
         closeable = org.mockito.MockitoAnnotations.openMocks(this);
-        player = new Player(1l, "Test Name");
+        player = new Player(1L, "Test Name");
     }
 
     @AfterEach
@@ -58,10 +57,10 @@ class CommandHandlerTest {
     @Test
     void handleCommand_whenCommandIsThrowinfool_thenPlayerMonitorFactoryIsCalled() throws InterruptedException {
         when(playerBuilder.createPlayer(1L)).thenReturn(player);
-            commandHandler.handleCommand(1L, "/throwinfool");
-            Thread.sleep(1000);
-            verify(playerBuilder).createPlayer(1L);
-            verify(playerMonitorFactory).addPlayer(player, "throwinfool");
+        commandHandler.handleCommand(1L, "/throwinfool");
+        Thread.sleep(1000);
+        verify(playerBuilder).createPlayer(1L);
+        verify(playerMonitorFactory).addPlayer(player, "throwinfool");
     }
 
     @Test

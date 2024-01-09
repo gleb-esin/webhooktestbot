@@ -33,7 +33,6 @@ public class CommandHandler implements ClientCommandHandler {
      */
     @Override
     public void handleCommand(Long id, String command) {
-        System.err.println("run handleCommand in " + Thread.currentThread().getName());
         switch (command) {
             case "/start", "/help" -> help.execute(id);
             case "/throwinfool", "/transferfool" -> {

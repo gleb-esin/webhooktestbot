@@ -15,11 +15,17 @@ import java.util.Scanner;
 public class PlayerInputValidator {
     MessageService messageService;
 
+    //fixme
     public List<Card> askForCards(Player player) {
-        messageService.sendMessageTo(player, "Введите порядковые номера карт в Вашей руке через пробел:");
+        if (player.getRole().equals("attacker"))  {
+            messageService.sendMessageTo(player, "Введите порядковые номера карт в Вашей руке через пробел:");
+        } else {
+            messageService.sendMessageTo(player, "Введите порядковые номера карт в Вашей руке через пробел: " +
+                    "\n(Если хотите пропустить ход введите 0)");
+        }
         String cardIndexes = messageService.receiveMessageFrom(player);
         List<Integer> cardIndexesList = parseCardIndexesStringToPlayerHandIndexes(cardIndexes);
-        boolean correctInput = (!cardIndexesList.isEmpty() && validatePlayerHandIndexes(cardIndexesList, player));
+        boolean correctInput = validatePlayerHandIndexes(cardIndexesList, player);
         while (!correctInput) {
             messageService.sendMessageTo(player, "Неверный ввод. Попробуйте ещё раз:");
             cardIndexes = messageService.receiveMessageFrom(player);

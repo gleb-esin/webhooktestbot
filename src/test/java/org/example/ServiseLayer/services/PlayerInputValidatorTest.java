@@ -31,6 +31,7 @@ class PlayerInputValidatorTest {
         player.getPlayerHand().add(new Card("♠", "6", false));
         player.getPlayerHand().add(new Card("♠", "7", false));
         player.getPlayerHand().add(new Card("♣", "6", false));
+        player.setRole("defender");
     }
     @AfterEach
     void tearDown() throws Exception {
@@ -164,8 +165,8 @@ class PlayerInputValidatorTest {
         assertEquals(expected, actual);
     }
     @Test
-    void askForCards_whenInputIsEmpty_thenReturnedEmptyList() {
-        when(messageService.receiveMessageFrom(player)).thenReturn("0 2");
+    void askForCards_whenInputIsZero_thenReturnedEmptyList() {
+        when(messageService.receiveMessageFrom(player)).thenReturn("0");
 
         List<Card> actual = playerInputValidator.askForCards(player);
 
