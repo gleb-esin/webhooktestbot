@@ -34,7 +34,8 @@ public class Attack {
         messageService.sendMessageTo(attacker, attacker.toString());
     }
 
-    public void move(Player attacker, TableController tableController, PlayerController playerController) {
+    public void move(PlayerController playerController, TableController tableController) {
+        Player attacker = playerController.getAttacker();
         List<Card> cards = playerInputValidator.askForCards(attacker);
         boolean isMoveCorrect = isAttackMoveCorrect(cards);
         while (cards.isEmpty() || (cards.size() > 1 && !isMoveCorrect)) {

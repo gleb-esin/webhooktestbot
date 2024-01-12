@@ -27,7 +27,9 @@ public class Defence  {
         messageService.sendMessageTo(playerController.getDefender(), playerController.getDefender().toString());
     }
 
-    public void move(Player defender, List<Player> playersForNotify, TableController tableController) {
+    public void move(PlayerController playerController, TableController tableController) {
+        Player defender = playerController.getDefender();
+        List<Player> playersForNotify = playerController.getPlayers();
         List<Card> unbeatenCards = tableController.getTable().getUnbeatenCards();
         boolean canDefend = isDefenceCorrect(unbeatenCards, defender.getPlayerHand());
         //If defender can't beat attacker cards...
@@ -69,6 +71,7 @@ public class Defence  {
                 }
             }
         }
+        if (defender.getRole().equals("binder")) playerController.setBinder(defender);
     }
 
     private boolean isDefenceCorrect(List<Card> unbeatenCards, List<Card> defenderCards) {

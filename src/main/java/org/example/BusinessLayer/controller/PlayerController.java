@@ -16,6 +16,7 @@ import java.util.*;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PlayerController {
+    @Setter
     boolean isGameOver = false;
     final List<Player> players;
     Player attacker;
@@ -46,7 +47,7 @@ public class PlayerController {
         }
         this.throwQueue.addFirst(this.attacker);
     }
-
+//TODO: revise algorithm
     private void setPlayerMinWeight(Player player) {
         int playersMinWeight = 0;
         boolean thisCardIsTrump;
@@ -78,14 +79,6 @@ public void setAttacker(Player player) {
 public void setDefender(Player player) {
     player.setRole("defender");
     this.defender = player;
-}
-
-public boolean isGameOver() {
-    return isGameOver;
-}
-
-public void setGameOver(boolean gameOver) {
-    isGameOver = gameOver;
 }
 
 public boolean isPlayerWinner(Player player, Deck deck) {

@@ -74,11 +74,10 @@ class AttackTest {
                 new Card("♣", "6", false)));
         when(playerInputValidator.askForCards(any())).thenReturn(cards);
 
-        attack.move(playerController.getAttacker(), tableController, playerController);
+        attack.move(playerController, tableController);
 
         assertEquals(cards, tableController.getAll());
-//FIXME:
-        //        verify(bot).sendMessageToAll(playerController.getPlayers(), tableController.getTable().toString());
+        verify(messageService).sendMessageToAll(playerController.getPlayers(), tableController.getTable().toString());
         assertEquals("thrower", attacker.getRole());
 
     }
@@ -94,9 +93,8 @@ class AttackTest {
         when(playerInputValidator.askForCards(any())).
                 thenReturn(wrongCards).thenReturn(cards);
 
-        attack.move(playerController.getAttacker(), tableController, playerController);
-////FIXME:
-//        verify(bot).sendMessageTo(attacker, "Так пойти не получится.");
+        attack.move(playerController, tableController);
+        verify(messageService).sendMessageTo(attacker, "Так пойти не получится.");
         verify(playerInputValidator, times(2)).askForCards(any());
     }
 }

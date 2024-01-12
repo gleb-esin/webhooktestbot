@@ -73,7 +73,7 @@ class DefenceTest {
     void move_whenDefenceIsCorrect_thenCadsAreBeaten() {
         when(playerInputValidator.askForCards(defender)).thenReturn(defenderCardsCorrect);
 
-        defence.move(defender, playerController.getPlayers(), tableController);
+        defence.move(playerController, tableController);
 
         assertEquals(4, tableController.getTable().getBeatenCards().size());
         verify(messageService).sendMessageToAll(playerController.getPlayers(), tableController.getTable().toString());
@@ -89,7 +89,7 @@ class DefenceTest {
         defender.getPlayerHand().addAll(defenderCardsWrong);
         when(playerInputValidator.askForCards(defender)).thenReturn(defenderCardsWrong).thenReturn(defenderCardsCorrect);
 
-        defence.move(defender, playerController.getPlayers(), tableController);
+        defence.move(playerController, tableController);
 
         verify(playerInputValidator, times(2)).askForCards(any());
         verify(messageService).sendMessageTo(defender, "Так не получится отбиться");
@@ -103,7 +103,7 @@ class DefenceTest {
         defender.getPlayerHand().addAll(defenderCardsWrong);
         when(playerInputValidator.askForCards(defender)).thenReturn(defenderCardsWrong).thenReturn(List.of());
 
-        defence.move(defender, playerController.getPlayers(), tableController);
+        defence.move(playerController, tableController);
 
         assertEquals("binder", defender.getRole());
         assertEquals(2, tableController.getAll().size());
@@ -118,7 +118,7 @@ class DefenceTest {
         defender.getPlayerHand().addAll(defenderCardsWrong);
         when(playerInputValidator.askForCards(defender)).thenReturn(defenderCardsWrong).thenReturn(defenderCardsCorrect);
 
-        defence.move(defender, playerController.getPlayers(), tableController);
+        defence.move(playerController, tableController);
 
         assertEquals("binder", defender.getRole());
         assertEquals(2, tableController.getAll().size());
@@ -130,7 +130,7 @@ class DefenceTest {
         defender.getPlayerHand().addAll(defenderCardsEmpty);
         when(playerInputValidator.askForCards(defender)).thenReturn(defenderCardsEmpty);
 
-        defence.move(defender, playerController.getPlayers(), tableController);
+        defence.move(playerController, tableController);
 
         verify(messageService).sendMessageToAll(playerController.getPlayers(), defender.getName() + " не будет отбиваться");
         assertEquals("binder", defender.getRole());

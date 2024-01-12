@@ -192,13 +192,13 @@ class PlayerInputValidatorTest {
     }
 
     @Test
-    void askForCards_whenInputIsEmpty_thenReturnPositiveIndex() {
-        when(messageService.receiveMessageFrom(player)).thenReturn("").thenReturn("1 2");
+    void askForCards_whenInputIsEmpty_thenReturnedEmptyList() {
+        when(messageService.receiveMessageFrom(player))
+                .thenReturn("");
 
-        playerInputValidator.askForCards(player);
+        List<Card> actual = playerInputValidator.askForCards(player);
 
-        verify(messageService).sendMessageTo(player, "Неверный ввод. Попробуйте ещё раз:");
-
+        assertTrue(actual.isEmpty());
     }
 
     @Test
