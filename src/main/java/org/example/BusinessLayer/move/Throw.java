@@ -21,8 +21,6 @@ public class Throw {
     MessageService messageService;
     PlayerInputValidator playerInputValidator;
     @NonFinal boolean throwerWantThrow = true;
-    @NonFinal Player whoLastUpdateThrowerWantThrow = null;
-
     @Autowired
     public Throw(MessageService messageService, PlayerInputValidator playerInputValidator) {
         this.messageService = messageService;
@@ -44,7 +42,6 @@ public class Throw {
             if (cards.isEmpty()) {
                 messageService.sendMessageToAll(playersForNotify, thrower.getName() + " не будет подкидывать.");
                 throwerWantThrow = false;
-                whoLastUpdateThrowerWantThrow = thrower;
             } else {
                 boolean throwIsNotCorrect = !isThrowMoveCorrect(tableController.getAll(), cards, defender);
                 while (throwIsNotCorrect) {
@@ -93,7 +90,7 @@ public class Throw {
 
     public boolean isThrowPossible(List<Card> tableCards, Player thrower, Player defender) {
         List<Card> throwerHand = thrower.getPlayerHand();
-        if (isThrowerReallyWantThrow(thrower)) {
+        if (isThrowerReallyWantThrow()) {
             boolean isThrowPossible = false;
             for (Card tableCard : tableCards) {
                 for (Card throwerCard : throwerHand) {
@@ -110,7 +107,7 @@ public class Throw {
         }
     }
 
-    private boolean isThrowerReallyWantThrow(Player thrower) {
+    private boolean isThrowerReallyWantThrow() {
         if(!throwerWantThrow) {
             throwerWantThrow = true;
             return false;
