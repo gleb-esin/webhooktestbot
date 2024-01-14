@@ -39,53 +39,49 @@ public class ThrowInFool implements State {
         PlayerInputValidator playerInputValidator = new PlayerInputValidator(messageService);
         Attack attack = new Attack(messageService, playerInputValidator);
         Defence defence = new Defence(messageService, playerInputValidator);
-        Player attacker = playerController.getAttacker();
-        Player defender = playerController.getDefender();
         Throw throwMove = new Throw(messageService, playerInputValidator);
-        List<Player> playersForNotify = playerController.getPlayers();
         boolean isDeckIsEmptyMessageNotSent = true;
 
         while (!playerController.isGameOver()) {
 
-            //attackInit attackMove
             attack.init(playerController, tableController);
             attack.move(playerController, tableController);
-            if (playerController.isPlayerWinner(attacker, deckController.getDeck())) break;
-
-            //defence Move
+            if (playerController.isPlayerWinner(playerController.getAttacker(), deckController.getDeck())) break;
             defence.init(playerController);
             defence.move(playerController, tableController);
-
-            if (playerController.isPlayerWinner(defender, deckController.getDeck())) break;
-
+            if (playerController.isPlayerWinner(playerController.getDefender(), deckController.getDeck())) break;
             //throw move
             ///...for each thrower....
             for (Player thrower : playerController.getThrowQueue()) {
                 //...check if thrower can throw it.
-                boolean isDefenceNeeded  = throwMove.move(thrower, playerController, tableController, deckController);
-                if(isDefenceNeeded){
-                    defence.init(playerController);
-                    defence.move(playerController, tableController);
+                boolean throwIsPossible = throwMove.isThrowPossible(tableController.getAll(), thrower, playerController.getDefender());
+                while (throwIsPossible) {
+                    boolean isDefenceNeeded = throwMove.move(thrower, playerController, tableController, deckController);
+                    if (isDefenceNeeded) {
+                        defence.init(playerController);
+                        defence.move(playerController, tableController);
+                    }
+                    throwIsPossible = throwMove.isThrowPossible(tableController.getAll(), thrower, playerController.getDefender());
                 }
             }
 
-            if (defender.getRole().equals("binder")) {
-                playerController.setBinder(defender);
-                messageService.sendMessageToAll(playersForNotify, playerController.getBinder().getName() + " забирает карты " + tableController.getAll().toString().substring(1, tableController.getAll().toString().length() - 1));
+            if (playerController.getDefender().getRole().equals("binder")) {
+                playerController.setBinder(playerController.getDefender());
+                messageService.sendMessageToAll(playerController.getPlayers(), playerController.getBinder().getName() + " забирает карты " + tableController.getAll().toString().substring(1, tableController.getAll().toString().length() - 1));
                 playerController.getBinder().getPlayerHand().addAll(tableController.getAll());
             }
 
             tableController.clear();
             if (deckController.getDeck().isEmpty()) {
-                if (isDeckIsEmptyMessageNotSent){
-                    messageService.sendMessageToAll(playersForNotify, "\uD83D\uDE45 <b>Колода пуста!</b> \uD83D\uDE45");
+                if (isDeckIsEmptyMessageNotSent) {
+                    messageService.sendMessageToAll(playerController.getPlayers(), "\uD83D\uDE45 <b>Колода пуста!</b> \uD83D\uDE45");
                     isDeckIsEmptyMessageNotSent = false;
                 }
-            } else
-                deckController.fillUpTheHands(playerController.getThrowQueue(), defender);
+            }
+            deckController.fillUpTheHands(playerController.getThrowQueue(), playerController.getDefender());
             playerController.changeTurn();
         }
-        messageService.sendMessageToAll(playersForNotify, "\uD83C\uDFC6 Победил " + playerController.getWinner().getName() + "! \uD83C\uDFC6");
+        messageService.sendMessageToAll(playerController.getPlayers(), "\uD83C\uDFC6 Победил " + playerController.getWinner().getName() + "! \uD83C\uDFC6");
     }
 
     private void dealCards() {

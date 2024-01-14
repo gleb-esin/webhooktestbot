@@ -56,10 +56,9 @@ public class DeckController {
         if (isLastDeal) {
             fillUpTheHandsForTheLastTime(throwQueue, defender);
         } else {
-            for (Player thrower : throwQueueCopy) {
-                fillUpThePlayersHand(thrower);
+            for (Player player : throwQueueCopy) {
+                fillUpThePlayersHand(player);
             }
-            fillUpThePlayersHand(defender);
         }
     }
 }

@@ -47,7 +47,8 @@ public class PlayerController {
         }
         this.throwQueue.addFirst(this.attacker);
     }
-//TODO: revise algorithm
+
+    //TODO: revise algorithm
     private void setPlayerMinWeight(Player player) {
         int playersMinWeight = 0;
         boolean thisCardIsTrump;
@@ -65,49 +66,55 @@ public class PlayerController {
                     playersMinWeight = card.getWeight();
                 }
             } else if (!thisCardIsTrump && weightNotSetYet) {
-                playersMinWeight = card.getWeight()+1000;
+                playersMinWeight = card.getWeight() + 1000;
+            }
         }
-    }
         player.setMinTrumpWeight(playersMinWeight);
-}
-
-public void setAttacker(Player player) {
-    player.setRole("attacker");
-    this.attacker = player;
-}
-
-public void setDefender(Player player) {
-    player.setRole("defender");
-    this.defender = player;
-}
-
-public boolean isPlayerWinner(Player player, Deck deck) {
-    boolean isWinner = deck.isEmpty() && player.getPlayerHand().isEmpty();
-    if (isWinner) {
-        player.setWinner(true);
-        setGameOver(true);
-        setWinner(player);
-        player.setWins(player.getWins() + 1);
     }
-    return isWinner;
-}
 
-
-public void changeTurn() {
-    Player attacker = this.throwQueue.pop();
-    attacker.setRole("thrower");
-    this.throwQueue.addLast(attacker);
-    if (this.binder == null) {
-        setAttacker(this.defender);
-    } else {
-        this.binder.setRole("thrower");
-        this.throwQueue.addLast(this.binder);
-        Player nextAttacker = this.throwQueue.pop();
-        setAttacker(nextAttacker);
+    public void setAttacker(Player player) {
+        player.setRole("attacker");
+        this.attacker = player;
     }
-    Player nextDefender = this.throwQueue.pop();
-    setDefender(nextDefender);
-    this.throwQueue.addFirst(this.attacker);
-    setBinder(null);
-}
+
+    public void setDefender(Player player) {
+        player.setRole("defender");
+        this.defender = player;
+    }
+
+    public boolean isPlayerWinner(Player player, Deck deck) {
+        boolean isWinner = deck.isEmpty() && player.getPlayerHand().isEmpty();
+        if (isWinner) {
+            player.setWinner(true);
+            setGameOver(true);
+            setWinner(player);
+            player.setWins(player.getWins() + 1);
+        }
+        return isWinner;
+    }
+
+
+    public void changeTurn() {
+        Player attacker = this.throwQueue.pop();
+        attacker.setRole("thrower");
+        this.throwQueue.addLast(attacker);
+        if (this.binder == null) {
+            setAttacker(this.defender);
+            Player nextDefender = this.throwQueue.pop();
+            setDefender(nextDefender);
+            this.throwQueue.addFirst(this.attacker);
+        } else if (this.binder != null && throwQueue.size() > 1) {
+            this.binder.setRole("thrower");
+            this.throwQueue.addLast(this.binder);
+            Player nextAttacker = this.throwQueue.pop();
+            setAttacker(nextAttacker);
+            Player nextDefender = this.throwQueue.pop();
+            setDefender(nextDefender);
+            this.throwQueue.addFirst(this.attacker);
+        } else {
+            setAttacker(attacker);
+            setDefender(defender);
+        }
+        setBinder(null);
+    }
 }

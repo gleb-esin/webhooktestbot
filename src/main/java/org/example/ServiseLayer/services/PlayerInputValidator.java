@@ -71,6 +71,8 @@ public class PlayerInputValidator {
      * @param  player             the player
      * @return                    true if the input is correct, false otherwise
      */
+
+    //TODO: remove playerHandIndexes.isEmpty() and test
     private boolean validatePlayerHandIndexes(List<Integer> playerHandIndexes, Player player) {
         boolean correctInput = true;
         if (playerHandIndexes.isEmpty()) {

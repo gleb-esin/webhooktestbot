@@ -1,14 +1,13 @@
 package org.example.BusinessLayer.move;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
 import org.example.BusinessLayer.controller.DeckController;
 import org.example.BusinessLayer.controller.PlayerController;
 import org.example.BusinessLayer.controller.TableController;
 import org.example.EntityLayer.Card;
 import org.example.EntityLayer.Player;
-import org.example.EntityLayer.Table;
 import org.example.ServiseLayer.services.MessageService;
 import org.example.ServiseLayer.services.PlayerInputValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,19 +16,25 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-@AllArgsConstructor(onConstructor = @__(@Autowired))
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class Throw {
     MessageService messageService;
     PlayerInputValidator playerInputValidator;
+    @NonFinal boolean throwerWantThrow = true;
+    @NonFinal Player whoLastUpdateThrowerWantThrow = null;
+
+    @Autowired
+    public Throw(MessageService messageService, PlayerInputValidator playerInputValidator) {
+        this.messageService = messageService;
+        this.playerInputValidator = playerInputValidator;
+    }
 
     public boolean move(Player thrower, PlayerController playerController, TableController tableController, DeckController deckController) {
         Player defender = playerController.getDefender();
         List<Player> playersForNotify = playerController.getPlayers();
-        boolean isThrowPossible = isThrowPossible(tableController.getAll(), thrower.getPlayerHand(), defender);
         boolean isDefenceNeeded = false;
 
-        while (isThrowPossible) {
+        for (int i = 0; i < 1; i++) {
             int numberOfUnbeatenCards = tableController.getTable().getUnbeatenCards().size();
             // If thrower can throw send initial notification to all waitingPlayers...
             messageService.sendMessageToAll(playersForNotify, "⚔️ " + thrower.getName() + " может подкинуть ⚔️");
@@ -38,6 +43,8 @@ public class Throw {
             List<Card> cards = playerInputValidator.askForCards(thrower);
             if (cards.isEmpty()) {
                 messageService.sendMessageToAll(playersForNotify, thrower.getName() + " не будет подкидывать.");
+                throwerWantThrow = false;
+                whoLastUpdateThrowerWantThrow = thrower;
             } else {
                 boolean throwIsNotCorrect = !isThrowMoveCorrect(tableController.getAll(), cards, defender);
                 while (throwIsNotCorrect) {
@@ -55,14 +62,13 @@ public class Throw {
             //...break throw loop
             if (throwerDidntThrow) {
                 break;
-            } else  {
+            } else {
                 //...and defender are not binder...
                 if (!defender.getRole().equals("binder")) {
                     //...make a defence move.
                     isDefenceNeeded = true;
                 }
             }
-            isThrowPossible = isThrowPossible(tableController.getAll(), thrower.getPlayerHand(), defender);
         }
         return isDefenceNeeded;
     }
@@ -85,17 +91,29 @@ public class Throw {
         return thrownCards == allowedCards;
     }
 
-    private boolean isThrowPossible(List<Card> tableCards, List<Card> throwerHand, Player defender) {
-        boolean isThrowPossible = false;
-        for (Card tableCard : tableCards) {
-            for (Card throwerCard : throwerHand) {
-                if (tableCard.getValue().equals(throwerCard.getValue())) {
-                    isThrowPossible = true;
-                    break;
+    public boolean isThrowPossible(List<Card> tableCards, Player thrower, Player defender) {
+        List<Card> throwerHand = thrower.getPlayerHand();
+        if (isThrowerReallyWantThrow(thrower)) {
+            boolean isThrowPossible = false;
+            for (Card tableCard : tableCards) {
+                for (Card throwerCard : throwerHand) {
+                    if (tableCard.getValue().equals(throwerCard.getValue())) {
+                        isThrowPossible = true;
+                        break;
+                    }
                 }
+                if (isThrowPossible) break;
             }
-            if (isThrowPossible) break;
+            return isThrowPossible && !defender.getPlayerHand().isEmpty();
+        } else {
+            return false;
         }
-        return isThrowPossible && !defender.getPlayerHand().isEmpty();
+    }
+
+    private boolean isThrowerReallyWantThrow(Player thrower) {
+        if(!throwerWantThrow) {
+            throwerWantThrow = true;
+            return false;
+        } else return true;
     }
 }
