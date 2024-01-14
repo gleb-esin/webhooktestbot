@@ -26,7 +26,6 @@ public class Throw {
         this.messageService = messageService;
         this.playerInputValidator = playerInputValidator;
     }
-
     public boolean move(Player thrower, PlayerController playerController, TableController tableController, DeckController deckController) {
         Player defender = playerController.getDefender();
         List<Player> playersForNotify = playerController.getPlayers();

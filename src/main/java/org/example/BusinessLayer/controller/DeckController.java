@@ -2,6 +2,7 @@ package org.example.BusinessLayer.controller;
 
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.example.EntityLayer.Card;
 import org.example.EntityLayer.Deck;
