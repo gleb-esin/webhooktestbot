@@ -43,17 +43,13 @@ public class ThrowInFool implements State {
         boolean isDeckIsEmptyMessageNotSent = true;
 
         while (!playerController.isGameOver()) {
-
             attack.init(playerController, tableController);
             attack.move(playerController, tableController);
             if (playerController.isPlayerWinner(playerController.getAttacker(), deckController.getDeck())) break;
             defence.init(playerController);
             defence.move(playerController, tableController);
             if (playerController.isPlayerWinner(playerController.getDefender(), deckController.getDeck())) break;
-            //throw move
-            ///...for each thrower....
             for (Player thrower : playerController.getThrowQueue()) {
-                //...check if thrower can throw it.
                 boolean throwIsPossible = throwMove.isThrowPossible(tableController.getAll(), thrower, playerController.getDefender());
                 while (throwIsPossible) {
                     boolean isDefenceNeeded = throwMove.move(thrower, playerController, tableController, deckController);
@@ -64,13 +60,11 @@ public class ThrowInFool implements State {
                     throwIsPossible = throwMove.isThrowPossible(tableController.getAll(), thrower, playerController.getDefender());
                 }
             }
-
             if (playerController.getDefender().getRole().equals("binder")) {
                 playerController.setBinder(playerController.getDefender());
                 messageService.sendMessageToAll(playerController.getPlayers(), playerController.getBinder().getName() + " забирает карты " + tableController.getAll().toString().substring(1, tableController.getAll().toString().length() - 1));
                 playerController.getBinder().getPlayerHand().addAll(tableController.getAll());
             }
-
             tableController.clear();
             if (deckController.getDeck().isEmpty()) {
                 if (isDeckIsEmptyMessageNotSent) {
