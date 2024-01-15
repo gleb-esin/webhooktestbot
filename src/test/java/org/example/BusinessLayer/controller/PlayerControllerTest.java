@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -203,7 +202,7 @@ class PlayerControllerTest {
     @Test
     void isPlayerWinner_whenDeckAndPlayerHandAreEmpty_thenTrue() {
         attacker.getPlayerHand().clear();
-        Deck deck = new Deck(UUID.randomUUID());
+        Deck deck = new Deck();
         deck.getDeck().clear();
         List<Player> players = new ArrayList<>(List.of(attacker, defender, thrower1, thrower2, thrower3, thrower4));
         playerController = new PlayerController(players);
@@ -214,7 +213,7 @@ class PlayerControllerTest {
     @Test
     void isPlayerWinner_whenDeckIsNotEmptyAndPlayerHandIsEmpty_thenFalse() {
         attacker.getPlayerHand().clear();
-        Deck deck = new Deck(UUID.randomUUID());
+        Deck deck = new Deck();
         List<Player> players = new ArrayList<>(List.of(attacker, defender, thrower1, thrower2, thrower3, thrower4));
         playerController = new PlayerController(players);
 
@@ -224,7 +223,7 @@ class PlayerControllerTest {
 
     @Test
     void isPlayerWinner_whenDeckIsEmptyAndPlayerHandIsNot_thenFalse() {
-        Deck deck = new Deck(UUID.randomUUID());
+        Deck deck = new Deck();
         deck.getDeck().clear();
         List<Player> players = new ArrayList<>(List.of(attacker, defender, thrower1, thrower2, thrower3, thrower4));
         playerController = new PlayerController(players);
@@ -234,7 +233,7 @@ class PlayerControllerTest {
 
     @Test
     void isPlayerWinner_whenDeckAndPlayerHandAreNotEmpty_thenFalse() {
-        Deck deck = new Deck(UUID.randomUUID());
+        Deck deck = new Deck();
         List<Player> players = new ArrayList<>(List.of(attacker, defender, thrower1, thrower2, thrower3, thrower4));
         playerController = new PlayerController(players);
 

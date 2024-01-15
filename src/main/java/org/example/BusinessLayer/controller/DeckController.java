@@ -1,26 +1,32 @@
 package org.example.BusinessLayer.controller;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.example.EntityLayer.Card;
 import org.example.EntityLayer.Deck;
 import org.example.EntityLayer.Player;
+import org.example.EntityLayer.Suit;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
 /**
  * This class provides control over deck's behavior during round
  */
+@Component
+@Lazy
+@Scope("prototype")
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class DeckController {
     Deck deck;
-
-    public DeckController(UUID gameId) {
-        this.deck = new Deck(gameId);
-    }
 
     public void fillUpThePlayersHand(Player player) {
         int playerCardGap = 6 - player.getPlayerHand().size();
@@ -39,7 +45,7 @@ public class DeckController {
         throwQueueCopy.addLast(defender);
         Iterator<Player> iterator = throwQueueCopy.iterator();
         for (Card card : deck.getDeck()) {
-            if(!iterator.hasNext()) iterator = throwQueueCopy.iterator();
+            if (!iterator.hasNext()) iterator = throwQueueCopy.iterator();
             nextPlayer = iterator.next();
             nextPlayer.getPlayerHand().add(card);
         }
@@ -61,5 +67,9 @@ public class DeckController {
                 fillUpThePlayersHand(player);
             }
         }
+    }
+
+    public Suit getTrump() {
+        return deck.getTrump();
     }
 }

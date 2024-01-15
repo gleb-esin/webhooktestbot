@@ -3,6 +3,7 @@ package org.example.BusinessLayer.move;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.example.BusinessLayer.controller.DeckController;
 import org.example.BusinessLayer.controller.PlayerController;
 import org.example.BusinessLayer.controller.TableController;
 import org.example.EntityLayer.Card;
@@ -12,6 +13,7 @@ import org.example.ServiseLayer.services.PlayerInputValidator;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+
 @Component
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -30,6 +32,7 @@ public class Attack {
                 .append("⚔️")
                 .append(System.lineSeparator())
                 .append(tableController.getTable().toString());
+
         messageService.sendMessageToAll(playerController.getPlayers(), message.toString());
         messageService.sendMessageTo(attacker, attacker.toString());
     }

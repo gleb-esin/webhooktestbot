@@ -1,24 +1,35 @@
 package org.example.BusinessLayer.controller;
 
+import jakarta.ws.rs.ext.ParamConverter;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import org.example.EntityLayer.Card;
 import org.example.EntityLayer.Deck;
 import org.example.EntityLayer.Player;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
 /**
  * This class provides control over players' behavior during round
  */
+
+@Component
+@Lazy
+@Scope("prototype")
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PlayerController {
     @Setter
     boolean isGameOver = false;
-    final List<Player> players;
+    @Setter
+    List<Player> players;
     Player attacker;
     Player defender;
     @Setter
@@ -26,10 +37,6 @@ public class PlayerController {
     @Setter
     Player winner;
     Deque<Player> throwQueue;
-
-    public PlayerController(List<Player> players) {
-        this.players = players;
-    }
 
     public void setPlayersTurn() {
         for (Player player : players) {

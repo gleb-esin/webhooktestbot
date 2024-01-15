@@ -1,12 +1,18 @@
 package org.example.BusinessLayer.controller;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import org.example.EntityLayer.Card;
 import org.example.EntityLayer.Player;
 import org.example.EntityLayer.Suit;
 import org.example.EntityLayer.Table;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,15 +20,19 @@ import java.util.List;
 /**
  * This class provides control over tables' behavior during round
  */
+@Component
+@Lazy
+@Scope("prototype")
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class TableController {
-
     Table table;
 
-    public TableController(Suit trump) {
-        this.table = new Table(trump);
+    public void setTrump(Suit trump) {
+        table.setTrump(trump);
     }
+
 
     public void clear() {
         table.getUnbeatenCards().clear();

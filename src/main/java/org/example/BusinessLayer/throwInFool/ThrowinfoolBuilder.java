@@ -1,16 +1,17 @@
 package org.example.BusinessLayer.throwInFool;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
-import org.example.EntityLayer.Player;
 import org.example.DataLayer.UserEntityRepository;
+import org.example.EntityLayer.Player;
 import org.example.ServiseLayer.factories.GameBuilder;
 import org.example.ServiseLayer.monitors.GameMonitor;
-import org.example.ServiseLayer.services.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -21,21 +22,17 @@ import java.util.concurrent.Semaphore;
 
 @Slf4j
 @Component
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ThrowinfoolBuilder implements GameBuilder {
     GameMonitor gameMonitor;
     UserEntityRepository userEntityRepository;
-    MessageService messageService;
     @Value("${game.maxAllowedParallelGames}")
     @NonFinal
+    @Autowired(required = false)
     int MAX_ALLOWED_PARALLEL_GAMES;
+    ApplicationContext applicationContext;
 
-    @Autowired
-    public ThrowinfoolBuilder(GameMonitor gameMonitor, UserEntityRepository userEntityRepository, MessageService messageService) {
-        this.gameMonitor = gameMonitor;
-        this.userEntityRepository = userEntityRepository;
-        this.messageService = messageService;
-    }
 
     @Override
     public void buildGame(List<Player> players) {
@@ -48,7 +45,8 @@ public class ThrowinfoolBuilder implements GameBuilder {
                 // Ожидаем, пока не получим разрешение от семафора
                 semaphore.acquire();
                 // Код для каждого отдельного игрока
-                new ThrowInFool(messageService, gameID, players).play();
+                ThrowInFool throwInFool = applicationContext.getBean(ThrowInFool.class);
+                throwInFool.play();
                 finnishGame(players, gameID);
             } catch (InterruptedException e) {
                 log.error("ThrowinfoolFactory.create(): " + e.getMessage());

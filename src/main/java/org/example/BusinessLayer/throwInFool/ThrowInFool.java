@@ -1,10 +1,12 @@
 package org.example.BusinessLayer.throwInFool;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.example.BusinessLayer.controller.DeckController;
 import org.example.BusinessLayer.controller.PlayerController;
 import org.example.BusinessLayer.controller.TableController;
+import org.example.EntityLayer.GameID;
 import org.example.EntityLayer.Player;
 import org.example.BusinessLayer.move.Attack;
 import org.example.BusinessLayer.move.Defence;
@@ -12,34 +14,29 @@ import org.example.BusinessLayer.move.Throw;
 import org.example.ServiseLayer.services.MessageService;
 import org.example.ServiseLayer.services.PlayerInputValidator;
 import org.example.BusinessLayer.states.State;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
 
-
+@Component
+@AllArgsConstructor(onConstructor = @__(@Autowired))
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ThrowInFool implements State {
-    UUID gameID;
+    GameID gameID;
     PlayerController playerController;
     DeckController deckController;
     TableController tableController;
     MessageService messageService;
-
-    public ThrowInFool(MessageService messageService, UUID gameID, List<Player> players) {
-        this.gameID = gameID;
-        this.messageService = messageService;
-        this.playerController = new PlayerController(players);
-        this.deckController = new DeckController(this.gameID);
-        this.tableController = new TableController(deckController.getDeck().getTrump());
-    }
+    Attack attack;
+    Defence defence;
+    Throw throwMove;
 
     public void play() {
         dealCards();
         playerController.setPlayersTurn();
-        PlayerInputValidator playerInputValidator = new PlayerInputValidator(messageService);
-        Attack attack = new Attack(messageService, playerInputValidator);
-        Defence defence = new Defence(messageService, playerInputValidator);
-        Throw throwMove = new Throw(messageService, playerInputValidator);
+
         boolean isDeckIsEmptyMessageNotSent = true;
 
         while (!playerController.isGameOver()) {
@@ -81,6 +78,7 @@ public class ThrowInFool implements State {
     private void dealCards() {
         for (Player player : playerController.getPlayers()) {
             deckController.fillUpThePlayersHand(player);
+            tableController.setTrump(deckController.getTrump());
             //if player gets cards - add 1 game
             player.setGames(player.getGames() + 1);
         }

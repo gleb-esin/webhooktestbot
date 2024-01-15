@@ -2,17 +2,22 @@ package org.example.EntityLayer;
 
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+@Component
+@Lazy
+@Scope("prototype")
 @Getter
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 public class Deck {
     List<Card> deck;
-    UUID gameId;
     Suit trump;
 
-    public Deck(UUID gameId) {
+    public Deck() {
         String[] suitArr = {"♠", "♣", "♥", "♦"};
         String trumpSuit = suitArr[(int) (Math.random() * 4)];
         this.trump = new Suit(trumpSuit, true);
@@ -27,7 +32,6 @@ public class Deck {
         }
         Collections.shuffle(deck);
         this.deck = deck;
-        this.gameId = gameId;
     }
 
     @Override
