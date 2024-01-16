@@ -6,19 +6,17 @@ import lombok.experimental.FieldDefaults;
 import org.example.BusinessLayer.controller.DeckController;
 import org.example.BusinessLayer.controller.PlayerController;
 import org.example.BusinessLayer.controller.TableController;
-import org.example.EntityLayer.GameID;
-import org.example.EntityLayer.Player;
 import org.example.BusinessLayer.move.Attack;
 import org.example.BusinessLayer.move.Defence;
 import org.example.BusinessLayer.move.Throw;
-import org.example.ServiseLayer.services.MessageService;
-import org.example.ServiseLayer.services.PlayerInputValidator;
 import org.example.BusinessLayer.states.State;
+import org.example.EntityLayer.GameID;
+import org.example.EntityLayer.Player;
+import org.example.ServiseLayer.services.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.UUID;
 
 @Component
 @AllArgsConstructor(onConstructor = @__(@Autowired))
@@ -33,8 +31,9 @@ public class ThrowInFool implements State {
     Defence defence;
     Throw throwMove;
 
-    public void play() {
-        dealCards();
+    public void play(List<Player> players) {
+        playerController.setPlayers(players);
+        dealCards(players);
         playerController.setPlayersTurn();
 
         boolean isDeckIsEmptyMessageNotSent = true;
@@ -59,24 +58,24 @@ public class ThrowInFool implements State {
             }
             if (playerController.getDefender().getRole().equals("binder")) {
                 playerController.setBinder(playerController.getDefender());
-                messageService.sendMessageToAll(playerController.getPlayers(), playerController.getBinder().getName() + " забирает карты " + tableController.getAll().toString().substring(1, tableController.getAll().toString().length() - 1));
+                messageService.sendMessageToAll(players, playerController.getBinder().getName() + " забирает карты " + tableController.getAll().toString().substring(1, tableController.getAll().toString().length() - 1));
                 playerController.getBinder().getPlayerHand().addAll(tableController.getAll());
             }
             tableController.clear();
             if (deckController.getDeck().isEmpty()) {
                 if (isDeckIsEmptyMessageNotSent) {
-                    messageService.sendMessageToAll(playerController.getPlayers(), "\uD83D\uDE45 <b>Колода пуста!</b> \uD83D\uDE45");
+                    messageService.sendMessageToAll(players, "\uD83D\uDE45 <b>Колода пуста!</b> \uD83D\uDE45");
                     isDeckIsEmptyMessageNotSent = false;
                 }
             }
             deckController.fillUpTheHands(playerController.getThrowQueue(), playerController.getDefender());
             playerController.changeTurn();
         }
-        messageService.sendMessageToAll(playerController.getPlayers(), "\uD83C\uDFC6 Победил " + playerController.getWinner().getName() + "! \uD83C\uDFC6");
+        messageService.sendMessageToAll(players, "\uD83C\uDFC6 Победил " + playerController.getWinner().getName() + "! \uD83C\uDFC6");
     }
 
-    private void dealCards() {
-        for (Player player : playerController.getPlayers()) {
+    private void dealCards(List<Player> players) {
+        for (Player player : players) {
             deckController.fillUpThePlayersHand(player);
             tableController.setTrump(deckController.getTrump());
             //if player gets cards - add 1 game

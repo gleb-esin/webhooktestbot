@@ -1,7 +1,6 @@
 package org.example.BusinessLayer.throwInFool;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
@@ -22,16 +21,21 @@ import java.util.concurrent.Semaphore;
 
 @Slf4j
 @Component
-@AllArgsConstructor(onConstructor = @__(@Autowired))
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ThrowinfoolBuilder implements GameBuilder {
     GameMonitor gameMonitor;
     UserEntityRepository userEntityRepository;
     @Value("${game.maxAllowedParallelGames}")
     @NonFinal
-    @Autowired(required = false)
     int MAX_ALLOWED_PARALLEL_GAMES;
     ApplicationContext applicationContext;
+
+    @Autowired
+    public ThrowinfoolBuilder(GameMonitor gameMonitor, UserEntityRepository userEntityRepository, ApplicationContext applicationContext) {
+        this.gameMonitor = gameMonitor;
+        this.userEntityRepository = userEntityRepository;
+        this.applicationContext = applicationContext;
+    }
 
 
     @Override
@@ -46,7 +50,7 @@ public class ThrowinfoolBuilder implements GameBuilder {
                 semaphore.acquire();
                 // Код для каждого отдельного игрока
                 ThrowInFool throwInFool = applicationContext.getBean(ThrowInFool.class);
-                throwInFool.play();
+                throwInFool.play(players);
                 finnishGame(players, gameID);
             } catch (InterruptedException e) {
                 log.error("ThrowinfoolFactory.create(): " + e.getMessage());

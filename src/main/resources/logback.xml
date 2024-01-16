@@ -1,35 +1,42 @@
 <configuration>
 
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
     <property name="HOME_LOG" value="/var/log/webhooktestbot/app.log"/>
 
-    <appender name="FILE-ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${HOME_LOG}</file>
+ Console appender for Spring logs
+<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+        <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+</appender>
 
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>/var/log/proj3ct.io/tg-simple-bot/app.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
-            <!-- each archived file, size max 10MB -->
-            <maxFileSize>10MB</maxFileSize>
-            <!-- total size of all archive files, if total size > 20GB, it will delete old archived file -->
-            <totalSizeCap>1GB</totalSizeCap>
-            <!-- 60 days to keep -->
-            <maxHistory>60</maxHistory>
-        </rollingPolicy>
+<!-- File appender for your logs -->
+<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${HOME_LOG}</file>
+    <encoder>
+        <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
 
-        <encoder>
-            <pattern>%d %p %c{"1".} [%t] %m%n</pattern>
-        </encoder>
-    </appender>
+    <!-- Rolling policy, adjust as needed -->
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+        <fileNamePattern>/var/log/proj3ct.io/tg-simple-bot/app.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+        <!-- each archived file, size max 10MB -->
+        <maxFileSize>10MB</maxFileSize>
+        <!-- total size of all archive files, if total size > 20GB, it will delete old archived file -->
+        <totalSizeCap>1GB</totalSizeCap>
+        <!-- 60 days to keep -->
+        <maxHistory>60</maxHistory>
+    </rollingPolicy>
+</appender>
 
-    <logger name="webhooktestbot" level="debug" additivity="false">
-        <appender-ref ref="FILE-ROLLING"/>
-    </logger>
+<!-- Logger for your package -->
+<logger name="webhooktestbot" level="DEBUG">
+    <appender-ref ref="FILE"/>
+</logger>
 
-    <root level="error">
-        <appender-ref ref="FILE-ROLLING"/>
-    </root>
-
-    <root level="info">
-        <appender-ref ref="FILE-ROLLING"/>
-    </root>
-
+<!-- Logger for Spring -->
+<root level="INFO">
+    <appender-ref ref="CONSOLE"/>
+</root>
 </configuration>
