@@ -10,7 +10,8 @@ class TableTest {
     void testToString() {
         String expected = "<b>Карты на столе:</b>" + System.lineSeparator() + "Отбитые карты: " + System.lineSeparator()+"Неотбитые карты: " + System.lineSeparator()+"Козырь <b>[♣]</b>";
 
-        Table table = new Table(new Suit("♣", true));
+        Table table = new Table();
+        table.setTrump(new Suit("♣", true));
 
         assertEquals(expected, table.toString());
     }

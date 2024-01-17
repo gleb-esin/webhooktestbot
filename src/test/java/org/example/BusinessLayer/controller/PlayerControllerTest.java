@@ -22,6 +22,7 @@ class PlayerControllerTest {
     Player thrower3;
     Player thrower4;
     PlayerController playerController;
+    List<Player> players;
 
     @BeforeEach
     void setUp() {
@@ -37,13 +38,15 @@ class PlayerControllerTest {
         thrower2.getPlayerHand().add(new Card("♠", "9", false));
         thrower3.getPlayerHand().add(new Card("♣", "10", false));
         thrower4.getPlayerHand().add(new Card("♦", "J", false));
+        playerController = new PlayerController();
+        players = new ArrayList<>();
     }
 
     @Test
     void setPlayersTurn_whenCardIsTrumpAndWeightNotSet() {
+        players.addAll(List.of(attacker, defender));
 
-        List<Player> players = new ArrayList<>(List.of(attacker, defender));
-        playerController = new PlayerController(players);
+        playerController.setPlayers(players);
         playerController.setPlayersTurn();
 
         assertEquals(101, attacker.getMinTrumpWeight());
@@ -53,8 +56,9 @@ class PlayerControllerTest {
     void setPlayersTurn_whenCardIsTrumpAndWeightIstSet_ButSetWeightIsLess() {
         attacker.getPlayerHand().add(new Card("♠", "6", true));
 
-        List<Player> players = new ArrayList<>(List.of(attacker, defender));
-        playerController = new PlayerController(players);
+        players.addAll(List.of(attacker, defender));
+
+        playerController.setPlayers(players);
         playerController.setPlayersTurn();
 
         assertEquals(100, attacker.getMinTrumpWeight());
@@ -64,8 +68,9 @@ class PlayerControllerTest {
     void setPlayersTurn_whenCardIsTrumpAndWeightIstSet_ButSetWeightIsGreater() {
         attacker.getPlayerHand().add(new Card("♠", "8", true));
 
-        List<Player> players = new ArrayList<>(List.of(attacker, defender));
-        playerController = new PlayerController(players);
+        players.addAll(List.of(attacker, defender));
+
+        playerController.setPlayers(players);
         playerController.setPlayersTurn();
 
         assertEquals(101, attacker.getMinTrumpWeight());
@@ -77,8 +82,9 @@ class PlayerControllerTest {
     @Test
     void setPlayersTurn_whenCardIsNotTrumpAndWeightNotSet() {
 
-        List<Player> players = new ArrayList<>(List.of(attacker, defender));
-        playerController = new PlayerController(players);
+        players.addAll(List.of(attacker, defender));
+
+        playerController.setPlayers(players);
         playerController.setPlayersTurn();
 
         assertEquals(1001, defender.getMinTrumpWeight());
@@ -88,8 +94,9 @@ class PlayerControllerTest {
     void setPlayersTurn_whenCardIsNotTrumpAndWeightIstSet_ButSetWeightIsLess() {
         defender.getPlayerHand().add(new Card("♣", "6", false));
 
-        List<Player> players = new ArrayList<>(List.of(attacker, defender));
-        playerController = new PlayerController(players);
+        players.addAll(List.of(attacker, defender));
+
+        playerController.setPlayers(players);
         playerController.setPlayersTurn();
 
         assertEquals(1001, defender.getMinTrumpWeight());
@@ -99,8 +106,9 @@ class PlayerControllerTest {
     void setPlayersTurn_whenCardIsNotTrumpAndWeightIstSet_ButSetWeightIsGreater() {
         defender.getPlayerHand().add(new Card("♣", "8", false));
 
-        List<Player> players = new ArrayList<>(List.of(attacker, defender));
-        playerController = new PlayerController(players);
+        players.addAll(List.of(attacker, defender));
+
+        playerController.setPlayers(players);
         playerController.setPlayersTurn();
 
         assertEquals(1001, defender.getMinTrumpWeight());
@@ -109,8 +117,9 @@ class PlayerControllerTest {
 
     @Test
     void setPlayersTurn_when2Players() {
-        List<Player> players = new ArrayList<>(List.of(attacker, defender));
-        playerController = new PlayerController(players);
+        players.addAll(List.of(attacker, defender));
+
+        playerController.setPlayers(players);
         playerController.setPlayersTurn();
 
         assertEquals("attacker", playerController.getAttacker().getRole());
@@ -119,8 +128,9 @@ class PlayerControllerTest {
 
     @Test
     void setPlayersTurn_when3Players() {
-        List<Player> players = new ArrayList<>(List.of(attacker, defender, thrower1));
-        playerController = new PlayerController(players);
+        players.addAll(List.of(attacker, defender, thrower1));
+
+        playerController.setPlayers(players);
         playerController.setPlayersTurn();
 
         assertEquals("attacker", playerController.getAttacker().getRole());
@@ -130,8 +140,9 @@ class PlayerControllerTest {
 
     @Test
     void setPlayersTurn_when4Players() {
-        List<Player> players = new ArrayList<>(List.of(attacker, defender, thrower1, thrower2));
-        playerController = new PlayerController(players);
+        players.addAll(List.of(attacker, defender, thrower1, thrower2));
+
+        playerController.setPlayers(players);
         playerController.setPlayersTurn();
 
         assertEquals("attacker", playerController.getAttacker().getRole());
@@ -142,8 +153,9 @@ class PlayerControllerTest {
 
     @Test
     void setPlayersTurn_when5Players() {
-        List<Player> players = new ArrayList<>(List.of(attacker, defender, thrower1, thrower2, thrower3));
-        playerController = new PlayerController(players);
+        players.addAll(List.of(attacker, defender, thrower1, thrower2, thrower3));
+
+        playerController.setPlayers(players);
         playerController.setPlayersTurn();
 
         assertEquals("attacker", playerController.getAttacker().getRole());
@@ -154,8 +166,9 @@ class PlayerControllerTest {
     }
     @Test
     void setPlayersTurn_when6Players() {
-        List<Player> players = new ArrayList<>(List.of(attacker, defender, thrower1, thrower2, thrower3, thrower4));
-        playerController = new PlayerController(players);
+        players.addAll(List.of(attacker, defender, thrower1, thrower2, thrower3, thrower4));
+
+        playerController.setPlayers(players);
         playerController.setPlayersTurn();
 
         assertEquals("attacker", playerController.getAttacker().getRole());
@@ -168,8 +181,9 @@ class PlayerControllerTest {
 
     @Test
     void changeTurn_when6Players_AndNoBinder() {
-        List<Player> players = new ArrayList<>(List.of(attacker, defender, thrower1, thrower2, thrower3, thrower4));
-        playerController = new PlayerController(players);
+        players.addAll(List.of(attacker, defender, thrower1, thrower2, thrower3, thrower4));
+
+        playerController.setPlayers(players);
         playerController.setPlayersTurn();
 
         playerController.changeTurn();
@@ -184,8 +198,8 @@ class PlayerControllerTest {
 
     @Test
     void changeTurn_withBinder() {
-        List<Player> players = new ArrayList<>(List.of(attacker, defender, thrower1, thrower2, thrower3, thrower4));
-        playerController = new PlayerController(players);
+        players.addAll(List.of(attacker, defender, thrower1, thrower2, thrower3, thrower4));
+        playerController.setPlayers(players);
         playerController.setPlayersTurn();
         playerController.setBinder(playerController.getDefender());
 
@@ -200,12 +214,27 @@ class PlayerControllerTest {
     }
 
     @Test
+    void changeTurn_when2PlayersAndDefenderIsBinder() {
+        defender.setRole("binder");
+        playerController.setBinder(defender);
+        players.addAll(List.of(attacker, defender));
+        playerController.setPlayers(players);
+        playerController.setPlayersTurn();
+
+        playerController.changeTurn();
+
+        assertEquals("attacker", attacker.getRole());
+        assertEquals("defender", defender.getRole());
+    }
+
+    @Test
     void isPlayerWinner_whenDeckAndPlayerHandAreEmpty_thenTrue() {
         attacker.getPlayerHand().clear();
         Deck deck = new Deck();
         deck.getDeck().clear();
-        List<Player> players = new ArrayList<>(List.of(attacker, defender, thrower1, thrower2, thrower3, thrower4));
-        playerController = new PlayerController(players);
+        players.addAll(List.of(attacker, defender, thrower1, thrower2, thrower3, thrower4));
+
+        playerController.setPlayers(players);
 
         assertTrue(playerController.isPlayerWinner(attacker, deck));
     }
@@ -214,8 +243,9 @@ class PlayerControllerTest {
     void isPlayerWinner_whenDeckIsNotEmptyAndPlayerHandIsEmpty_thenFalse() {
         attacker.getPlayerHand().clear();
         Deck deck = new Deck();
-        List<Player> players = new ArrayList<>(List.of(attacker, defender, thrower1, thrower2, thrower3, thrower4));
-        playerController = new PlayerController(players);
+        players.addAll(List.of(attacker, defender, thrower1, thrower2, thrower3, thrower4));
+
+        playerController.setPlayers(players);
 
         assertFalse(playerController.isPlayerWinner(attacker, deck));
     }
@@ -225,8 +255,9 @@ class PlayerControllerTest {
     void isPlayerWinner_whenDeckIsEmptyAndPlayerHandIsNot_thenFalse() {
         Deck deck = new Deck();
         deck.getDeck().clear();
-        List<Player> players = new ArrayList<>(List.of(attacker, defender, thrower1, thrower2, thrower3, thrower4));
-        playerController = new PlayerController(players);
+        players.addAll(List.of(attacker, defender, thrower1, thrower2, thrower3, thrower4));
+
+        playerController.setPlayers(players);
 
         assertFalse(playerController.isPlayerWinner(attacker, deck));
     }
@@ -234,8 +265,9 @@ class PlayerControllerTest {
     @Test
     void isPlayerWinner_whenDeckAndPlayerHandAreNotEmpty_thenFalse() {
         Deck deck = new Deck();
-        List<Player> players = new ArrayList<>(List.of(attacker, defender, thrower1, thrower2, thrower3, thrower4));
-        playerController = new PlayerController(players);
+        players.addAll(List.of(attacker, defender, thrower1, thrower2, thrower3, thrower4));
+
+        playerController.setPlayers(players);
 
         assertFalse(playerController.isPlayerWinner(attacker, deck));
     }

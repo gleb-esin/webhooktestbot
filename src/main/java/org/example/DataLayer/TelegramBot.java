@@ -68,16 +68,11 @@ public class TelegramBot extends TelegramWebhookBot {
     /**
      * Handles the received webhook update. Returns null for a successful answer to server
      *
-     * @param  update  the update received from the webhook
-     * @return         the BotApiMethod object representing the response to the webhook update
+     * @param update the update received from the webhook
+     * @return the BotApiMethod object representing the response to the webhook update
      */
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
-        //fixme
-        log.error("Error");
-        log.warn("Warn");
-        log.debug("Debug");
-        log.info("Info");
         if (update.hasMessage() && update.getMessage().hasText()) {
             String text = update.getMessage().getText();
             Long chatId = update.getMessage().getChatId();
@@ -89,8 +84,8 @@ public class TelegramBot extends TelegramWebhookBot {
     /**
      * A listener method for handling outgoing messages to the server.
      *
-     * @param  event  the event to be handled, expects a SendMessage object
-     * @return        void
+     * @param event the event to be handled, expects a SendMessage object
+     * @return void
      */
     @EventListener(BotApiMethod.class)
     private void messageSenderOnEventListener(SendMessage event) {

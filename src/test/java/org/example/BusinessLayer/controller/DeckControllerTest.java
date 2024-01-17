@@ -1,17 +1,22 @@
 package org.example.BusinessLayer.controller;
 
+import org.example.EntityLayer.Deck;
 import org.example.EntityLayer.Player;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Deque;
 import java.util.LinkedList;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class DeckControllerTest {
-    DeckController deckController = new DeckController(Mockito.mock(UUID.class));
+    DeckController deckController;
+    @BeforeEach
+    public void setUp() {
+        deckController = new DeckController(new Deck());
+    }
 
     @Test
     void test_fillUpThePlayersHand() {

@@ -5,6 +5,7 @@ import org.example.BusinessLayer.controller.TableController;
 import org.example.EntityLayer.Card;
 import org.example.EntityLayer.Player;
 import org.example.EntityLayer.Suit;
+import org.example.EntityLayer.Table;
 import org.example.ServiseLayer.services.MessageService;
 import org.example.ServiseLayer.services.PlayerInputValidator;
 import org.junit.jupiter.api.AfterEach;
@@ -41,8 +42,10 @@ class DefenceTest {
         closeable = MockitoAnnotations.openMocks(this);
         attacker = new Player(1L, "attacker");
         defender = new Player(2L, "defender");
-        tableController = new TableController(new Suit("♠", true));
-        playerController = new PlayerController(List.of(attacker, defender));
+        tableController = new TableController(new Table());
+        tableController.setTrump(new Suit("♠", true));
+        playerController = new PlayerController();
+        playerController.setPlayers(List.of(attacker, defender));
         playerController.setAttacker(attacker);
         playerController.setDefender(defender);
         cards = new ArrayList<>(List.of(

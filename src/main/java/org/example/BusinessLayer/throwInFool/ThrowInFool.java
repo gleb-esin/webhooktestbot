@@ -37,7 +37,7 @@ public class ThrowInFool implements State {
         playerController.setPlayersTurn();
 
         boolean isDeckIsEmptyMessageNotSent = true;
-
+        gameloop:
         while (!playerController.isGameOver()) {
             attack.init(playerController, tableController);
             attack.move(playerController, tableController);
@@ -49,6 +49,7 @@ public class ThrowInFool implements State {
                 boolean throwIsPossible = throwMove.isThrowPossible(tableController.getAll(), thrower, playerController.getDefender());
                 while (throwIsPossible) {
                     boolean isDefenceNeeded = throwMove.move(thrower, playerController, tableController, deckController);
+                    if (playerController.isPlayerWinner(thrower, deckController.getDeck())) break gameloop;
                     if (isDefenceNeeded) {
                         defence.init(playerController);
                         defence.move(playerController, tableController);
