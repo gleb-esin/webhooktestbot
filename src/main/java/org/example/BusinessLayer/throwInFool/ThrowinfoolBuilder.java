@@ -20,7 +20,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
 
 @Slf4j
-@Component
+@Component("throwinfoolBuilder")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ThrowinfoolBuilder implements GameBuilder {
     GameMonitor gameMonitor;
@@ -29,21 +29,22 @@ public class ThrowinfoolBuilder implements GameBuilder {
     @NonFinal
     int MAX_ALLOWED_PARALLEL_GAMES;
     ApplicationContext applicationContext;
+    Semaphore semaphore;
 
     @Autowired
     public ThrowinfoolBuilder(GameMonitor gameMonitor, UserEntityRepository userEntityRepository, ApplicationContext applicationContext) {
         this.gameMonitor = gameMonitor;
         this.userEntityRepository = userEntityRepository;
         this.applicationContext = applicationContext;
+        this.semaphore = new Semaphore(MAX_ALLOWED_PARALLEL_GAMES);
     }
 
-
+//fixme
     @Override
     public void buildGame(List<Player> players) {
         UUID gameID = UUID.randomUUID();
         gameMonitor.addGame(gameID, players);
-        ExecutorService executorService = Executors.newCachedThreadPool(); // Мы используем CachedThreadPool
-        Semaphore semaphore = new Semaphore(MAX_ALLOWED_PARALLEL_GAMES); // Начальное количество разрешений
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
         executorService.submit(() -> {
             try {
                 // Ожидаем, пока не получим разрешение от семафора
