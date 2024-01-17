@@ -73,6 +73,11 @@ public class TelegramBot extends TelegramWebhookBot {
      */
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
+        //fixme
+        log.error("Error");
+        log.warn("Warn");
+        log.debug("Debug");
+        log.info("Info");
         if (update.hasMessage() && update.getMessage().hasText()) {
             String text = update.getMessage().getText();
             Long chatId = update.getMessage().getChatId();

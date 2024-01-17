@@ -1,10 +1,7 @@
 <configuration>
     <property name="HOME_LOG" value="/var/log/webhooktestbot/app.log"/>
-
-
     <!-- Include Spring Boot's default configuration -->
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
-
     <!-- Define color options for the console -->
     <springProperty scope="context" name="CONSOLE_LOG_PATTERN" source="logging.pattern.console"/>
 
@@ -23,7 +20,7 @@
         </encoder>
         <!-- Rolling policy, adjust as needed -->
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>C:\var\log\webhooktestbot\app.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <fileNamePattern>app.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
             <!-- each archived file, size max 10MB -->
             <maxFileSize>10MB</maxFileSize>
             <!-- total size of all archive files, if total size > 20GB, it will delete old archived file -->
@@ -31,6 +28,12 @@
             <!-- 60 days to keep -->
             <maxHistory>60</maxHistory>
         </rollingPolicy>
+
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>DENY</onMatch>
+            <onMismatch>NEUTRAL</onMismatch>
+        </filter>
     </appender>
 
     <!-- Logger for Spring -->
