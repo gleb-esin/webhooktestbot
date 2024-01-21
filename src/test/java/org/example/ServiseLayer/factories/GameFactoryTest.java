@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
@@ -42,12 +43,12 @@ class GameFactoryTest {
     @Test
     void create_whenGameTypeIsCorrect_thenBuildGameIsInvoked() {
         gameFactory.create("throwinfool", players);
-        verify(throwinfoolBuilder).buildGame(players);
+        verify(throwinfoolBuilder).runGame(eq(players));
     }
 
     @Test
     void create_whenGameTypeIsNotCorrect_thenBuildGameIsNotInvoked() {
         gameFactory.create("noSuchGame", players);
-        verify(throwinfoolBuilder, never()).buildGame(players);
+        verify(throwinfoolBuilder, never()).runGame(players);
     }
 }

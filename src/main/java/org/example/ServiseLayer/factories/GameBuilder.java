@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.UUID;
 
 public interface GameBuilder {
-    void buildGame(List<Player> players);
+    void runGame(List<Player> players);
 
     void finnishGame(List<Player> players, UUID gameID);
+
+    void buildGame(List<Player> players);
 }

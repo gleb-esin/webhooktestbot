@@ -30,7 +30,7 @@ public class GameFactory {
     public void create(String gameType, List<Player> players) {
         String key = gameType + "Builder";
         if (gameBuilders.containsKey(key)) {
-            gameBuilders.get(key).buildGame(players);
+            gameBuilders.get(key).runGame(players);
         } else {
             log.error("GameFactory.create(): Unsupported game type: " + gameType);
         }
