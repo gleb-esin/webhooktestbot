@@ -84,16 +84,16 @@ public class TelegramBot extends TelegramWebhookBot {
     /**
      * A listener method for handling outgoing messages to the server.
      *
-     * @param event the event to be handled, expects a SendMessage object
+     * @param sendMessage the event to be handled, expects a SendMessage object
      * @return void
      */
-    @EventListener(BotApiMethod.class)
-    private void messageSenderOnEventListener(SendMessage event) {
+    @EventListener(SendMessage.class)
+    private void messageSenderOnEventListener(SendMessage sendMessage) {
         try {
-            event.enableHtml(true);
-            execute(event);
+            sendMessage.enableHtml(true);
+            execute(sendMessage);
         } catch (TelegramApiException e) {
-            log.error("TelegramBot.eventListener(): Error sending message: " + e.getMessage());
+            log.error(e.getMessage());
         }
     }
 }

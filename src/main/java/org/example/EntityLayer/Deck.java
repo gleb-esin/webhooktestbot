@@ -44,7 +44,8 @@ public class Deck {
     }
 
     public Card getNextCard() {
-        return deck.remove(0);
+        Card card = deck.remove(0);
+        return card;
     }
 
     public boolean isEmpty() {

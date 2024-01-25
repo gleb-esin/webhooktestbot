@@ -17,7 +17,6 @@ import static org.mockito.Mockito.when;
 
 class PlayerInputValidatorTest {
     AutoCloseable closeable;
-
     @Mock
     MessageService messageService;
     Player player = new Player(1L, "test");

@@ -68,8 +68,9 @@ public class ThrowInFool implements State {
                     messageService.sendMessageToAll(players, "\uD83D\uDE45 <b>Колода пуста!</b> \uD83D\uDE45");
                     isDeckIsEmptyMessageNotSent = false;
                 }
+            } else {
+                deckController.fillUpTheHands(playerController.getThrowQueue(), playerController.getDefender());
             }
-            deckController.fillUpTheHands(playerController.getThrowQueue(), playerController.getDefender());
             playerController.changeTurn();
         }
         messageService.sendMessageToAll(players, "\uD83C\uDFC6 Победил " + playerController.getWinner().getName() + "! \uD83C\uDFC6");
@@ -79,7 +80,7 @@ public class ThrowInFool implements State {
         for (Player player : players) {
             deckController.fillUpThePlayersHand(player);
             tableController.setTrump(deckController.getTrump());
-            //if player gets cards - add 1 game
+            //if player gets cards - add plus one game
             player.setGames(player.getGames() + 1);
         }
     }
