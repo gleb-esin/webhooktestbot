@@ -1,20 +1,20 @@
 package org.example.BusinessLayer.controller;
 
-import jakarta.ws.rs.ext.ParamConverter;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import org.example.EntityLayer.Card;
 import org.example.EntityLayer.Deck;
 import org.example.EntityLayer.Player;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * This class provides control over players' behavior during round
@@ -54,8 +54,6 @@ public class PlayerController {
         }
         this.throwQueue.addFirst(this.attacker);
     }
-
-    //TODO: revise algorithm
     private void setPlayerMinWeight(Player player) {
         int playersMinWeight = 0;
         boolean thisCardIsTrump;
@@ -68,11 +66,11 @@ public class PlayerController {
 
             if (thisCardIsTrump && weightNotSetYet) {
                 playersMinWeight = card.getWeight();
-            } else if (thisCardIsTrump && !weightNotSetYet) {
+            } else if (thisCardIsTrump) {
                 if (setWeightGreaterNewOne) {
                     playersMinWeight = card.getWeight();
                 }
-            } else if (!thisCardIsTrump && weightNotSetYet) {
+            } else if (weightNotSetYet) {
                 playersMinWeight = card.getWeight() + 1000;
             }
         }
@@ -110,7 +108,7 @@ public class PlayerController {
             Player nextDefender = this.throwQueue.pop();
             setDefender(nextDefender);
             this.throwQueue.addFirst(this.attacker);
-        } else if (this.binder != null && throwQueue.size() > 1) {
+        } else if (throwQueue.size() > 1) {
             this.binder.setRole("thrower");
             this.throwQueue.addLast(this.binder);
             Player nextAttacker = this.throwQueue.pop();

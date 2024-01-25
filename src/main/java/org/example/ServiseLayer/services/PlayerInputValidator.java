@@ -75,9 +75,7 @@ public class PlayerInputValidator {
     //TODO: remove playerHandIndexes.isEmpty() and test
     private boolean validatePlayerHandIndexes(List<Integer> playerHandIndexes, Player player) {
         boolean correctInput = true;
-        if (playerHandIndexes.isEmpty()) {
-            correctInput = true;
-        } else if (playerHandIndexes.size() > player.getPlayerHand().size()) {
+        if (playerHandIndexes.size() > player.getPlayerHand().size()) {
             correctInput = false;
         } else {
             for (Integer index : playerHandIndexes) {
