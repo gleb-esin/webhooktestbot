@@ -9,7 +9,6 @@ import org.example.BusinessLayer.move.Throw;
 import org.example.BusinessLayer.throwInFool.ThrowInFool;
 import org.example.EntityLayer.Card;
 import org.example.EntityLayer.Deck;
-import org.example.EntityLayer.GameID;
 import org.example.EntityLayer.Player;
 import org.example.ServiseLayer.services.MessageService;
 import org.junit.jupiter.api.AfterEach;
@@ -27,8 +26,6 @@ import static org.mockito.Mockito.*;
 
 class ThrowInFoolTest {
     AutoCloseable closeable;
-    @Mock
-    GameID gameID;
     @Mock
     PlayerController playerController;
     @Mock
@@ -75,6 +72,38 @@ class ThrowInFoolTest {
     @AfterEach
     void tearDown() throws Exception {
         closeable.close();
+    }
+
+    @Test
+    void play_whenInvoked_thenDeckControllerFilledUpPlayersHand() {
+        when(playerController.isGameOver()).thenReturn(true);
+        throwInFool.play(players);
+
+        verify(deckController, times(3)).fillUpThePlayersHand(any());
+    }
+
+    @Test
+    void play_whenInvoked_thenPlayerControllerSetPlayers() {
+        when(playerController.isGameOver()).thenReturn(true);
+        throwInFool.play(players);
+
+        verify(playerController, times(1)).setPlayers(players);
+    }
+
+    @Test
+    void play_whenInvoked_thenPlayerControllerSetPlayerSetPlayersTurn() {
+        when(playerController.isGameOver()).thenReturn(true);
+        throwInFool.play(players);
+
+        verify(playerController, times(1)).setPlayersTurn();
+    }
+
+    @Test
+    void play_whenInvoked_thenTableControllerSetPlayerSetTrump() {
+        when(playerController.isGameOver()).thenReturn(true);
+        throwInFool.play(players);
+
+        verify(tableController, times(1)).setTrump(deckController.getTrump());
     }
 
     @Test
