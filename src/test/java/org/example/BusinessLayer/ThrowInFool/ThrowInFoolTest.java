@@ -65,8 +65,6 @@ class ThrowInFoolTest {
         when(playerController.getThrowQueue()).thenReturn(new LinkedList<>(List.of(attacker, thrower)));
         when(deckController.getDeck()).thenReturn(deck);
         when(playerController.getWinner()).thenReturn(attacker);
-
-
     }
 
     @AfterEach

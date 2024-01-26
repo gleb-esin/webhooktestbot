@@ -29,6 +29,11 @@ public class DeckController {
     Deck deck;
     int MAX_PLAYERS_HAND_SIZE = 6;
 
+    /**
+     * Fills up the player's hand up to MAX_PLAYERS_HAND_SIZE with cards from the deck.
+     *
+     * @param  player   the player whose hand will be filled
+     */
     public void fillUpThePlayersHand(Player player) {
         int playerCardGap = MAX_PLAYERS_HAND_SIZE - player.getPlayerHand().size();
         if (playerCardGap > deck.getDeckSize()) playerCardGap = deck.getDeckSize();
@@ -40,6 +45,11 @@ public class DeckController {
             }
         }
     }
+    /**
+     * Fills up the players hands with cards up to MAX_PLAYERS_HAND_SIZE from the deck when deck size is less than cards needed to players.
+     *
+     * @param  throwQueueCopy   deque contains attacker, throwers and defender
+     */
     private void fillUpTheHandsForTheLastTime(Deque<Player> throwQueueCopy) {
         Player nextPlayer;
         Iterator<Player> iterator = throwQueueCopy.iterator();
@@ -52,7 +62,12 @@ public class DeckController {
             nextPlayer.getPlayerHand().add(deck.getNextCard());
         }
     }
-
+    /**
+     * Decides how to fill up the players hands depending on whether the deck have enough cards or not.
+     *
+     * @param  throwQueue   the queue of attacker and throwers
+     * @param  defender     defender
+     */
     public void fillUpTheHands(Deque<Player> throwQueue, Player defender) {
         Deque<Player> throwQueueCopy = new LinkedList<>(throwQueue);
         throwQueueCopy.addLast(defender);
@@ -69,7 +84,11 @@ public class DeckController {
             }
         }
     }
-
+    /**
+     * Returns the trump suit from the deck.
+     *
+     * @return         the trump suit
+     */
     public Suit getTrump() {
         return deck.getTrump();
     }

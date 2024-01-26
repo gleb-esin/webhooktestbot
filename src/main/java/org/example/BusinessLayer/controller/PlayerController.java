@@ -19,7 +19,6 @@ import java.util.List;
 /**
  * This class provides control over players' behavior during round
  */
-
 @Component
 @Lazy
 @Scope("prototype")
@@ -38,6 +37,9 @@ public class PlayerController {
     Player winner;
     Deque<Player> throwQueue;
 
+    /**
+     * Set the turn for each player based on players' minTrumpWeight.
+     */
     public void setPlayersTurn() {
         for (Player player : players) {
             setPlayerMinWeight(player);
@@ -46,6 +48,15 @@ public class PlayerController {
         for (int i = 0; i < players.size(); i++) {
             players.get(i).setTurn(i + 1);
         }
+        formQueue(players);
+    }
+
+    /**
+     * Forms a queue of players and sets game roles.
+     *
+     * @param  players   the list of players to form the queue
+     */
+    private void formQueue(List<Player> players) {
         this.throwQueue = new LinkedList<>(players);
         setAttacker(this.throwQueue.pop());
         setDefender(this.throwQueue.pop());
@@ -54,6 +65,12 @@ public class PlayerController {
         }
         this.throwQueue.addFirst(this.attacker);
     }
+
+    /**
+     * Sets the weight of minimal value trump card. If trump card is not found, add 1000 to minimum non trump card  weight.
+     *
+     * @param  player   the player whose minimum weight needs to be set
+     */
     private void setPlayerMinWeight(Player player) {
         int playersMinWeight = 0;
         boolean thisCardIsTrump;
@@ -77,20 +94,37 @@ public class PlayerController {
         player.setMinTrumpWeight(playersMinWeight);
     }
 
+    /**
+     * Sets player as an attacker.
+     *
+     * @param  player   the player to set as the attacker
+     */
     public void setAttacker(Player player) {
         player.setRole("attacker");
         this.attacker = player;
     }
 
+    /**
+     * Sets the player as a defender.
+     *
+     * @param  player  the player to set as a defender
+     */
     public void setDefender(Player player) {
         player.setRole("defender");
         this.defender = player;
     }
 
+    /**
+     * Checks if the player is the winner based on the remaining cards in the player's hand and in the deck.
+     * Set game state, winner and increment players wins in case of a win.
+     *
+     * @param  player  the player to check for winning status
+     * @param  deck    the deck to check for empty status
+     * @return         true if the player is the winner, false otherwise
+     */
     public boolean isPlayerWinner(Player player, Deck deck) {
         boolean isWinner = deck.isEmpty() && player.getPlayerHand().isEmpty();
         if (isWinner) {
-            player.setWinner(true);
             setGameOver(true);
             setWinner(player);
             player.setWins(player.getWins() + 1);
@@ -98,7 +132,9 @@ public class PlayerController {
         return isWinner;
     }
 
-
+    /**
+     * Changes the  players' turn in the game.
+     */
     public void changeTurn() {
         Player attacker = this.throwQueue.pop();
         attacker.setRole("thrower");

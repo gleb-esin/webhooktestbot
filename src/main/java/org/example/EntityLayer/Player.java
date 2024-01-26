@@ -19,7 +19,6 @@ public class Player implements Comparable<Player> {
     final String name;
     final Long chatID;
     final List<Card> playerHand = new ArrayList<>();
-    boolean isWinner = false;
     int turn;
     String role;
     Integer minTrumpWeight;
@@ -40,7 +39,7 @@ public class Player implements Comparable<Player> {
 
     @Override
     public String toString() {
-        Comparator<Card> weightComparator = (card1, card2) -> Integer.compare(card1.getWeight(), card2.getWeight());
+        Comparator<Card> weightComparator = Comparator.comparingInt(Card::getWeight);
         Collections.sort(playerHand, weightComparator);
         StringBuilder upperString = new StringBuilder();
         StringBuilder bottomString = new StringBuilder();
@@ -65,16 +64,11 @@ public class Player implements Comparable<Player> {
 
     @Override
     public int compareTo(Player player) {
-        if (this.minTrumpWeight > player.minTrumpWeight) {
-            return 1;
-        } else if(this.minTrumpWeight < player.minTrumpWeight) {
-            return -1;
-        } else return 0;
+        return this.minTrumpWeight.compareTo(player.minTrumpWeight);
     }
 
     public UserEntity toUserEntity() {
-        UserEntity userEntity = new UserEntity(this);
-        return userEntity;
+        return new UserEntity(this);
     }
 
     public String getStatistics() {
