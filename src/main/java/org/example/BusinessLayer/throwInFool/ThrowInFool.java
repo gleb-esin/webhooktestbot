@@ -10,7 +10,6 @@ import org.example.BusinessLayer.move.Attack;
 import org.example.BusinessLayer.move.Defence;
 import org.example.BusinessLayer.move.Throw;
 import org.example.BusinessLayer.states.State;
-import org.example.EntityLayer.GameID;
 import org.example.EntityLayer.Player;
 import org.example.ServiseLayer.services.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,6 @@ import java.util.List;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ThrowInFool implements State {
-    GameID gameID;
     PlayerController playerController;
     DeckController deckController;
     TableController tableController;
@@ -30,12 +28,8 @@ public class ThrowInFool implements State {
     Attack attack;
     Defence defence;
     Throw throwMove;
-
     public void play(List<Player> players) {
-        playerController.setPlayers(players);
-        dealCards(players);
-        playerController.setPlayersTurn();
-
+        init(players);
         boolean isDeckIsEmptyMessageNotSent = true;
         gameloop:
         while (!playerController.isGameOver()) {
@@ -76,12 +70,10 @@ public class ThrowInFool implements State {
         messageService.sendMessageToAll(players, "\uD83C\uDFC6 Победил " + playerController.getWinner().getName() + "! \uD83C\uDFC6");
     }
 
-    private void dealCards(List<Player> players) {
-        for (Player player : players) {
-            deckController.fillUpThePlayersHand(player);
-            tableController.setTrump(deckController.getTrump());
-            //if player gets cards - add plus one game
-            player.setGames(player.getGames() + 1);
-        }
+    private void init(List<Player> players) {
+        players.forEach(deckController::fillUpThePlayersHand);
+        playerController.setPlayers(players);
+        playerController.setPlayersTurn();
+        tableController.setTrump(deckController.getTrump());
     }
 }

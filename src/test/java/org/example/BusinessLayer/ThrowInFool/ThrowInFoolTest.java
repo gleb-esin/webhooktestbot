@@ -78,7 +78,7 @@ class ThrowInFoolTest {
     }
 
     @Test
-    void throwInFoolTest_whenPlayerControllerSsGameOverIsTrue_thenSendFinalMessage() {
+    void throwInFoolTest_whenPlayerControllerGameOverIsTrue_thenSendFinalMessage() {
         when(playerController.isGameOver()).thenReturn(true);
         when(playerController.getWinner()).thenReturn(attacker);
         String finalMessage = "\uD83C\uDFC6 Победил <b>attacker</b>! \uD83C\uDFC6";
@@ -89,7 +89,7 @@ class ThrowInFoolTest {
     }
 
     @Test
-    void throwInFoolTest_isGameIsNotOver_thenSendAttackInitIsInvoked() {
+    void throwInFoolTest_whenGameIsNotOver_thenSendAttackInitIsInvoked() {
         when(playerController.isGameOver()).thenReturn(false);
         when(playerController.isPlayerWinner(playerController.getAttacker(), deckController.getDeck())).thenReturn(true);
         when(playerController.getWinner()).thenReturn(attacker);

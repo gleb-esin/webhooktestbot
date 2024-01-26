@@ -4,115 +4,105 @@ import org.example.EntityLayer.Deck;
 import org.example.EntityLayer.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.Deque;
 import java.util.LinkedList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.*;
 
 class DeckControllerTest {
     DeckController deckController;
+    Deck deck;
+    Player attacker;
+    Player defender;
+    Deque<Player> throwQueue;
+
     @BeforeEach
     public void setUp() {
-        deckController = new DeckController(new Deck());
-    }
-
-    @Test
-    void test_fillUpThePlayersHand() {
-        Player player = new Player(1L, null);
-        deckController.fillUpThePlayersHand(player);
-        player.getPlayerHand().remove(0);
-        player.getPlayerHand().remove(0);
-
-        deckController.fillUpThePlayersHand(player);
-
-        assertEquals(6, player.getPlayerHand().size());
-    }
-
-    @Test
-    void test_fillUpTheHands_fullDeck() {
-        Player attacker = new Player(4L, "Attacker");
-        Player defender = new Player(3L, "Defender");
-        Player thrower = new Player(5L, "Thrower");
-        Deque<Player> throwQueue = new LinkedList<>();
+        deck = new Deck();
+        deckController = spy(new DeckController(deck));
+        attacker = new Player(4L, "Attacker");
+        defender = new Player(3L, "Defender");
+        throwQueue = new LinkedList<>();
         throwQueue.add(attacker);
-        throwQueue.add(thrower);
-        throwQueue.add(defender);
-        throwQueue.forEach(player -> deckController.fillUpThePlayersHand(player));
-        attacker.getPlayerHand().remove(0);
-        attacker.getPlayerHand().remove(0);
-        thrower.getPlayerHand().remove(0);
-        defender.getPlayerHand().remove(0);
-        defender.getPlayerHand().remove(0);
-        defender.getPlayerHand().remove(0);
-        throwQueue.remove(defender);
+    }
+
+    @Test
+    void fillUpThePlayersHand_whenPlayerHasNotEnoughCards_thenFilledUpTo6cardsInHand() {
+        deckController.fillUpThePlayersHand(attacker);
+        assertEquals(6, attacker.getPlayerHand().size());
+
+    }
+
+    @Test
+    void fillUpThePlayersHand_whenPlayerHas6Cards_thenHandDoesNotFilledUp() {
+        for (int i = 0; i < 6; i++) {
+            attacker.getPlayerHand().add(deck.getNextCard());
+        }
+
+        deckController.fillUpThePlayersHand(attacker);
+
+        assertEquals(6, attacker.getPlayerHand().size());
+    }
+
+    @Test
+    void fillUpThePlayersHand_whenPlayerHasMoreThan6Cards_thenHandDoesNotFilledUp() {
+        for (int i = 0; i < 8; i++) {
+            attacker.getPlayerHand().add(deck.getNextCard());
+        }
+
+        deckController.fillUpThePlayersHand(attacker);
+
+        assertEquals(8, attacker.getPlayerHand().size());
+    }
+
+    @Test
+    void fillUpTheHands_whenDeckHasMoreCardsThanNeededForPlayers_thenFillUpThePlayersHandIsInvoke() {
+        deckController.fillUpTheHands(throwQueue, defender);
+
+        verify(deckController, times(2)).fillUpThePlayersHand(any());
+
+    }
+
+    @Test
+    void fillUpTheHands_whenDeckHasLessCardsThanNeededForPlayers_thenFillUpThePlayersHandIsNotInvoke() {
+        for (int i = 0; i < 25; i++) {
+            deck.getNextCard();
+        }
+        deckController.fillUpTheHands(throwQueue, defender);
+
+        verify(deckController, never()).fillUpThePlayersHand(any());
+    }
+
+    @Test
+    void fillUpTheHands_whenDeckHasLessCardsThanNeededForPlayers_thenDeckIsEmpty() {
+        for (int i = 0; i < 25; i++) {
+            deck.getNextCard();
+        }
 
         deckController.fillUpTheHands(throwQueue, defender);
 
-        assertEquals(6, attacker.getPlayerHand().size());
-        assertEquals(6, thrower.getPlayerHand().size());
-        assertEquals(6, defender.getPlayerHand().size());
+        assertTrue(deck.isEmpty());
     }
 
     @Test
-    void test_fillUpTheHands_almostEmptyDeck() {
-        //create test environment with:
-        //deck size = 4
-        //defender hand size = 3
-        //thrower hand size = 5
-        //attacker hand size = 4
-        Player attacker = new Player(4L, "Attacker");
-        Player defender = new Player(3L, "Defender");
-        Player thrower = new Player(5L, "Thrower");
-        Deque<Player> throwQueue = new LinkedList<>();
-        throwQueue.add(attacker);
-        throwQueue.add(thrower);
-        throwQueue.add(defender);
-        throwQueue.forEach(player -> deckController.fillUpThePlayersHand(player));
-        attacker.getPlayerHand().remove(0);
-        attacker.getPlayerHand().remove(0);
-        thrower.getPlayerHand().remove(0);
-        defender.getPlayerHand().remove(0);
-        defender.getPlayerHand().remove(0);
-        defender.getPlayerHand().remove(0);
-        throwQueue.remove(defender);
-        throwQueue.remove(defender);
-        deckController.getDeck().getDeck().subList(0, 14).clear();
-        DeckController deckControllerSpy = Mockito.spy(deckController);
-        deckControllerSpy.fillUpTheHands(throwQueue, defender);
+    void fillUpTheHands_whenDeckHasMoreCardsThanNeededForPlayers_thenDeckIsDecreases() {
 
-        Mockito.verify(deckControllerSpy).fillUpTheHandsForTheLastTime(throwQueue, defender);
+        deckController.fillUpTheHands(throwQueue, defender);
+
+        assertEquals(24, deck.getDeckSize());
     }
 
     @Test
-    void test_fillUpTheHandsForTheLastTime() {
-        //create test environment with:
-        //deck size = 4
-        //defender hand size = 3
-        //thrower hand size = 5
-        //attacker hand size = 4
-        Player attacker = new Player(4L, "Attacker");
-        Player defender = new Player(3L, "Defender");
-        Player thrower = new Player(5L, "Thrower");
-        Deque<Player> throwQueue = new LinkedList<>();
-        throwQueue.add(attacker);
-        throwQueue.add(thrower);
-        throwQueue.add(defender);
-        throwQueue.forEach(player -> deckController.fillUpThePlayersHand(player));
-        attacker.getPlayerHand().remove(0);
-        attacker.getPlayerHand().remove(0);
-        thrower.getPlayerHand().remove(0);
-        defender.getPlayerHand().remove(0);
-        defender.getPlayerHand().remove(0);
-        defender.getPlayerHand().remove(0);
-        throwQueue.remove(defender);
-        deckController.getDeck().getDeck().subList(0, 14).clear();
+    void illUpTheHands_whenDeckHasMoreCardsThanNeededForPlayers_thenDeckIsDecreases () {
+        for (int i = 0; i < 24; i++) {
+            deck.getNextCard();
+        }
 
-        deckController.fillUpTheHandsForTheLastTime(throwQueue, defender);
+        deckController.fillUpTheHands(throwQueue, defender);
 
-        assertEquals(6, attacker.getPlayerHand().size());
-        assertEquals(6, thrower.getPlayerHand().size());
-        assertEquals(4, defender.getPlayerHand().size());
+        assertEquals(0, deck.getDeckSize());
     }
 }

@@ -51,4 +51,8 @@ public class Deck {
     public boolean isEmpty() {
         return deck.isEmpty();
     }
+
+    public int getDeckSize() {
+        return deck.size();
+    }
 }

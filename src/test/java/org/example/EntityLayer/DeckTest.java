@@ -58,7 +58,7 @@ class DeckTest {
     @Test
     void getNextCard_whenCalled_thenDeckSizeIsDecreased() {
         deck.getNextCard();
-        int actual = deck.getDeck().size();
+        int actual = deck.getDeckSize();
 
         assertEquals(35, actual);
     }
@@ -74,7 +74,7 @@ class DeckTest {
     void Deck_whenCreated_thenContains36cards() {
         deck = new Deck();
 
-        assertEquals(36, deck.getDeck().size());
+        assertEquals(36, deck.getDeckSize());
     }
 
     @Test
