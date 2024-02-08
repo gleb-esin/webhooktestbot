@@ -28,7 +28,7 @@ public class GameMonitor {
      * @param  gameId   the ID of the game to be added
      * @param  players  the list of players in the game
      */
-    public void addGame(UUID gameId, List<Player> players) {
+    public void addSession(UUID gameId, List<Player> players) {
         games.put(gameId, players);
     }
 

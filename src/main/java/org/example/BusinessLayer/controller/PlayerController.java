@@ -7,12 +7,10 @@ import lombok.experimental.FieldDefaults;
 import org.example.EntityLayer.Card;
 import org.example.EntityLayer.Deck;
 import org.example.EntityLayer.Player;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
-import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,7 +18,6 @@ import java.util.List;
  * This class provides control over players' behavior during round
  */
 @Component
-@Lazy
 @Scope("prototype")
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -35,7 +32,7 @@ public class PlayerController {
     Player binder;
     @Setter
     Player winner;
-    Deque<Player> throwQueue;
+    LinkedList<Player> throwQueue;
 
     /**
      * Set the turn for each player based on players' minTrumpWeight.
@@ -157,5 +154,10 @@ public class PlayerController {
             setDefender(defender);
         }
         setBinder(null);
+    }
+
+    public void setThrower(Player player) {
+        player.setRole("thrower");
+        throwQueue.add(player);
     }
 }

@@ -17,7 +17,7 @@ import java.util.List;
 @Component
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class Defence  {
+public class Defence {
     MessageService messageService;
     PlayerInputValidator playerInputValidator;
 
@@ -75,13 +75,13 @@ public class Defence  {
     }
 
     private boolean isDefenceCorrect(List<Card> unbeatenCards, List<Card> defenderCards) {
-        int isDefendCorrect;
+        boolean isDefendCorrect;
         int cardsNumberToBeat = unbeatenCards.size();
         int beatenCards = 0;
         for (Card tableCard : unbeatenCards) {
             for (Card defenderCard : defenderCards) {
-                isDefendCorrect = defenderCard.compareTo(tableCard);
-                if (isDefendCorrect > 0) {
+                isDefendCorrect = defenderCard.compareTo(tableCard) > 0;
+                if (isDefendCorrect) {
                     beatenCards++;
                     break;
                 }

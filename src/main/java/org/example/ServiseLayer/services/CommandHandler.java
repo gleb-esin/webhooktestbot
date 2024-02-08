@@ -20,7 +20,7 @@ import java.util.concurrent.Executors;
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CommandHandler implements ClientCommandHandler {
-    PlayerBuilder playerfactory;
+    PlayerBuilder playerBuilder;
     MessageMonitor messageMonitor;
     Help help;
     PlayerMonitorFactory playerMonitorFactory;
@@ -29,21 +29,21 @@ public class CommandHandler implements ClientCommandHandler {
      * Handle a messages and commands from the user.
      *
      * @param  id       the ID of the user
-     * @param  command  the command to be handled
+     * @param  text  the text to be handled
      */
     @Override
-    public void handleCommand(Long id, String command) {
-        switch (command) {
+    public void handleCommand(Long id, String text) {
+        switch (text) {
             case "/start", "/help" -> help.execute(id);
             case "/throwinfool", "/transferfool" -> {
                 ExecutorService executorService = Executors.newSingleThreadExecutor();
                 executorService.submit(() -> {
-                    Player player = playerfactory.createPlayer(id);
-                    playerMonitorFactory.addPlayer(player, command.substring(1));
+                    Player player = playerBuilder.createPlayer(id);
+                    playerMonitorFactory.addPlayer(player, text.substring(1));
                 });
                 executorService.shutdown();
             }
-            default -> messageMonitor.completeRequestedMessage(id, command);
+            default -> messageMonitor.completeRequestedMessage(id, text);
         }
     }
 }

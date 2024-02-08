@@ -3,7 +3,6 @@ package org.example.BusinessLayer.move;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.example.BusinessLayer.controller.DeckController;
 import org.example.BusinessLayer.controller.PlayerController;
 import org.example.BusinessLayer.controller.TableController;
 import org.example.EntityLayer.Card;
@@ -25,15 +24,16 @@ public class Attack {
     public void init(PlayerController playerController, TableController tableController) {
         Player attacker = playerController.getAttacker();
         Player defender = playerController.getDefender();
-        StringBuilder message = new StringBuilder("⚔️ Ход ")
-                .append(attacker.getName())
-                .append(" под ")
-                .append(defender.getName())
-                .append("⚔️")
-                .append(System.lineSeparator())
-                .append(tableController.getTable().toString());
+        String message = "⚔️ Ход " +
+                attacker.getName() +
+                " под " +
+                defender.getName() +
+                "⚔️" +
+                System.lineSeparator() +
+                "Козырь: " +
+                tableController.getTable().getTrump();
 
-        messageService.sendMessageToAll(playerController.getPlayers(), message.toString());
+        messageService.sendMessageToAll(playerController.getPlayers(), message);
         messageService.sendMessageTo(attacker, attacker.toString());
     }
 

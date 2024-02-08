@@ -62,7 +62,8 @@ class AttackTest {
                 defender.getName() +
                 "⚔️" +
                 System.lineSeparator() +
-                tableController.getTable().toString();
+                "Козырь: " +
+                tableController.getTable().getTrump();
 
         attack.init(playerController, tableController);
 

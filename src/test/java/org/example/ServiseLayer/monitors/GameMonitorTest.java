@@ -50,13 +50,13 @@ class GameMonitorTest {
 
     @Test
     void addGameMonitor_andGetPlayers() {
-        gameMonitor.addGame(gameId, players);
+        gameMonitor.addSession(gameId, players);
         assertEquals(players, gameMonitor.getPlayers(gameId));
     }
 
     @Test
     void removeThrowInFoolToGameMonitor() {
-        gameMonitor.addGame(gameId, players);
+        gameMonitor.addSession(gameId, players);
 
         gameMonitor.removeGame(gameId);
 

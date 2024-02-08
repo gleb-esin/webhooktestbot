@@ -1,6 +1,7 @@
 package org.example.ServiseLayer.factories;
 
-import org.example.BusinessLayer.throwInFool.ThrowinfoolPlayerMonitor;
+
+import org.example.BusinessLayer.games.throwinFool.ThrowInFoolPlayerMonitor;
 import org.example.EntityLayer.Player;
 import org.example.ServiseLayer.monitors.PlayersMonitor;
 import org.junit.jupiter.api.AfterEach;
@@ -18,7 +19,7 @@ class PlayerMonitorFactoryTest {
     AutoCloseable autoCloseable;
     Map<String, PlayersMonitor> monitorMap;
     @Mock
-    ThrowinfoolPlayerMonitor throwinfoolMonitor;
+    ThrowInFoolPlayerMonitor throwinfoolMonitor;
     @Mock
     Player player;
     PlayerMonitorFactory playerMonitorFactory;

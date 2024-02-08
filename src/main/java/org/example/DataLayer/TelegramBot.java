@@ -55,6 +55,7 @@ public class TelegramBot extends TelegramWebhookBot {
             List<BotCommand> menu = new ArrayList<>(
                     List.of(
                             new BotCommand("/throwinfool", "Подкидной дурак"),
+                            new BotCommand("/transferfool", "Переводной дурак"),
                             new BotCommand("/help", "Описание бота")
 //                    ,new BotCommand("/test", "test game")
                     )
