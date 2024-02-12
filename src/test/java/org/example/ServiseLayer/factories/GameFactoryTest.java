@@ -2,7 +2,7 @@ package org.example.ServiseLayer.factories;
 
 import org.example.BusinessLayer.games.Game;
 import org.example.BusinessLayer.games.throwinFool.ThrowInFool;
-import org.example.BusinessLayer.games.transferFool.TransferFool;
+import org.example.BusinessLayer.games.TransferFool;
 import org.example.DataLayer.UserEntityRepository;
 import org.example.EntityLayer.Player;
 import org.example.EntityLayer.UserEntity;

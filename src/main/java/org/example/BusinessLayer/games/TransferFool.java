@@ -1,12 +1,10 @@
-package org.example.BusinessLayer.games.transferFool;
+package org.example.BusinessLayer.games;
 
 import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import org.example.BusinessLayer.controller.DeckController;
 import org.example.BusinessLayer.controller.PlayerController;
 import org.example.BusinessLayer.controller.TableController;
-import org.example.BusinessLayer.games.AbstractFool;
-import org.example.BusinessLayer.games.Game;
 import org.example.BusinessLayer.move.Attack;
 import org.example.BusinessLayer.move.Defence;
 import org.example.BusinessLayer.move.Throw;
@@ -57,7 +55,7 @@ public class TransferFool extends AbstractFool implements State, Game {
         sendMessageWithGameWinner(players);
     }
 
-    private void changeDefender() {
+    protected void changeDefender() {
         Player nextDefender;
         if (playerController.getThrowQueue().size() == 1) {
             nextDefender = playerController.getThrowQueue().pop();
@@ -69,7 +67,7 @@ public class TransferFool extends AbstractFool implements State, Game {
         playerController.setDefender(nextDefender);
     }
 
-    private boolean isDefenceIsTransfer() {
+    protected boolean isDefenceIsTransfer() {
         boolean isDefenceIsTransfer = true;
         List<Card> unbeatenCards = tableController.getTable().getUnbeatenCards();
         Card previousCard = unbeatenCards.get(0);
