@@ -6,7 +6,7 @@ import org.example.BusinessLayer.controller.DeckController;
 import org.example.BusinessLayer.controller.PlayerController;
 import org.example.BusinessLayer.controller.TableController;
 import org.example.BusinessLayer.move.Attack;
-import org.example.BusinessLayer.move.Defence;
+import org.example.BusinessLayer.move.DefenceForTransferFool;
 import org.example.BusinessLayer.move.Throw;
 import org.example.BusinessLayer.states.State;
 import org.example.EntityLayer.Card;
@@ -26,7 +26,7 @@ public class TransferFool extends AbstractFool implements State, Game {
     TableController tableController;
 
     @Autowired
-    public TransferFool(PlayerController playerController, DeckController deckController, TableController tableController, MessageService messageService, Attack attack, Defence defence, Throw throwMove) {
+    public TransferFool(PlayerController playerController, DeckController deckController, TableController tableController, MessageService messageService, Attack attack, DefenceForTransferFool defence, Throw throwMove) {
         super(playerController, deckController, tableController, messageService, attack, defence, throwMove);
         this.playerController = playerController;
         this.tableController = tableController;

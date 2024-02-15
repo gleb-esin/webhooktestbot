@@ -3,7 +3,6 @@ package org.example.BusinessLayer.games;
 import org.example.BusinessLayer.controller.DeckController;
 import org.example.BusinessLayer.controller.PlayerController;
 import org.example.BusinessLayer.controller.TableController;
-import org.example.BusinessLayer.games.throwinFool.ThrowInFool;
 import org.example.BusinessLayer.move.Attack;
 import org.example.BusinessLayer.move.Defence;
 import org.example.BusinessLayer.move.Throw;

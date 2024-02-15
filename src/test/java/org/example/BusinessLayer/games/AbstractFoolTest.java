@@ -4,6 +4,7 @@ import org.example.BusinessLayer.controller.DeckController;
 import org.example.BusinessLayer.controller.PlayerController;
 import org.example.BusinessLayer.controller.TableController;
 import org.example.BusinessLayer.move.Attack;
+import org.example.BusinessLayer.move.AbstractDefence;
 import org.example.BusinessLayer.move.Defence;
 import org.example.BusinessLayer.move.Throw;
 import org.example.EntityLayer.Deck;
@@ -314,7 +315,7 @@ public class AbstractFoolTest {
 
 class AbstractFoolImpl extends AbstractFool {
 
-    protected AbstractFoolImpl(PlayerController playerController, DeckController deckController, TableController tableController, MessageService messageService, Attack attack, Defence defence, Throw throwMove) {
+    protected AbstractFoolImpl(PlayerController playerController, DeckController deckController, TableController tableController, MessageService messageService, Attack attack, AbstractDefence defence, Throw throwMove) {
         super(playerController, deckController, tableController, messageService, attack, defence, throwMove);
     }
 

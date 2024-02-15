@@ -18,11 +18,11 @@ import org.mockito.MockitoAnnotations;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-class DefenceTest {
+class DefenceForThrowInFoolTest {
     AutoCloseable closeable;
     Player attacker;
     Player defender;
@@ -35,7 +35,7 @@ class DefenceTest {
     @Mock
     PlayerInputValidator playerInputValidator;
     @InjectMocks
-    AbstractDefence defence;
+    DefenceFotThrowInFool defence;
 
     @BeforeEach
     void setUp() {
@@ -62,14 +62,6 @@ class DefenceTest {
     @AfterEach
     void tearDown() throws Exception {
         closeable.close();
-    }
-
-    @Test
-    void init() {
-        defence.init(playerController);
-        verify(messageService).sendMessageToAll(playerController.getPlayers(),
-                "\uD83D\uDEE1 Отбивается " + playerController.getDefender().getName() + " \uD83D\uDEE1");
-        verify(messageService).sendMessageTo(playerController.getDefender(), playerController.getDefender().toString());
     }
 
     @Test
