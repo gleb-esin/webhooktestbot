@@ -19,8 +19,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class AbstractDefenceTest {
     AutoCloseable closeable;
@@ -36,6 +35,7 @@ class AbstractDefenceTest {
     @BeforeEach
     void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
+        defence = new AbstractDefenceImpl(messageService, mock(PlayerInputValidator.class));
         defender = new Player(1L, "Defender");
         when(playerController.getDefender()).thenReturn(defender);
 

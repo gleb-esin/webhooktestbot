@@ -4,7 +4,7 @@ import org.example.BusinessLayer.controller.DeckController;
 import org.example.BusinessLayer.controller.PlayerController;
 import org.example.BusinessLayer.controller.TableController;
 import org.example.BusinessLayer.move.Attack;
-import org.example.BusinessLayer.move.Defence;
+import org.example.BusinessLayer.move.DefenceForThrowInFool;
 import org.example.BusinessLayer.move.Throw;
 import org.example.EntityLayer.Player;
 import org.example.ServiseLayer.services.MessageService;
@@ -33,7 +33,7 @@ class ThrowInFoolTest {
     @Mock
     Attack attack;
     @Mock
-    Defence defence;
+    DefenceForThrowInFool defence;
     @Mock
     Throw throwMove;
     @Spy

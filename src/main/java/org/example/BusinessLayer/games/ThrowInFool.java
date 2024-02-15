@@ -6,7 +6,7 @@ import org.example.BusinessLayer.controller.DeckController;
 import org.example.BusinessLayer.controller.PlayerController;
 import org.example.BusinessLayer.controller.TableController;
 import org.example.BusinessLayer.move.Attack;
-import org.example.BusinessLayer.move.DefenceFotThrowInFool;
+import org.example.BusinessLayer.move.DefenceForThrowInFool;
 import org.example.BusinessLayer.move.Throw;
 import org.example.EntityLayer.Player;
 import org.example.ServiseLayer.services.MessageService;
@@ -22,7 +22,7 @@ import java.util.List;
 public class ThrowInFool extends AbstractFool implements Game {
 
     @Autowired
-    public ThrowInFool(PlayerController playerController, DeckController deckController, TableController tableController, MessageService messageService, Attack attack, DefenceFotThrowInFool defence, Throw throwMove) {
+    public ThrowInFool(PlayerController playerController, DeckController deckController, TableController tableController, MessageService messageService, Attack attack, DefenceForThrowInFool defence, Throw throwMove) {
         super(playerController, deckController, tableController, messageService, attack, defence, throwMove);
     }
 

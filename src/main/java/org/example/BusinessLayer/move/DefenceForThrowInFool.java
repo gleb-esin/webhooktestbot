@@ -11,9 +11,9 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class DefenceFotThrowInFool extends AbstractDefence implements Defence {
+public class DefenceForThrowInFool extends AbstractDefence implements Defence {
 
-    public DefenceFotThrowInFool(MessageService messageService, PlayerInputValidator playerInputValidator) {
+    public DefenceForThrowInFool(MessageService messageService, PlayerInputValidator playerInputValidator) {
         super(messageService, playerInputValidator);
     }
 

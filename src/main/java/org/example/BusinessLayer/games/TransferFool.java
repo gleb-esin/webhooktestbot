@@ -67,6 +67,6 @@ public class TransferFool extends AbstractFool implements State, Game {
     }
 
     protected boolean isDefenceIsTransfer() {
-        return (!playerController.getDefender().getRole().equals("binder"))&&(!tableController.getTable().getUnbeatenCards().isEmpty());
+        return (playerController.getDefender().getRole().equals("cardTransfer"))&&(!tableController.getTable().getUnbeatenCards().isEmpty());
     }
 }

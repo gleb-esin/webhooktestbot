@@ -59,12 +59,12 @@ public class DefenceForTransferFool extends AbstractDefence implements Defence {
                     isMoveCorrect = isDefendCorrect || isTransferCorrect;
                 }
                 if (isTransferCorrect) {
-                    defender.setRole("carsTransfer");
+                    defender.setRole("cadsTransfer");
                 }
                 if (!defender.getRole().equals("binder")) {
                     tableController.addCardsToTable(cards, defender);
                     messageService.sendMessageToAll(playersForNotify, tableController.getTable().toString());
-                    if (defender.getRole().equals("carsTransfer")) {
+                    if (defender.getRole().equals("cadsTransfer")) {
                         messageService.sendMessageToAll(playersForNotify, defender.getName() + " перевел карты!");
                     } else {
                         messageService.sendMessageToAll(playersForNotify, "Карты отбиты!");

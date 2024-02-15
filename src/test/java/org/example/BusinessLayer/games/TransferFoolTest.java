@@ -4,7 +4,7 @@ import org.example.BusinessLayer.controller.DeckController;
 import org.example.BusinessLayer.controller.PlayerController;
 import org.example.BusinessLayer.controller.TableController;
 import org.example.BusinessLayer.move.Attack;
-import org.example.BusinessLayer.move.Defence;
+import org.example.BusinessLayer.move.DefenceForTransferFool;
 import org.example.BusinessLayer.move.Throw;
 import org.example.EntityLayer.Card;
 import org.example.EntityLayer.Player;
@@ -38,7 +38,7 @@ class TransferFoolTest {
     @Mock
     Attack attack;
     @Mock
-    Defence defence;
+    DefenceForTransferFool defence;
     @Mock
     Throw throwMove;
     @Spy
@@ -59,6 +59,7 @@ class TransferFoolTest {
     @BeforeEach
     void setUp() {
         closeable = org.mockito.MockitoAnnotations.openMocks(this);
+        when(defender.getRole()).thenReturn("defender");
         players = List.of(attacker, thrower);
         doNothing().when(transferFool).init(any());
         doNothing().when(transferFool).sendMessageWithGameWinner(any());
@@ -264,26 +265,30 @@ class TransferFoolTest {
     }
 
     @Test
-    void isDefenceIsTransfer_whenValuesAreEquals_thenReturnTrue() {
-        List<Card> valueIsEquals = List.of(new Card("♠", "6", false), new Card("♣", "6", false));
-        Table table = mock(Table.class);
-        when(tableController.getTable()).thenReturn(table);
-        when(table.getUnbeatenCards()).thenReturn(valueIsEquals);
-
-        boolean expected = transferFool.isDefenceIsTransfer();
-
-        assertTrue(expected);
-    }
-
-    @Test
-    void isDefenceIsTransfer_whenValuesAreNotEquals_thenReturnFalse() {
-        List<Card> valueIsEquals = List.of(new Card("♠", "6", false), new Card("♣", "6", false),  new Card("♣", "7", false));
-        Table table = mock(Table.class);
-        when(tableController.getTable()).thenReturn(table);
-        when(table.getUnbeatenCards()).thenReturn(valueIsEquals);
+    void isDefenceIsTransfer_whenDefendersRoleIsNotEqualsCardTransfer_thenReturnFalse(){
 
         boolean expected = transferFool.isDefenceIsTransfer();
 
         assertFalse(expected);
+
+    }
+
+    @Test
+    void isDefenceIsTransfer_whenUnbeatenCardsIsEmpty_thenReturnFalse(){
+        when(table.getUnbeatenCards()).thenReturn(List.of());
+
+        boolean expected = transferFool.isDefenceIsTransfer();
+
+        assertFalse(expected);
+    }
+
+    @Test
+    void isDefenceIsTransfer_whenUnbeatenCardsIsNotEmptyAndDefendersRoleIsCardTransfer_thenReturnTrue(){
+        when(table.getUnbeatenCards()).thenReturn(List.of(mock(Card.class)));
+        when(defender.getRole()).thenReturn("cardTransfer");
+
+        boolean expected = transferFool.isDefenceIsTransfer();
+
+        assertTrue(expected);
     }
 }

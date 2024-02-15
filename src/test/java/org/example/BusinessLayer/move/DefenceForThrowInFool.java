@@ -35,7 +35,7 @@ class DefenceForThrowInFoolTest {
     @Mock
     PlayerInputValidator playerInputValidator;
     @InjectMocks
-    DefenceFotThrowInFool defence;
+    DefenceForThrowInFool defence;
 
     @BeforeEach
     void setUp() {
