@@ -44,7 +44,7 @@ public class DefenceForTransferFool extends AbstractDefence implements Defence {
             } else {
                 ///...check his cards for correct attackMove
                 boolean isDefendCorrect = isDefenceCorrect(unbeatenCards, cards);
-                boolean isTransferCorrect = isTransferPossible(unbeatenCards, cards);
+                boolean isTransferCorrect = isTransferCorrect(unbeatenCards, cards);
                 boolean isMoveCorrect = isDefendCorrect || isTransferCorrect;
                 while (!isMoveCorrect || cards.size() > unbeatenCards.size()) {
                     if (cards.isEmpty()) {

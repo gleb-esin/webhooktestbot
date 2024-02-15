@@ -9,7 +9,6 @@ import org.example.BusinessLayer.move.Attack;
 import org.example.BusinessLayer.move.DefenceForTransferFool;
 import org.example.BusinessLayer.move.Throw;
 import org.example.BusinessLayer.states.State;
-import org.example.EntityLayer.Card;
 import org.example.EntityLayer.Player;
 import org.example.ServiseLayer.services.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,16 +67,6 @@ public class TransferFool extends AbstractFool implements State, Game {
     }
 
     protected boolean isDefenceIsTransfer() {
-        boolean isDefenceIsTransfer = true;
-        List<Card> unbeatenCards = tableController.getTable().getUnbeatenCards();
-        Card previousCard = unbeatenCards.get(0);
-        for (int i = 1; i < unbeatenCards.size(); i++) {
-            if (!previousCard.getValue().equals(unbeatenCards.get(i).getValue())) {
-                isDefenceIsTransfer = false;
-                break;
-            }
-            previousCard = unbeatenCards.get(i);
-        }
-        return isDefenceIsTransfer;
+        return (!playerController.getDefender().getRole().equals("binder"))&&(!tableController.getTable().getUnbeatenCards().isEmpty());
     }
 }

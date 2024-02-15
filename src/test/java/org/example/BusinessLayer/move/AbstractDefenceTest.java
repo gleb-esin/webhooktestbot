@@ -82,6 +82,16 @@ class AbstractDefenceTest {
 
         assertFalse(expected);
     }
+
+    @Test
+    void isDefenceCorrect_when() {
+        List<Card> unbeatenCards = List.of(new Card("♠", "6", false), new Card("♠", "7", false));
+        List<Card> defenderCards = List.of(new Card("♠", "8", false), new Card("♣", "6", false));
+
+        boolean expected = defence.isDefenceCorrect(unbeatenCards, defenderCards);
+
+        assertFalse(expected);
+    }
 }
 
 class AbstractDefenceImpl extends AbstractDefence{
