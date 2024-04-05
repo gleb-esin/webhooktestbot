@@ -1,7 +1,7 @@
 package org.example.BusinessLayer.games.throwInFool;
 
 
-import org.example.BusinessLayer.games.throwinFool.ThrowInFoolPlayerMonitor;
+import org.example.BusinessLayer.games.ThrowInFoolPlayerMonitor;
 import org.example.EntityLayer.Player;
 import org.example.ServiseLayer.factories.GameFactory;
 import org.example.ServiseLayer.services.MessageService;

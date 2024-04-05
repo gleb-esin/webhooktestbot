@@ -28,29 +28,15 @@ import java.util.List;
 public class TableController {
     Table table;
 
-    /**
-     * Sets the trump suit displayed with the table.
-     *
-     * @param  trump  the suit to set as the trump suit
-     */
     public void setTrump(Suit trump) {
         table.setTrump(trump);
     }
 
-    /**
-     * Clear cards from  the table.
-     *
-     */
     public void clear() {
         table.getUnbeatenCards().clear();
         table.getBeatenCards().clear();
     }
 
-    /**
-     * Retrieves all the cards from the table.
-     *
-     * @return         the list of all cards on the table
-     */
     public List<Card> getAll() {
         List<Card> allCards = new ArrayList<>(table.getBeatenCards());
         allCards.addAll(table.getUnbeatenCards());
@@ -58,7 +44,7 @@ public class TableController {
     }
 
     /**
-     * Adds player cards adds cards to the desired slot based on the player's role.
+     * Adds player cards to the desired slot based on the player's role.
      *
      * @param  playerCards  the list of cards to be added to the table
      * @param  player       the player adding the cards to the table

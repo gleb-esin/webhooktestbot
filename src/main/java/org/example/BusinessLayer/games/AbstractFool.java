@@ -44,8 +44,12 @@ public abstract class AbstractFool {
         messageService.sendMessageToAll(players, "\uD83C\uDFC6 Победил " + playerController.getWinner().getName() + "! \uD83C\uDFC6");
     }
 
+    /**
+     * Contains the main logic of the game.
+     *
+     * @param players a list of the players in the game
+     */
     public abstract void play(List<Player> players);
-
     protected void changeTurn() {
         playerController.changeTurn();
     }
@@ -58,6 +62,12 @@ public abstract class AbstractFool {
         return !playerController.isGameOver();
     }
 
+    /**
+     * Fills up the hands of players with cards from the deck if the deck is not empty.
+     * If the deck is empty, sends a message to all players.
+     *
+     * @param players List of players in the game.
+     */
     protected void fillUpPlayerHands(List<Player> players) {
         if (!deckController.getDeck().isEmpty()) {
             deckController.fillUpTheHands(playerController.getThrowQueue(), playerController.getDefender());
@@ -69,6 +79,12 @@ public abstract class AbstractFool {
         }
     }
 
+    /**
+     * Handles the scenario where the binder player grabs cards from the table.
+     * Sends a message to all players about the action.
+     *
+     * @param players List of players in the game.
+     */
     protected void binderGrabsCards(List<Player> players) {
         if (playerController.getDefender().getRole().equals("binder")) {
             playerController.setBinder(playerController.getDefender());
@@ -107,6 +123,11 @@ public abstract class AbstractFool {
         return playerController.isPlayerWinner(playerController.getAttacker(), deckController.getDeck());
     }
 
+    /**
+     * Initializes the game with players, fills up their hands, sets player turns, and sets the trump for the game.
+     *
+     * @param players List of players in the game.
+     */
     protected void init(List<Player> players) {
         players.forEach(deckController::fillUpThePlayersHand);
         playerController.setPlayers(players);

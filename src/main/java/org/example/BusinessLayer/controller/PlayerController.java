@@ -35,7 +35,7 @@ public class PlayerController {
     LinkedList<Player> throwQueue;
 
     /**
-     * Set the turn for each player based on players' minTrumpWeight.
+     * Set the move's turn for each player based on players' minTrumpWeight.
      */
     public void setPlayersTurn() {
         for (Player player : players) {
@@ -91,21 +91,11 @@ public class PlayerController {
         player.setMinTrumpWeight(playersMinWeight);
     }
 
-    /**
-     * Sets player as an attacker.
-     *
-     * @param  player   the player to set as the attacker
-     */
     public void setAttacker(Player player) {
         player.setRole("attacker");
         this.attacker = player;
     }
 
-    /**
-     * Sets the player as a defender.
-     *
-     * @param  player  the player to set as a defender
-     */
     public void setDefender(Player player) {
         player.setRole("defender");
         this.defender = player;
@@ -122,15 +112,20 @@ public class PlayerController {
     public boolean isPlayerWinner(Player player, Deck deck) {
         boolean isWinner = deck.isEmpty() && player.getPlayerHand().isEmpty();
         if (isWinner) {
-            setGameOver(true);
-            setWinner(player);
-            player.setWins(player.getWins() + 1);
+            finalizeGame(player);
         }
         return isWinner;
     }
 
+    private void finalizeGame(Player player) {
+        setGameOver(true);
+        setWinner(player);
+        player.setWins(player.getWins() + 1);
+    }
+
     /**
-     * Changes the  players' turn in the game.
+     * Changes the  players' turn based on their roles in the game.
+     *
      */
     public void changeTurn() {
         Player attacker = this.throwQueue.pop();

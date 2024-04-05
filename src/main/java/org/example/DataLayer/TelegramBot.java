@@ -46,9 +46,6 @@ public class TelegramBot extends TelegramWebhookBot {
         this.clientCommandHandler = clientCommandHandler;
     }
 
-    /**
-     * Registers the bot menu when application is ready.
-     */
     @EventListener(ApplicationReadyEvent.class)
     private void registerMenu() {
         try {

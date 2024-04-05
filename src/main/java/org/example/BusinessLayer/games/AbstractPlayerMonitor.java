@@ -11,6 +11,10 @@ import org.example.ServiseLayer.services.MessageService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
+/**
+ * Creates a separate players monitor for each game type.
+ *
+ */
 @Slf4j
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @AllArgsConstructor
@@ -33,7 +37,7 @@ public abstract class AbstractPlayerMonitor {
     }
 
     /**
-     * Runs the game if the number of players is equal to or greater than the maximum number of players.
+     * Runs the game if the number of players is equal or greater than the maximum number of players.
      *
      * @param MAX_PLAYERS The maximum number of players allowed in the game.
      * @param player      The player to add.
@@ -47,11 +51,6 @@ public abstract class AbstractPlayerMonitor {
         }
     }
 
-    /**
-     * Gets a list of players from the queue.
-     *
-     * @return The list of players.
-     */
     public List<Player> getPlayers() {
         List<Player> players = new ArrayList<>();
         for (int i = 0; i < MAX_PLAYERS; i++) {
@@ -60,11 +59,6 @@ public abstract class AbstractPlayerMonitor {
         return players;
     }
 
-    /**
-     * Gets the size of the queue.
-     *
-     * @return The size of the queue.
-     */
     public int getQueueSize() {
         return waiters.size();
     }

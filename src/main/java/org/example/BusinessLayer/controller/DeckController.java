@@ -30,7 +30,7 @@ public class DeckController {
     int MAX_PLAYERS_HAND_SIZE = 6;
 
     /**
-     * Fills up the player's hand up to MAX_PLAYERS_HAND_SIZE with cards from the deck.
+     * Alternately fills up the player's hand up to MAX_PLAYERS_HAND_SIZE with cards from the deck.
      *
      * @param  player   the player whose hand will be filled
      */
@@ -46,7 +46,7 @@ public class DeckController {
         }
     }
     /**
-     * Fills up the players hands with cards up to MAX_PLAYERS_HAND_SIZE from the deck when deck size is less than cards needed to players.
+     * Fills up the players hands evenly with cards up to MAX_PLAYERS_HAND_SIZE from the deck when deck size is less than cards needed to players.
      *
      * @param  throwQueueCopy   deque contains attacker, throwers and defender
      */
@@ -84,11 +84,6 @@ public class DeckController {
             }
         }
     }
-    /**
-     * Returns the trump suit from the deck.
-     *
-     * @return         the trump suit
-     */
     public Suit getTrump() {
         return deck.getTrump();
     }

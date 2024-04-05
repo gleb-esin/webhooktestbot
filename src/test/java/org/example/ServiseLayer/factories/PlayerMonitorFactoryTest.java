@@ -1,7 +1,7 @@
 package org.example.ServiseLayer.factories;
 
 
-import org.example.BusinessLayer.games.throwinFool.ThrowInFoolPlayerMonitor;
+import org.example.BusinessLayer.games.ThrowInFoolPlayerMonitor;
 import org.example.EntityLayer.Player;
 import org.example.ServiseLayer.monitors.PlayersMonitor;
 import org.junit.jupiter.api.AfterEach;

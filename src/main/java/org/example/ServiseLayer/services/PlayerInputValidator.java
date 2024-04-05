@@ -18,13 +18,6 @@ import java.util.Scanner;
 public class PlayerInputValidator {
     MessageService messageService;
 
-    /**
-     * Asks the player for the cards, parse and validate given string and returns the list of cards.
-     * If the player input contains 0, returns an empty list.
-     *
-     * @param  player the player object
-     * @return       the list of cards chosen by the player
-     */
     public List<Card> askForCards(Player player) {
         if (player.getRole().equals("attacker"))  {
             messageService.sendMessageTo(player, "Введите порядковые номера карт в Вашей руке через пробел:");
@@ -33,6 +26,10 @@ public class PlayerInputValidator {
                     "\n(Если хотите пропустить ход введите 0)");
         }
         String cardIndexes = messageService.receiveMessageFrom(player);
+        return validatePlayersCards(player, cardIndexes);
+    }
+
+    private List<Card> validatePlayersCards(Player player, String cardIndexes) {
         List<Integer> cardIndexesList = parseCardIndexesStringToPlayerHandIndexes(cardIndexes);
         boolean correctInput = validatePlayerHandIndexes(cardIndexesList, player);
         while (!correctInput) {

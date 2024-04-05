@@ -21,66 +21,31 @@ public class MessageServiceImpl implements MessageService {
     MessageMonitor messageMonitor;
     ApplicationEventPublisher applicationEventPublisher;
 
-    /**
-     * Sends a message to the specified chat ID.
-     *
-     * @param  chatId   the ID of the chat to send the message to
-     * @param  message  the message to send
-     */
     @Override
     public void sendMessageTo(Long chatId, String message) {
         publishEvent(new SendMessage(chatId.toString(), message));
     }
 
-    /**
-     * Sends a message to the specified player.
-     *
-     * @param  player   the player to send the message to
-     * @param  message  the message to be sent
-     */
     @Override
     public void sendMessageTo(Player player, String message) {
        sendMessageTo(player.getChatID(), message);
     }
 
-    /**
-     * Sends a message to list of players.
-     *
-     * @param  players   the list of players to send the message to
-     * @param  message   the message to send
-     */
     @Override
     public void sendMessageToAll(List<Player> players, String message) {
         players.forEach(player -> sendMessageTo(player, message));
     }
 
-    /**
-     * Receives a message from the specified player.
-     *
-     * @param  player  the player who sent the message
-     * @return         the received message as a string
-     */
     @Override
     public String receiveMessageFrom(Player player) {
         return messageMonitor.requestIncomingMessage(player.getChatID());
     }
-    /**
-     * Retrieves a message from the specified chat ID.
-     *
-     * @param  chatId  the ID of the chat to retrieve the message from
-     * @return         the received message as a string
-     */
+
     @Override
     public String receiveMessageFrom(Long chatId) {
         return messageMonitor.requestIncomingMessage(chatId);
     }
 
-    /**
-     * Publishes an event using the given object as the event.
-     *
-     * @param  event  the event object to be published expected to be an SendMessage object
-     * @return        void
-     */
     private void publishEvent(Object event) {
         applicationEventPublisher.publishEvent(event);
     }
