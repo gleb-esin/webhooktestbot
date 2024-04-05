@@ -5,6 +5,7 @@ import org.example.BusinessLayer.controller.PlayerController;
 import org.example.BusinessLayer.controller.TableController;
 import org.example.BusinessLayer.move.Attack;
 import org.example.BusinessLayer.move.Defence;
+import org.example.BusinessLayer.move.DefenceForTransferFool;
 import org.example.BusinessLayer.move.Throw;
 import org.example.EntityLayer.Card;
 import org.example.EntityLayer.Player;
@@ -38,7 +39,7 @@ class TransferFoolTest {
     @Mock
     Attack attack;
     @Mock
-    Defence defence;
+    DefenceForTransferFool defence;
     @Mock
     Throw throwMove;
     @Spy
@@ -71,6 +72,7 @@ class TransferFoolTest {
         when(table.getUnbeatenCards()).thenReturn(mock(List.class));
         throwQueue = new LinkedList<>(players);
         when(playerController.getDefender()).thenReturn(defender);
+        when(defender.getRole()).thenReturn("defender");
     }
 
     @AfterEach
@@ -277,10 +279,10 @@ class TransferFoolTest {
 
     @Test
     void isDefenceIsTransfer_whenValuesAreNotEquals_thenReturnFalse() {
-        List<Card> valueIsEquals = List.of(new Card("♠", "6", false), new Card("♣", "6", false),  new Card("♣", "7", false));
+        List<Card> valueIsNotEquals = List.of(new Card("♠", "6", false), new Card("♣", "6", false),  new Card("♣", "7", false));
         Table table = mock(Table.class);
         when(tableController.getTable()).thenReturn(table);
-        when(table.getUnbeatenCards()).thenReturn(valueIsEquals);
+        when(table.getUnbeatenCards()).thenReturn(valueIsNotEquals);
 
         boolean expected = transferFool.isDefenceIsTransfer();
 

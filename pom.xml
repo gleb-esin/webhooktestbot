@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.example</groupId>
     <artifactId>throwinfoolbot</artifactId>
-    <version>build-${buildNumber}</version>
+    <version>1.0</version>
     <name>throwinfoolbot</name>
     <description>throwinfoolbot</description>
     <properties>
@@ -77,15 +77,16 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
-
     </dependencies>
-    <scm>
-        <connection>scm:git:git@github.com:gleb-esin/\webhooktestbot.git</connection>
-        <developerConnection>scm:it:git@github.com:gleb-esin/\webhooktestbot.git</developerConnection>
-        <url>scm:git:git@github.com:gleb-esin/\webhooktestbot.git</url>
-    </scm>
 
     <build>
+        <finalName>${project.artifactId}</finalName>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -97,25 +98,6 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>buildnumber-maven-plugin</artifactId>
-                <version>1.4</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>create</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <format>{0,number}</format>
-                    <items>
-                        <item>buildNumber</item>
-                    </items>
                 </configuration>
             </plugin>
 

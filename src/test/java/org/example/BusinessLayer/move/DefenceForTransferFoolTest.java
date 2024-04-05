@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-class DefenceTest {
+class DefenceForTransferFoolTest {
     AutoCloseable closeable;
     Player attacker;
     Player defender;
@@ -35,7 +35,7 @@ class DefenceTest {
     @Mock
     PlayerInputValidator playerInputValidator;
     @InjectMocks
-    AbstractDefence defence;
+    DefenceForTransferFool defence;
 
     @BeforeEach
     void setUp() {
@@ -128,7 +128,7 @@ class DefenceTest {
     }
 
     @Test
-    void move_whenDefenderDoNotWantDefence_thenTableIsEmpty () {
+    void move_whenDefenderDoNotWantDefence_thenTableIsEmpty() {
         ArrayList<Card> defenderCardsEmpty = new ArrayList<>();
         defender.getPlayerHand().addAll(defenderCardsEmpty);
         when(playerInputValidator.askForCards(defender)).thenReturn(defenderCardsEmpty);

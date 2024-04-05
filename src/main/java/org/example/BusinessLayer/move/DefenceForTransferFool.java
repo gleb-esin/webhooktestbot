@@ -94,11 +94,13 @@ public class DefenceForTransferFool extends AbstractDefence implements Defence {
     }
 
     protected boolean isTransferCorrect(List<Card> unbeatenCards, List<Card> cards) {
-        for (Card card : cards) {
-            if (!unbeatenCards.get(0).getValue().equals(card.getValue())) {
-                return false;
+       if(!cards.isEmpty()) {
+            for (Card card : cards) {
+                if (!unbeatenCards.get(0).getValue().equals(card.getValue())) {
+                    return false;
+                }
             }
-        }
-        return true;
+           return true;
+        } else return false;
     }
 }
