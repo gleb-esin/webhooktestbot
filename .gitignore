@@ -19,7 +19,7 @@ target/
 *.iml
 *.ipr
 telegram.properties
-db.properties
+database.properties
 
 ### NetBeans ###
 /nbproject/private/

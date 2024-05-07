@@ -19,7 +19,7 @@ public class WebhookController {
      * @param  update  the update received from the webhook
      * @return         the empty response 200 to the server
      */
-    @RequestMapping(value = "/webhook", method = RequestMethod.POST)
+    @RequestMapping(value = "/throwinfool", method = RequestMethod.POST)
     public ResponseEntity<BotApiMethod<?>> onUpdateReceived(@RequestBody Update update) {
         bot.onWebhookUpdateReceived(update);
         return new ResponseEntity<>(HttpStatus.OK);

@@ -1,6 +1,6 @@
 package org.example.DataLayer;
 
-import org.example.DataLayer.config.Botconfig;
+import org.example.DataLayer.config.BotConfig;
 import org.example.ServiseLayer.services.ClientCommandHandler;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
 class TelegramBotTest {
     AutoCloseable closeable;
     @Mock
-    Botconfig botconfig;
+    BotConfig botconfig;
     @Mock
     ClientCommandHandler clientCommandHandler;
     @InjectMocks
@@ -29,7 +29,7 @@ class TelegramBotTest {
     @BeforeEach
     void setUp() {
         closeable = MockitoAnnotations.openMocks(this);
-        TelegramBot telegramBotMock = new TelegramBot(new Botconfig(), clientCommandHandler);
+        TelegramBot telegramBotMock = new TelegramBot(new BotConfig(), clientCommandHandler);
         telegramBot = spy(telegramBotMock);
         when(update.hasMessage()).thenReturn(true);
         when(update.getMessage()).thenReturn(message);
