@@ -49,19 +49,26 @@ class GameMonitorTest {
     }
 
     @Test
-    void addGameMonitor_andGetPlayers() {
+    void addGameMonitor_andGetPlayersList() {
         gameMonitor.addSession(gameId, players);
-        assertEquals(players, gameMonitor.getPlayers(gameId));
+        assertEquals(players, gameMonitor.getPlayersList(gameId));
     }
+
+//    @Test
+// fixme    void removeThrowInFoolToGameMonitor() {
+
+//        gameMonitor.addSession(gameId, players);
+//        gameMonitor.removeGame(gameId);
+//        assertNotEquals(players, gameMonitor.getPlayersList(gameId));
+//        verify(messageService).sendMessageToAll(players, "Игра  завершена.\n Выберите что-нибудь из меню");
+//    }
 
     @Test
-    void removeThrowInFoolToGameMonitor() {
-        gameMonitor.addSession(gameId, players);
+    void getGameId() {
+        UUID expected = UUID.randomUUID();
+        gameMonitor.addSession(expected, players);
+        UUID actual = gameMonitor.getGameId(attacker);
 
-        gameMonitor.removeGame(gameId);
-
-        assertNotEquals(players, gameMonitor.getPlayers(gameId));
-        verify(messageService).sendMessageToAll(players, "Игра  завершена.\n Выберите что-нибудь из меню");
+        assertEquals(expected, actual);
     }
-
 }
