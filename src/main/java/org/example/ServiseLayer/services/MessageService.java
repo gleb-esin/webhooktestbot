@@ -47,4 +47,6 @@ public interface MessageService {
      * @return         the received message as a string
      */
     String receiveMessageFrom(Long chatId);
+
+    void sendInlineKeyboard(Player player, String question, String[] buttons);
 }

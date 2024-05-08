@@ -93,4 +93,15 @@ public class Player implements Comparable<Player> {
     public String getName() {
         return "<b>" + name + "</b>";
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        boolean equals = this.chatID.equals(((Player) obj).chatID);
+        return equals;
+    }
+
+    @Override
+    public int hashCode() {
+        return chatID.hashCode();
+    }
 }

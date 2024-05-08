@@ -8,6 +8,7 @@ import org.example.ServiseLayer.services.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class GameMonitor {
     MessageService messageService;
-    ConcurrentHashMap<UUID, List<Player>> games = new ConcurrentHashMap<>();
+    ConcurrentHashMap<Player, UUID> games = new ConcurrentHashMap<>();
 
     /**
      * Adds a game to the map of games.
@@ -29,7 +30,9 @@ public class GameMonitor {
      * @param  players  the list of players in the game
      */
     public void addSession(UUID gameId, List<Player> players) {
-        games.put(gameId, players);
+        for (Player player : players) {
+            games.put(player, gameId);
+        }
     }
 
     /**
@@ -38,8 +41,19 @@ public class GameMonitor {
      * @param  gameId  the UUID of the game
      * @return         the list of players for the specified game ID
      */
-    public List<Player> getPlayers(UUID gameId) {
-        return games.get(gameId);
+    public List<Player> getPlayersList(UUID gameId) {
+        List<Player> players = new ArrayList<>();
+        games.forEach((player, uuid) -> {
+            if (uuid.equals(gameId)) {
+                players.add(player);
+            }
+        });
+        return players;
+    }
+
+    public UUID getGameId(Player player) {
+        UUID gameId = games.get(player);
+        return gameId;
     }
 
     /**
@@ -48,7 +62,8 @@ public class GameMonitor {
      * @param  gameId  the ID of the game to be removed
      */
     public void removeGame(UUID gameId) {
-        List<Player> players = games.remove(gameId);
+        List<Player> players = getPlayersList(gameId);
+        games.keySet().removeAll(players);
         messageService.sendMessageToAll(players, "Игра  завершена.\n Выберите что-нибудь из меню");
     }
 }

@@ -14,6 +14,7 @@ import org.telegram.telegrambots.bots.TelegramWebhookBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.commands.SetMyCommands;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.commands.BotCommand;
 import org.telegram.telegrambots.meta.api.objects.commands.scope.BotCommandScopeDefault;
@@ -90,11 +91,17 @@ public class TelegramBot extends TelegramWebhookBot {
      */
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
-        if (update.hasMessage() && update.getMessage().hasText()) {
-            String text = update.getMessage().getText();
-            Long chatId = update.getMessage().getChatId();
-            clientCommandHandler.handleCommand(chatId, text);
+        Long chatId;
+        Message message = update.getMessage();
+        String usersMessage;
+        if (update.hasCallbackQuery()) {
+            usersMessage = update.getCallbackQuery().getData();
+            chatId = update.getCallbackQuery().getFrom().getId();
+        } else {
+            usersMessage = message.getText();
+            chatId = message.getChatId();
         }
+        clientCommandHandler.handleCommand(chatId, usersMessage);
         return null;
     }
 }

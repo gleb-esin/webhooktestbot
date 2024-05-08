@@ -9,7 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
+import java.util.ArrayList;
 import java.util.List;
 /**
  * A service implementation class for sending and receiving messages.
@@ -73,6 +76,27 @@ public class MessageServiceImpl implements MessageService {
     @Override
     public String receiveMessageFrom(Long chatId) {
         return messageMonitor.requestIncomingMessage(chatId);
+    }
+
+    @Override
+    public void sendInlineKeyboard(Player player, String question, String[] buttons) {
+        InlineKeyboardMarkup inlineKeyboardMarkup = new InlineKeyboardMarkup();
+        List<List<InlineKeyboardButton>> buttonRows = new ArrayList<>();
+        List<InlineKeyboardButton> row = new ArrayList<>();
+        for (String string : buttons) {
+            InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
+            String[] buttonArr = string.split("--");
+            inlineKeyboardButton.setText(buttonArr[0]);
+            inlineKeyboardButton.setCallbackData(buttonArr[1]);
+            row.add(inlineKeyboardButton);
+        }
+        buttonRows.add(row);
+        inlineKeyboardMarkup.setKeyboard(buttonRows);
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(player.getChatID().toString());
+        sendMessage.setText(question);
+        sendMessage.setReplyMarkup(inlineKeyboardMarkup);
+        publishEvent(sendMessage);
     }
 
     /**
