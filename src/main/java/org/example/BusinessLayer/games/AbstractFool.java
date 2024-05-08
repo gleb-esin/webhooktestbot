@@ -108,7 +108,10 @@ public abstract class AbstractFool {
     }
 
     protected void init(List<Player> players) {
-        players.forEach(deckController::fillUpThePlayersHand);
+        players.forEach(player -> {
+            deckController.fillUpThePlayersHand(player);
+            player.setGames(player.getGames() + 1);
+        });
         playerController.setPlayers(players);
         playerController.setPlayersTurn();
         tableController.setTrump(deckController.getTrump());

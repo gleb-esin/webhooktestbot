@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.BusinessLayer.games.Game;
 import org.example.DataLayer.UserEntityRepository;
 import org.example.EntityLayer.Player;
+import org.example.EntityLayer.UserEntity;
 import org.example.ServiseLayer.monitors.GameMonitor;
 import org.example.ServiseLayer.services.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,9 +79,12 @@ public class GameFactory {
     }
 
     public void finnishGame(List<Player> players, UUID gameID) {
-        gameMonitor.removeGame(gameID);
+        gameMonitor.removeGame(players);
         for (Player player : players) {
-            userEntityRepository.save(player.toUserEntity());
+            UserEntity userEntity = new UserEntity(player);
+            userEntityRepository.save(userEntity);
         }
+
     }
 }
+
