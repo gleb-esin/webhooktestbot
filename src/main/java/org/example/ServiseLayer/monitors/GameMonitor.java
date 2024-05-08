@@ -26,8 +26,8 @@ public class GameMonitor {
     /**
      * Adds a game to the map of games.
      *
-     * @param  gameId   the ID of the game to be added
-     * @param  players  the list of players in the game
+     * @param gameId  the ID of the game to be added
+     * @param players the list of players in the game
      */
     public void addSession(UUID gameId, List<Player> players) {
         for (Player player : players) {
@@ -38,8 +38,8 @@ public class GameMonitor {
     /**
      * Retrieves the list of players for a given game ID.
      *
-     * @param  gameId  the UUID of the game
-     * @return         the list of players for the specified game ID
+     * @param gameId the UUID of the game
+     * @return the list of players for the specified game ID
      */
     public List<Player> getPlayersList(UUID gameId) {
         List<Player> players = new ArrayList<>();
@@ -58,13 +58,20 @@ public class GameMonitor {
 
     /**
      * Removes a game from the list of games.
-     *
-     * @param  gameId  the ID of the game to be removed
      */
-    public void removeGame(UUID gameId) {
-        List<Player> players = getPlayersList(gameId);
-        games.keySet().removeAll(players);
-        messageService.sendMessageToAll(players, "Игра  завершена.\n Выберите что-нибудь из меню");
+    public void removeGame(List<Player> players) {
+        for (Player player : players) {
+            games.remove(player);
+            messageService.sendMessageTo(player, "Игра  завершена.\n Выберите что-нибудь из меню");
+        }
+    }
+
+    public void removeGame(UUID uuid) {
+        games.forEach((player, uuid1) -> {
+            if (uuid1.equals(uuid)) {
+                games.remove(player);
+            }
+        });
     }
 }
 
